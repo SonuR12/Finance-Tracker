@@ -68,11 +68,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return true
     },
 
-    async jwt({ token, user, account }) {
+    async jwt({ token, user, account, trigger, session }) {
       if (user) {
         token.id = user.id
         token.role = (user as any).role || 'user'
         token.emailVerified = account?.provider === 'google' ? true : Boolean((user as any).emailVerified)
+      }
+      if (trigger === 'update' && session?.user?.name) {
+        token.name = session.user.name
       }
       return token
     },
@@ -82,6 +85,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.id = token.id as string
         session.user.role = token.role as string
         session.user.emailVerified = token.emailVerified as boolean
+        if (token.name) session.user.name = token.name as string
       }
       return session
     },

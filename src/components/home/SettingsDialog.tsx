@@ -110,11 +110,19 @@ function SaveBtn({ onClick, saving, saved, t }: { onClick: () => void; saving: b
   );
 }
 
+/* module-level cache — survives tab switches, cleared on sign out */
+let settingsCache: Settings | null = null;
+
+export function clearSettingsCache() { settingsCache = null; }
+
 export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const { data: session } = useSession();
+  const { data: session, update } = useSession();
   const user = session?.user;
 
   const [activeTab, setActiveTab] = useState("profile");
+  const [fullName, setFullName] = useState("");
+  const [profileSaving, setProfileSaving] = useState(false);
+  const [profileSaved, setProfileSaved] = useState(false);
   const [settings, setSettings] = useState<Settings>(DEFAULTS);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -125,17 +133,34 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
   const [analytics, setAnalytics] = useState(true);
   const [theme, setTheme] = useState<"light" | "dark" | "system">("system");
   const [chartColor, setChartColor] = useState("indigo");
+  const fetchedRef = useRef(false);
 
   const { language: ctxLang, currency: ctxCurrency, setLanguage: applyLanguage, setCurrency: applyCurrency } = useSettings();
   const t = useT();
   const overlayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!open || !user) return;
+    if (user?.name) setFullName(user.name);
+  }, [user?.name]);
+
+  useEffect(() => {
+    if (!open || !user || fetchedRef.current) return;
+    // use cache if available — no API call
+    if (settingsCache) {
+      setSettings(settingsCache);
+      return;
+    }
+    fetchedRef.current = true;
     setLoading(true);
     fetch("/api/settings")
       .then((r) => r.json())
-      .then((data) => { if (!data.error) setSettings({ ...DEFAULTS, ...data }); })
+      .then((data) => {
+        if (!data.error) {
+          const merged = { ...DEFAULTS, ...data };
+          settingsCache = merged;
+          setSettings(merged);
+        }
+      })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, [open, user]);
@@ -174,6 +199,7 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
       applyLanguage(settings.language);
       const sym = CURRENCIES.find((c) => c.value === settings.currency)?.symbol ?? "$";
       applyCurrency(settings.currency, sym);
+      settingsCache = { ...settings };
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
     } finally {
@@ -251,29 +277,52 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
                       <div className="flex items-center gap-4 mb-5">
                         {user?.image ? (
                           <div className="h-16 w-16 rounded-full overflow-hidden flex-shrink-0">
-                            <Image src={user.image} alt={user.name ?? "User"} width={64} height={64} className="w-full h-full object-cover" />
+                            <Image src={user.image} alt={fullName || (user.name ?? "User")} width={64} height={64} className="w-full h-full object-cover" />
                           </div>
                         ) : (
                           <div className="h-16 w-16 rounded-full bg-indigo-500 flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
-                            {user?.name?.[0]?.toUpperCase() ?? "U"}
+                            {fullName?.[0]?.toUpperCase() ?? "U"}
                           </div>
                         )}
                         <div>
-                          <p className="font-semibold text-neutral-800 dark:text-neutral-100">{user?.name}</p>
+                          <p className="font-semibold text-neutral-800 dark:text-neutral-100">{fullName || user?.name}</p>
                           <p className="text-sm text-neutral-500">{user?.email}</p>
                         </div>
                       </div>
                       <div className="space-y-3">
                         <div>
                           <label className="text-xs text-neutral-500 mb-1 block">{t("settings.fullName")}</label>
-                          <input defaultValue={user?.name ?? ""} className="w-full rounded-lg border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 px-3 py-2 text-sm text-neutral-800 dark:text-neutral-100 outline-none focus:border-indigo-400" />
+                          <input value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full rounded-lg border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 px-3 py-2 text-sm text-neutral-800 dark:text-neutral-100 outline-none focus:border-indigo-400" />
                         </div>
                         <div>
                           <label className="text-xs text-neutral-500 mb-1 block">{t("settings.email")}</label>
                           <input defaultValue={user?.email ?? ""} disabled className="w-full rounded-lg border border-neutral-200 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800/50 px-3 py-2 text-sm text-neutral-500 outline-none cursor-not-allowed" />
                         </div>
                       </div>
-                      <button className="mt-4 rounded-lg bg-indigo-500 hover:bg-indigo-600 text-white text-sm px-4 py-2 transition">{t("settings.saveChanges")}</button>
+                      <button
+                        disabled={profileSaving}
+                        onClick={async () => {
+                          setProfileSaving(true);
+                          try {
+                            const res = await fetch("/api/authentication/update-name", {
+                              method: "PATCH",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({ name: fullName }),
+                            });
+                            if (res.ok) {
+                              await update({ name: fullName });
+                              setProfileSaved(true);
+                              setTimeout(() => setProfileSaved(false), 2500);
+                            }
+                          } finally {
+                            setProfileSaving(false);
+                          }
+                        }}
+                        className="mt-4 flex items-center gap-2 rounded-lg bg-indigo-500 hover:bg-indigo-600 disabled:opacity-60 text-white text-sm px-4 py-2 transition"
+                      >
+                        {profileSaving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : profileSaved ? <Check className="h-3.5 w-3.5" /> : null}
+                        {profileSaving ? t("settings.saving") : profileSaved ? t("settings.saved") : t("settings.saveChanges")}
+                      </button>
                     </div>
                     <Hr />
                     <div>
