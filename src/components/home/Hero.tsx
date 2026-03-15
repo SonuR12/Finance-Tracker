@@ -5,9 +5,11 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useT } from "@/lib/i18n-context";
 
 export default function Hero() {
   const imageRef = useRef<HTMLDivElement>(null);
+  const t = useT();
 
   useEffect(() => {
     const imageElement = imageRef.current;
@@ -56,7 +58,7 @@ export default function Hero() {
       {/* Hero Content */}
       <div className="z-10 px-4 py-5 sm:py-10 md:py-20 text-center space-y-6">
         <h1 className="mx-auto max-w-3xl text-3xl font-bold md:text-5xl lg:text-6xl relative">
-          {"Smarter Money Moves Powered by AI".split(" ").map((word, index) => (
+          {t("hero.title").split(" ").map((word: string, index: number) => (
             <React.Fragment key={index}>
               {word === "Powered" && <br />}
               <motion.span
@@ -81,9 +83,7 @@ export default function Hero() {
           transition={{ duration: 0.5, delay: 0.7 }}
           className="mx-auto max-w-2xl text-lg text-neutral-500 dark:text-neutral-400"
         >
-          Unlock the full potential of your finances with intelligent insights,
-          real-time tracking, and automated budgeting all in one powerful
-          platform.
+          {t("hero.subtitle")}
         </motion.p>
 
         <motion.div
@@ -94,9 +94,9 @@ export default function Hero() {
         >
           <Button asChild
             size="lg"
-            className="button-gradient text-white group self-center"
+            className="button-gradient text-white group self-center px-8 py-6 text-base rounded-full"
           >
-            <Link href="/dashboard">Get Started
+            <Link href="/dashboard">{t("hero.cta")}
             <Image
                 width={20}
                 height={20}
@@ -109,9 +109,9 @@ export default function Hero() {
           <Button
             variant="outline"
             size="lg"
-            className="inline-block gradient-title bg-clip-text"
+            className="flex items-center justify-center gradient-title bg-clip-text px-8 py-6 text-base rounded-full"
           >
-            Watch Demo
+            {t("hero.demo")}
           </Button>
         </motion.div>
       </div>

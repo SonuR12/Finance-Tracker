@@ -1,17 +1,18 @@
+"use client";
 import React from "react";
-import { Mail, Github, Linkedin } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { useT } from "@/lib/i18n-context";
 
 export default function Footer() {
+  const t = useT();
   return (
     <footer className="w-full flex flex-col sm:flex-row justify-between border-t border-gray-700 dark:border-white/20 py-3 px-6 bg-gradient-to-r from-gray-900 via-indigo-950 to-indigo-800 dark:from-neutral-900 dark:to-neutral-800">
       <div className="max-w-6xl py-3 mx-auto ml-0 flex flex-col sm:flex-row justify-between items-center text-sm text-neutral-200 dark:text-neutral-300">
         <div className="mb-4 sm:mb-0 text-center sm:text-left">
           © {new Date().getFullYear()} Sonu Rai — Full Stack Developer{" "}
           <br className="sm:hidden" />
-          Blending functionality with beautiful UI to build seamless digital
-          experiences.
+          {t("footer.tagline")}
         </div>
       </div>
 

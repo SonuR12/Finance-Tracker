@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SessionProvider } from "next-auth/react";
+import { Toaster } from "sonner";
+import { SettingsProvider } from "@/lib/settings-context";
+import { I18nProvider } from "@/lib/i18n-context";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -25,11 +28,34 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: `
+          (function() {
+            try {
+              var html = document.documentElement;
+              var t = localStorage.getItem('theme') || 'system';
+              html.dataset.theme = t;
+              if (t === 'dark') html.classList.add('dark');
+              else if (t === 'light') html.classList.remove('dark');
+              else if (window.matchMedia('(prefers-color-scheme: dark)').matches) html.classList.add('dark');
+              var lang = localStorage.getItem('language');
+              if (lang) html.lang = lang;
+            } catch(e) {}
+          })();
+        `}} />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <SessionProvider>{children}</SessionProvider>
+        <SessionProvider>
+          <SettingsProvider>
+            <I18nProvider>
+              {children}
+            </I18nProvider>
+          </SettingsProvider>
+        </SessionProvider>
+        <Toaster richColors position="bottom-right" />
       </body>
     </html>
   );
