@@ -1,11 +1,11 @@
 "use client";
 
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import {
   X, User, SlidersHorizontal, PiggyBank,
-  Bell, Shield, Palette, Loader2, Check,
+  Bell, Shield, Palette, Loader2, Check, LogOut,
 } from "lucide-react";
 import {
   Select, SelectContent, SelectItem,
@@ -277,9 +277,16 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
                     </div>
                     <Hr />
                     <div>
-                      <SLabel>{t("settings.dangerZone")}</SLabel>
-                      <button className="rounded-lg border border-red-200 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 text-sm px-4 py-2 transition">{t("settings.deleteAccount")}</button>
+                      <SLabel>Account</SLabel>
+                      <button
+                        onClick={() => signOut()}
+                        className="flex items-center gap-2 rounded-lg border border-red-200 dark:border-red-800/50 text-sm px-4 py-2 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition"
+                      >
+                        <LogOut className="h-4 w-4" />
+                        Sign Out
+                      </button>
                     </div>
+
                   </div>
                 )}
 

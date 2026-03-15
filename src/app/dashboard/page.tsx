@@ -1,28 +1,22 @@
 import { auth } from "@/lib/auth";
-import { signOut } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import Sidebar from "@/components/dashboard/Sidebar";
+import DashboardClient from "@/components/dashboard/DashboardClient";
 
 export default async function DashboardPage() {
   const session = await auth();
+  if (!session?.user) redirect("/sign-in");
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-zinc-50 dark:bg-black">
-      <h1 className="text-2xl font-semibold text-zinc-900 dark:text-white">
-        Welcome, {session?.user?.name ?? "User"}
-      </h1>
-      <p className="text-zinc-500">{session?.user?.email}</p>
-      <form
-        action={async () => {
-          "use server";
-          await signOut({ redirectTo: "/" });
-        }}
-      >
-        <button
-          type="submit"
-          className="rounded-lg bg-zinc-900 px-4 py-2 text-sm text-white hover:bg-zinc-700 dark:bg-white dark:text-black"
-        >
-          Sign out
-        </button>
-      </form>
+    <div className="flex min-h-screen bg-neutral-50 dark:bg-neutral-950">
+      <Sidebar
+        name={session.user.name}
+        email={session.user.email}
+        image={session.user.image}
+      />
+      <div className="flex-1 min-w-0 flex flex-col">
+        <DashboardClient name={session.user.name} />
+      </div>
     </div>
   );
 }
