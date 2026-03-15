@@ -1,22 +1,8 @@
-import NextAuth from "next-auth";
-import Credentials from "next-auth/providers/credentials";
-import Google from "next-auth/providers/google";
-import bcrypt from "bcryptjs";
-
-// Replace this with your real DB lookup
-async function getUserByEmail(email: string) {
-  // Example static user — swap with DB query
-  const users = [
-    {
-      id: "1",
-      email: "user@example.com",
-      // bcrypt hash of "password123"
-      password: "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy",
-      name: "Demo User",
-    },
-  ];
-  return users.find((u) => u.email === email) ?? null;
-}
+import NextAuth from 'next-auth'
+import Credentials from 'next-auth/providers/credentials'
+import Google from 'next-auth/providers/google'
+import bcrypt from 'bcryptjs'
+import { getDb } from './mongodb'
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -26,27 +12,78 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
     Credentials({
       credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
+        email: { label: 'Email', type: 'email' },
+        password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) return null;
+        if (!credentials?.email || !credentials?.password) return null
 
-        const user = await getUserByEmail(credentials.email as string);
-        if (!user) return null;
+        const db = await getDb()
+        const user = await db.collection('users').findOne({
+          email: credentials.email,
+          provider: 'credentials',
+        })
 
-        const valid = await bcrypt.compare(
-          credentials.password as string,
-          user.password
-        );
-        if (!valid) return null;
+        if (!user || !user.password) return null
 
-        return { id: user.id, email: user.email, name: user.name };
+        const valid = await bcrypt.compare(credentials.password as string, user.password)
+        if (!valid) return null
+
+        if (!user.emailVerified) return null
+
+        return {
+          id: user._id.toString(),
+          email: user.email,
+          name: user.name || 'User',
+          role: user.role || 'user',
+          emailVerified: true,
+        }
       },
     }),
   ],
-  pages: {
-    signIn: "/sign-in",
+
+  pages: { signIn: '/sign-in' },
+  session: { strategy: 'jwt' },
+
+  callbacks: {
+    async signIn({ user, account }) {
+      if (account?.provider === 'google' && user.email) {
+        const db = await getDb()
+        const existing = await db.collection('users').findOne({
+          email: user.email,
+          provider: 'google',
+        })
+        if (!existing) {
+          await db.collection('users').insertOne({
+            email: user.email,
+            name: user.name,
+            image: user.image,
+            role: 'user',
+            provider: 'google',
+            emailVerified: true,
+            createdAt: new Date(),
+          })
+        }
+      }
+      return true
+    },
+
+    async jwt({ token, user, account }) {
+      if (user) {
+        token.id = user.id
+        token.role = (user as any).role || 'user'
+        token.emailVerified = account?.provider === 'google' ? true : Boolean((user as any).emailVerified)
+      }
+      return token
+    },
+
+    async session({ session, token }) {
+      if (token) {
+        session.user.id = token.id as string
+        session.user.role = token.role as string
+        session.user.emailVerified = token.emailVerified as boolean
+      }
+      return session
+    },
   },
-  session: { strategy: "jwt" },
-});
+})
