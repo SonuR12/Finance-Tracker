@@ -1,65 +1,142 @@
+"use client";
+
+import { featuresData, statsData, testimonialsData } from "@/data/home";
 import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
+import Hero from "@/components/home/Hero";
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="flex flex-col gap-10">
+      <Hero />
+
+      {/* Stats Section */}
+      <section className="py-16 bg-indigo-50 mt-5">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+            {statsData.map((item, index) => (
+              <motion.div
+                key={index}
+                className="text-center"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 1, delay: index * 0.1 }}
+              >
+                <div className="text-4xl font-bold text-indigo-600 mb-2">
+                  {item.value}
+                </div>
+                <div className="text-gray-500 text-sm">{item.label}</div>
+              </motion.div>
+            ))}
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      {/* Features Section */}
+      <section id="features" className="pt-32 text-center -mt-22">
+        <motion.div
+          className="text-2xl font-bold pb-12"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 0.8 }}
+        >
+          Everything you need to manage your finances
+        </motion.div>
+        <div className="mx-auto px-5 sm:px-10 xl:px-24">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            {featuresData.map((item, index) => (
+              <motion.div
+                key={index}
+                className="text-left rounded-md border border-gray-100 p-7 space-y-3 shadow-md"
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, delay: index * 0.10 }}
+                viewport={{ once: true }}
+              >
+                <div className="text-4xl font-bold text-indigo-500">
+                  {item.icon}
+                </div>
+                <div className="text-black text-[18px] font-bold">
+                  {item.title}
+                </div>
+                <div className="text-gray-600 text-sm">
+                  {item.description}
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
-      </main>
+      </section>
+
+      {/* Testimonials Section */}
+      <section id="testimonials" className="py-12 text-center">
+        <motion.h1
+          className="text-2xl font-bold pb-12"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 0.8 }}
+        >
+          What Our Users Say
+        </motion.h1>
+        <div className="mx-auto px-5 sm:px-10 xl:px-24">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            {testimonialsData.map((item, index) => (
+              <motion.div
+                key={index}
+                className="text-left rounded-md border border-gray-100 p-7 space-y-3 shadow-md"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: index * 0.1 }}
+                viewport={{ once: true }}
+              >
+                <div className="sm:flex gap-2 items-center">
+                  <Image
+                    src={item.image}
+                    alt="User Image"
+                    width={50}
+                    height={50}
+                    className="rounded-full object-cover w-12 h-12"
+                  />
+                  <div>
+                    <div className="text-black text-[15px] font-bold">
+                      {item.name}
+                    </div>
+                    <div className="text-black text-[13px] font-bold">
+                      {item.role}
+                    </div>
+                  </div>
+                </div>
+                <div className="text-gray-600 text-sm">{item.quote}</div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Call-to-Action Section */}
+      <motion.section
+        className="px-4 py-16 bg-indigo-50 mt-5 text-center flex flex-col items-center justify-center gap-3"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
+        viewport={{ once: true }}
+      >
+        <h1 className="font-bold text-2xl inline-block gradient-title">
+          Ready to Take Control of Your Finances ?
+        </h1>
+        <span className="text-neutral-700">
+          Join thousands of users who are already managing their finances
+          smarter with Finance Tracker
+        </span>
+        <div className="relative inline-block mt-2">
+          <span className="absolute -inset-[2px] rounded-md bg-gradient-to-r from-purple-500 via-blue-500 to-indigo-500 animate-border-move bg-[length:200%_200%] blur-sm"></span>
+          <Button className="relative z-10 border border-transparent bg-white text-black hover:bg-gray-100 transition-colors duration-300 rounded-md px-7 py-3 font-bold hover:cursor-pointer">
+            Start Free Trial
+          </Button>
+        </div>
+      </motion.section>
     </div>
   );
 }
