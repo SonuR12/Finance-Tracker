@@ -1,0 +1,98 @@
+{
+  "nav": {
+    "home": "Startseite",
+    "features": "Funktionen",
+    "pricing": "Preise",
+    "testimonials": "Erfahrungsberichte",
+    "login": "Anmelden",
+    "getStarted": "Loslegen",
+    "settings": "Einstellungen",
+    "logout": "Abmelden"
+  },
+  "hero": {
+    "title": "Klügere Geldentscheidungen mit KI",
+    "subtitle": "Entfalten Sie das volle Potenzial Ihrer Finanzen mit intelligenten Einblicken, Echtzeit-Tracking und automatisierter Budgetierung auf einer leistungsstarken Plattform.",
+    "cta": "Loslegen",
+    "demo": "Demo ansehen"
+  },
+  "stats": {
+    "users": "Aktive Nutzer",
+    "transactions": "Verfolgte Transaktionen",
+    "uptime": "Verfügbarkeit",
+    "rating": "Nutzerbewertung"
+  },
+  "features": {
+    "title": "Alles, was Sie zur Verwaltung Ihrer Finanzen benötigen",
+    "analytics": { "title": "Erweiterte Analysen", "desc": "Erhalten Sie detaillierte Einblicke in Ihre Ausgabenmuster mit KI-gestützten Analysen" },
+    "scanner": { "title": "Intelligenter Belegscanner", "desc": "Extrahieren Sie automatisch Daten aus Belegen mit fortschrittlicher KI-Technologie" },
+    "budget": { "title": "Budgetplanung", "desc": "Erstellen und verwalten Sie Budgets mit intelligenten Empfehlungen" },
+    "multiAccount": { "title": "Multi-Konto-Unterstützung", "desc": "Verwalten Sie mehrere Konten und Kreditkarten an einem Ort" },
+    "multiCurrency": { "title": "Multi-Währung", "desc": "Unterstützung für mehrere Währungen mit Echtzeit-Konvertierung" },
+    "insights": { "title": "Automatisierte Einblicke", "desc": "Erhalten Sie automatisierte Finanzeinblicke und Empfehlungen" }
+  },
+  "testimonials": {
+    "title": "Was Unsere Nutzer Sagen"
+  },
+  "cta": {
+    "title": "Bereit, die Kontrolle über Ihre Finanzen zu übernehmen?",
+    "subtitle": "Schließen Sie sich Tausenden von Nutzern an, die ihre Finanzen bereits intelligenter mit Finance Tracker verwalten",
+    "button": "Kostenlose Testversion starten"
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "profile": "Profil",
+    "preferences": "Einstellungen",
+    "budget": "Budget",
+    "notifications": "Benachrichtigungen",
+    "security": "Sicherheit",
+    "appearance": "Erscheinungsbild",
+    "saveChanges": "Änderungen speichern",
+    "saving": "Speichern...",
+    "saved": "Gespeichert!",
+    "yourProfile": "Ihr Profil",
+    "fullName": "Vollständiger Name",
+    "email": "E-Mail",
+    "dangerZone": "Gefahrenzone",
+    "deleteAccount": "Konto löschen",
+    "general": "Allgemein",
+    "language": "Sprache",
+    "currency": "Währung",
+    "dashboard": "Dashboard",
+    "showBalance": "Guthaben im Dashboard anzeigen",
+    "showBalanceDesc": "Zeigt Ihr Gesamtguthaben auf dem Hauptbildschirm an",
+    "autoCategorize": "Transaktionen automatisch kategorisieren",
+    "autoCategorizeDesc": "KI verwenden, um neue Transaktionen automatisch zu kategorisieren",
+    "monthlyBudget": "Monatliche Budgetlimits",
+    "budgetAlerts": "Budgetwarnungen",
+    "alertNearLimit": "Warnen wenn Limit naht",
+    "alertNearLimitDesc": "Benachrichtigen wenn Sie 80% eines Budgets erreichen",
+    "notificationPrefs": "Benachrichtigungseinstellungen",
+    "transactionAlerts": "Transaktionswarnungen",
+    "transactionAlertsDesc": "Für jede Transaktion benachrichtigt werden",
+    "budgetWarnings": "Budgetwarnungen",
+    "budgetWarningsDesc": "Warnung wenn Sie Ihr Budgetlimit fast erreicht haben",
+    "weeklySummary": "Wöchentliche Zusammenfassung",
+    "weeklySummaryDesc": "Wöchentliche Ausgabenzusammenfassung per E-Mail erhalten",
+    "monthlyReport": "Monatsbericht",
+    "monthlyReportDesc": "Vollständigen monatlichen Finanzbericht erhalten",
+    "productUpdates": "Produktaktualisierungen",
+    "productUpdatesDesc": "Frühzeitiger Zugang zu neuen Funktionen und Verbesserungen",
+    "twoFA": "Zwei-Faktor-Authentifizierung",
+    "twoFADesc": "Fügen Sie Ihrem Konto eine zusätzliche Sicherheitsebene hinzu",
+    "loginNotifications": "Anmeldebenachrichtigungen",
+    "loginNotificationsDesc": "Benachrichtigt werden wenn ein neues Gerät sich anmeldet",
+    "dataPrivacy": "Daten & Datenschutz",
+    "shareAnalytics": "Analysedaten teilen",
+    "shareAnalyticsDesc": "Helfen Sie uns zu verbessern, indem Sie anonyme Nutzungsdaten teilen",
+    "exportData": "Meine Daten exportieren",
+    "theme": "Design",
+    "light": "Hell",
+    "dark": "Dunkel",
+    "followSystem": "System folgen",
+    "chartColor": "Diagrammfarbe",
+    "selected": "Ausgewählt"
+  },
+  "footer": {
+    "tagline": "Funktionalität mit schöner Benutzeroberfläche verbinden, um nahtlose digitale Erlebnisse zu schaffen."
+  }
+}

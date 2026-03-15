@@ -1,0 +1,98 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "features": "Fonctionnalités",
+    "pricing": "Tarifs",
+    "testimonials": "Témoignages",
+    "login": "Connexion",
+    "getStarted": "Commencer",
+    "settings": "Paramètres",
+    "logout": "Déconnexion"
+  },
+  "hero": {
+    "title": "Des Mouvements d'Argent Plus Intelligents avec l'IA",
+    "subtitle": "Libérez tout le potentiel de vos finances avec des informations intelligentes, un suivi en temps réel et une budgétisation automatisée sur une seule plateforme.",
+    "cta": "Commencer",
+    "demo": "Voir la Démo"
+  },
+  "stats": {
+    "users": "Utilisateurs Actifs",
+    "transactions": "Transactions Suivies",
+    "uptime": "Disponibilité",
+    "rating": "Note des Utilisateurs"
+  },
+  "features": {
+    "title": "Tout ce dont vous avez besoin pour gérer vos finances",
+    "analytics": { "title": "Analyses Avancées", "desc": "Obtenez des informations détaillées sur vos habitudes de dépenses avec des analyses alimentées par l'IA" },
+    "scanner": { "title": "Scanner de Reçus Intelligent", "desc": "Extrayez automatiquement les données des reçus grâce à la technologie IA avancée" },
+    "budget": { "title": "Planification Budgétaire", "desc": "Créez et gérez des budgets avec des recommandations intelligentes" },
+    "multiAccount": { "title": "Support Multi-Comptes", "desc": "Gérez plusieurs comptes et cartes de crédit en un seul endroit" },
+    "multiCurrency": { "title": "Multi-Devises", "desc": "Support pour plusieurs devises avec conversion en temps réel" },
+    "insights": { "title": "Informations Automatisées", "desc": "Obtenez des informations financières automatisées et des recommandations" }
+  },
+  "testimonials": {
+    "title": "Ce Que Disent Nos Utilisateurs"
+  },
+  "cta": {
+    "title": "Prêt à Prendre le Contrôle de Vos Finances?",
+    "subtitle": "Rejoignez des milliers d'utilisateurs qui gèrent déjà leurs finances plus intelligemment avec Finance Tracker",
+    "button": "Démarrer l'Essai Gratuit"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "profile": "Profil",
+    "preferences": "Préférences",
+    "budget": "Budget",
+    "notifications": "Notifications",
+    "security": "Sécurité",
+    "appearance": "Apparence",
+    "saveChanges": "Enregistrer les Modifications",
+    "saving": "Enregistrement...",
+    "saved": "Enregistré!",
+    "yourProfile": "Votre Profil",
+    "fullName": "Nom Complet",
+    "email": "Email",
+    "dangerZone": "Zone Dangereuse",
+    "deleteAccount": "Supprimer le Compte",
+    "general": "Général",
+    "language": "Langue",
+    "currency": "Devise",
+    "dashboard": "Tableau de Bord",
+    "showBalance": "Afficher le solde sur le tableau de bord",
+    "showBalanceDesc": "Affiche votre solde total sur l'écran principal",
+    "autoCategorize": "Catégoriser automatiquement les transactions",
+    "autoCategorizeDesc": "Utiliser l'IA pour catégoriser automatiquement les nouvelles transactions",
+    "monthlyBudget": "Limites de Budget Mensuel",
+    "budgetAlerts": "Alertes de Budget",
+    "alertNearLimit": "Alerter quand proche de la limite",
+    "alertNearLimitDesc": "Notifier quand vous atteignez 80% d'un budget",
+    "notificationPrefs": "Préférences de Notification",
+    "transactionAlerts": "Alertes de transactions",
+    "transactionAlertsDesc": "Être notifié pour chaque transaction",
+    "budgetWarnings": "Avertissements de budget",
+    "budgetWarningsDesc": "Alerte quand vous êtes proche de votre limite de budget",
+    "weeklySummary": "Résumé hebdomadaire",
+    "weeklySummaryDesc": "Recevoir un résumé hebdomadaire des dépenses par email",
+    "monthlyReport": "Rapport mensuel",
+    "monthlyReportDesc": "Obtenir un rapport financier mensuel complet",
+    "productUpdates": "Mises à jour du produit",
+    "productUpdatesDesc": "Accès anticipé aux nouvelles fonctionnalités et améliorations",
+    "twoFA": "Authentification à deux facteurs",
+    "twoFADesc": "Ajoutez une couche de sécurité supplémentaire à votre compte",
+    "loginNotifications": "Notifications de connexion",
+    "loginNotificationsDesc": "Être notifié quand un nouvel appareil se connecte",
+    "dataPrivacy": "Données et Confidentialité",
+    "shareAnalytics": "Partager les données d'analyse",
+    "shareAnalyticsDesc": "Aidez-nous à nous améliorer en partageant des données d'utilisation anonymes",
+    "exportData": "Exporter Mes Données",
+    "theme": "Thème",
+    "light": "Clair",
+    "dark": "Sombre",
+    "followSystem": "Suivre le Système",
+    "chartColor": "Couleur du Graphique",
+    "selected": "Sélectionné"
+  },
+  "footer": {
+    "tagline": "Allier fonctionnalité et belle interface pour créer des expériences numériques fluides."
+  }
+}

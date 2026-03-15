@@ -1,0 +1,98 @@
+{
+  "nav": {
+    "home": "Home",
+    "features": "Features",
+    "pricing": "Pricing",
+    "testimonials": "Testimonials",
+    "login": "Log in",
+    "getStarted": "Get Started",
+    "settings": "Settings",
+    "logout": "Log out"
+  },
+  "hero": {
+    "title": "Smarter Money Moves Powered by AI",
+    "subtitle": "Unlock the full potential of your finances with intelligent insights, real-time tracking, and automated budgeting all in one powerful platform.",
+    "cta": "Get Started",
+    "demo": "Watch Demo"
+  },
+  "stats": {
+    "users": "Active Users",
+    "transactions": "Transactions Tracked",
+    "uptime": "Uptime",
+    "rating": "User Rating"
+  },
+  "features": {
+    "title": "Everything you need to manage your finances",
+    "analytics": { "title": "Advanced Analytics", "desc": "Get detailed insights into your spending patterns with AI-powered analytics" },
+    "scanner": { "title": "Smart Receipt Scanner", "desc": "Extract data automatically from receipts using advanced AI technology" },
+    "budget": { "title": "Budget Planning", "desc": "Create and manage budgets with intelligent recommendations" },
+    "multiAccount": { "title": "Multi-Account Support", "desc": "Manage multiple accounts and credit cards in one place" },
+    "multiCurrency": { "title": "Multi-Currency", "desc": "Support for multiple currencies with real-time conversion" },
+    "insights": { "title": "Automated Insights", "desc": "Get automated financial insights and recommendations" }
+  },
+  "testimonials": {
+    "title": "What Our Users Say"
+  },
+  "cta": {
+    "title": "Ready to Take Control of Your Finances?",
+    "subtitle": "Join thousands of users who are already managing their finances smarter with Finance Tracker",
+    "button": "Start Free Trial"
+  },
+  "settings": {
+    "title": "Settings",
+    "profile": "Profile",
+    "preferences": "Preferences",
+    "budget": "Budget",
+    "notifications": "Notifications",
+    "security": "Security",
+    "appearance": "Appearance",
+    "saveChanges": "Save Changes",
+    "saving": "Saving...",
+    "saved": "Saved!",
+    "yourProfile": "Your Profile",
+    "fullName": "Full Name",
+    "email": "Email",
+    "dangerZone": "Danger Zone",
+    "deleteAccount": "Delete Account",
+    "general": "General",
+    "language": "Language",
+    "currency": "Currency",
+    "dashboard": "Dashboard",
+    "showBalance": "Show balance on dashboard",
+    "showBalanceDesc": "Display your total balance on the main screen",
+    "autoCategorize": "Auto-categorize transactions",
+    "autoCategorizeDesc": "Use AI to automatically categorize new transactions",
+    "monthlyBudget": "Monthly Budget Limits",
+    "budgetAlerts": "Budget Alerts",
+    "alertNearLimit": "Alert when near limit",
+    "alertNearLimitDesc": "Notify when you reach 80% of a budget",
+    "notificationPrefs": "Notification Preferences",
+    "transactionAlerts": "Transaction alerts",
+    "transactionAlertsDesc": "Get notified for every transaction",
+    "budgetWarnings": "Budget warnings",
+    "budgetWarningsDesc": "Alert when you're close to your budget limit",
+    "weeklySummary": "Weekly summary",
+    "weeklySummaryDesc": "Receive a weekly spending summary email",
+    "monthlyReport": "Monthly report",
+    "monthlyReportDesc": "Get a full monthly financial report",
+    "productUpdates": "Product updates",
+    "productUpdatesDesc": "Early access to new features and improvements",
+    "twoFA": "Two-factor authentication",
+    "twoFADesc": "Add an extra layer of security to your account",
+    "loginNotifications": "Login notifications",
+    "loginNotificationsDesc": "Get notified when a new device signs in",
+    "dataPrivacy": "Data & Privacy",
+    "shareAnalytics": "Share analytics data",
+    "shareAnalyticsDesc": "Help us improve by sharing anonymous usage data",
+    "exportData": "Export My Data",
+    "theme": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "followSystem": "Follow System",
+    "chartColor": "Chart Color",
+    "selected": "Selected"
+  },
+  "footer": {
+    "tagline": "Blending functionality with beautiful UI to build seamless digital experiences."
+  }
+}

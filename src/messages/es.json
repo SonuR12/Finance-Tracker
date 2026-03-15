@@ -1,0 +1,98 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "features": "Características",
+    "pricing": "Precios",
+    "testimonials": "Testimonios",
+    "login": "Iniciar sesión",
+    "getStarted": "Comenzar",
+    "settings": "Configuración",
+    "logout": "Cerrar sesión"
+  },
+  "hero": {
+    "title": "Movimientos de Dinero Más Inteligentes con IA",
+    "subtitle": "Desbloquea todo el potencial de tus finanzas con información inteligente, seguimiento en tiempo real y presupuesto automatizado en una sola plataforma.",
+    "cta": "Comenzar",
+    "demo": "Ver Demo"
+  },
+  "stats": {
+    "users": "Usuarios Activos",
+    "transactions": "Transacciones Rastreadas",
+    "uptime": "Disponibilidad",
+    "rating": "Calificación de Usuarios"
+  },
+  "features": {
+    "title": "Todo lo que necesitas para gestionar tus finanzas",
+    "analytics": { "title": "Análisis Avanzado", "desc": "Obtén información detallada sobre tus patrones de gasto con análisis impulsado por IA" },
+    "scanner": { "title": "Escáner de Recibos Inteligente", "desc": "Extrae datos automáticamente de los recibos usando tecnología avanzada de IA" },
+    "budget": { "title": "Planificación de Presupuesto", "desc": "Crea y gestiona presupuestos con recomendaciones inteligentes" },
+    "multiAccount": { "title": "Soporte Multi-Cuenta", "desc": "Gestiona múltiples cuentas y tarjetas de crédito en un solo lugar" },
+    "multiCurrency": { "title": "Multi-Moneda", "desc": "Soporte para múltiples monedas con conversión en tiempo real" },
+    "insights": { "title": "Información Automatizada", "desc": "Obtén información financiera automatizada y recomendaciones" }
+  },
+  "testimonials": {
+    "title": "Lo Que Dicen Nuestros Usuarios"
+  },
+  "cta": {
+    "title": "¿Listo para Tomar el Control de tus Finanzas?",
+    "subtitle": "Únete a miles de usuarios que ya gestionan sus finanzas de manera más inteligente con Finance Tracker",
+    "button": "Iniciar Prueba Gratuita"
+  },
+  "settings": {
+    "title": "Configuración",
+    "profile": "Perfil",
+    "preferences": "Preferencias",
+    "budget": "Presupuesto",
+    "notifications": "Notificaciones",
+    "security": "Seguridad",
+    "appearance": "Apariencia",
+    "saveChanges": "Guardar Cambios",
+    "saving": "Guardando...",
+    "saved": "¡Guardado!",
+    "yourProfile": "Tu Perfil",
+    "fullName": "Nombre Completo",
+    "email": "Correo Electrónico",
+    "dangerZone": "Zona de Peligro",
+    "deleteAccount": "Eliminar Cuenta",
+    "general": "General",
+    "language": "Idioma",
+    "currency": "Moneda",
+    "dashboard": "Panel",
+    "showBalance": "Mostrar saldo en el panel",
+    "showBalanceDesc": "Muestra tu saldo total en la pantalla principal",
+    "autoCategorize": "Categorizar transacciones automáticamente",
+    "autoCategorizeDesc": "Usa IA para categorizar automáticamente las nuevas transacciones",
+    "monthlyBudget": "Límites de Presupuesto Mensual",
+    "budgetAlerts": "Alertas de Presupuesto",
+    "alertNearLimit": "Alertar cuando esté cerca del límite",
+    "alertNearLimitDesc": "Notificar cuando alcances el 80% de un presupuesto",
+    "notificationPrefs": "Preferencias de Notificación",
+    "transactionAlerts": "Alertas de transacciones",
+    "transactionAlertsDesc": "Recibe notificaciones por cada transacción",
+    "budgetWarnings": "Advertencias de presupuesto",
+    "budgetWarningsDesc": "Alerta cuando estés cerca de tu límite de presupuesto",
+    "weeklySummary": "Resumen semanal",
+    "weeklySummaryDesc": "Recibe un resumen semanal de gastos por correo",
+    "monthlyReport": "Informe mensual",
+    "monthlyReportDesc": "Obtén un informe financiero mensual completo",
+    "productUpdates": "Actualizaciones del producto",
+    "productUpdatesDesc": "Acceso anticipado a nuevas funciones y mejoras",
+    "twoFA": "Autenticación de dos factores",
+    "twoFADesc": "Agrega una capa adicional de seguridad a tu cuenta",
+    "loginNotifications": "Notificaciones de inicio de sesión",
+    "loginNotificationsDesc": "Recibe notificaciones cuando un nuevo dispositivo inicie sesión",
+    "dataPrivacy": "Datos y Privacidad",
+    "shareAnalytics": "Compartir datos de análisis",
+    "shareAnalyticsDesc": "Ayúdanos a mejorar compartiendo datos de uso anónimos",
+    "exportData": "Exportar Mis Datos",
+    "theme": "Tema",
+    "light": "Claro",
+    "dark": "Oscuro",
+    "followSystem": "Seguir Sistema",
+    "chartColor": "Color del Gráfico",
+    "selected": "Seleccionado"
+  },
+  "footer": {
+    "tagline": "Combinando funcionalidad con una hermosa interfaz para crear experiencias digitales perfectas."
+  }
+}
