@@ -9,11 +9,13 @@ declare module 'next-auth' {
       role: string
       emailVerified: boolean
       image?: string
+      avatarColor?: string | null
     }
   }
   interface User {
     role?: string
     emailVerified?: boolean
+    avatarColor?: string | null
   }
 }
 
@@ -22,5 +24,6 @@ declare module 'next-auth/jwt' {
     id: string
     role: string
     emailVerified: boolean
+    avatarColor?: string | null
   }
 }

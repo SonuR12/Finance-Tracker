@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
 import { Bell, Settings, LogOut, Home, LayoutDashboard, Menu, X } from "lucide-react";
-import { SettingsDialog } from "@/components/home/SettingsDialog";
+import { SettingsDialog } from "@/components/ui/SettingsDialog";
 import { useSettings } from "@/lib/settings-context";
 
 interface Props {
@@ -32,7 +32,7 @@ export default function DashboardNav({ name, email, image }: Props) {
           {/* Left */}
           <div className="flex items-center gap-3">
             <Link href="/" className="flex items-center gap-2">
-              <Image src="/svg/logo.svg" alt="Logo" width={24} height={24} />
+              <Image src="/images/logo.png" alt="Logo" width={24} height={24} />
               <span className="font-bold text-sm text-neutral-800 dark:text-neutral-100 hidden sm:block">Finance</span>
             </Link>
             <div className="hidden sm:flex items-center gap-1 ml-4">

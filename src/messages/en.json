@@ -89,7 +89,7 @@
     "light": "Light",
     "dark": "Dark",
     "followSystem": "Follow System",
-    "chartColor": "Chart Color",
+    "chartColor": "Theme Color",
     "selected": "Selected"
   },
   "footer": {

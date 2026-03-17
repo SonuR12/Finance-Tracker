@@ -20,6 +20,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Code expired. Please sign up again.' }, { status: 400 })
     }
 
+    const AVATAR_COLORS = [
+      'bg-red-500', 'bg-orange-500', 'bg-amber-500', 'bg-green-500',
+      'bg-teal-500', 'bg-blue-500', 'bg-indigo-500', 'bg-purple-500', 'bg-pink-500',
+    ]
+    const avatarColor = AVATAR_COLORS[Math.floor(Math.random() * AVATAR_COLORS.length)]
+
     const db = await getDb()
     await db.collection('users').insertOne({
       email: pending.email,
@@ -28,6 +34,7 @@ export async function POST(req: Request) {
       role: 'user',
       provider: 'credentials',
       emailVerified: true,
+      avatarColor,
       createdAt: new Date(),
     })
 

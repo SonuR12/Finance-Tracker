@@ -31,12 +31,26 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         if (!user.emailVerified) return null
 
+        if (!user.avatarColor) {
+          const COLORS = [
+            'bg-red-500', 'bg-orange-500', 'bg-amber-500', 'bg-green-500',
+            'bg-teal-500', 'bg-blue-500', 'bg-indigo-500', 'bg-purple-500', 'bg-pink-500',
+          ]
+          const avatarColor = COLORS[Math.floor(Math.random() * COLORS.length)]
+          await db.collection('users').updateOne(
+            { _id: user._id },
+            { $set: { avatarColor } }
+          )
+          user.avatarColor = avatarColor
+        }
+
         return {
           id: user._id.toString(),
           email: user.email,
           name: user.name || 'User',
           role: user.role || 'user',
           emailVerified: true,
+          avatarColor: user.avatarColor || null,
         }
       },
     }),
@@ -73,6 +87,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.id = user.id
         token.role = (user as any).role || 'user'
         token.emailVerified = account?.provider === 'google' ? true : Boolean((user as any).emailVerified)
+        token.avatarColor = (user as any).avatarColor || null
       }
       if (trigger === 'update' && session?.user?.name) {
         token.name = session.user.name
@@ -86,6 +101,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.role = token.role as string
         session.user.emailVerified = token.emailVerified as boolean
         if (token.name) session.user.name = token.name as string
+        session.user.avatarColor = token.avatarColor as string | null
       }
       return session
     },

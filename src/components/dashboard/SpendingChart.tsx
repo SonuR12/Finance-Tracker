@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
-import { spendingByCategory } from "./data";
 import { useSettings } from "@/lib/settings-context";
 
 const RADIAN = Math.PI / 180;
@@ -18,17 +17,14 @@ function CustomLabel({ cx, cy, midAngle, innerRadius, outerRadius, percent }: an
   );
 }
 
-export default function SpendingChart() {
+export default function SpendingChart({ data }: { data: any[] }) {
   const { currencySymbol } = useSettings();
-  const total = spendingByCategory.reduce((s, c) => s + c.value, 0);
+  const total = data.reduce((s, c) => s + c.value, 0);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      animate={{ opacity: 1, y: 0 }}
+    <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.3 }}
-      className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5"
-    >
+      className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5">
       <div className="mb-4">
         <h3 className="font-semibold text-neutral-900 dark:text-white">Spending by Category</h3>
         <p className="text-xs text-neutral-400 mt-0.5">This month</p>
@@ -37,11 +33,9 @@ export default function SpendingChart() {
         <div className="relative flex-shrink-0">
           <ResponsiveContainer width={160} height={160}>
             <PieChart>
-              <Pie data={spendingByCategory} cx="50%" cy="50%" innerRadius={48} outerRadius={76}
+              <Pie data={data} cx="50%" cy="50%" innerRadius={48} outerRadius={76}
                 dataKey="value" labelLine={false} label={CustomLabel}>
-                {spendingByCategory.map((entry, i) => (
-                  <Cell key={i} fill={entry.color} stroke="none" />
-                ))}
+                {data.map((entry, i) => <Cell key={i} fill={entry.color} stroke="none" />)}
               </Pie>
               <Tooltip
                 contentStyle={{ borderRadius: 10, border: "none", boxShadow: "0 4px 20px rgba(0,0,0,0.1)", fontSize: 12 }}
@@ -55,7 +49,7 @@ export default function SpendingChart() {
           </div>
         </div>
         <div className="flex-1 space-y-2 min-w-0">
-          {spendingByCategory.map((cat) => (
+          {data.map((cat) => (
             <div key={cat.name} className="flex items-center gap-2">
               <span className="h-2.5 w-2.5 rounded-full flex-shrink-0" style={{ background: cat.color }} />
               <span className="text-xs text-neutral-600 dark:text-neutral-400 flex-1 truncate">{cat.name}</span>

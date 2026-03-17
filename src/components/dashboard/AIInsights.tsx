@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, X, RefreshCw } from "lucide-react";
-import { aiInsights } from "./data";
 
 const typeStyles: Record<string, string> = {
   warning: "border-amber-200 bg-amber-50 dark:border-amber-800/50 dark:bg-amber-950/20",
@@ -11,11 +10,11 @@ const typeStyles: Record<string, string> = {
   info:    "border-blue-200 bg-blue-50 dark:border-blue-800/50 dark:bg-blue-950/20",
 };
 
-export default function AIInsights() {
+export default function AIInsights({ data }: { data: any[] }) {
   const [dismissed, setDismissed] = useState<number[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const visible = aiInsights.filter((_, i) => !dismissed.includes(i));
+  const visible = data.filter((_, i) => !dismissed.includes(i));
 
   function refresh() {
     setLoading(true);
@@ -23,15 +22,12 @@ export default function AIInsights() {
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      animate={{ opacity: 1, y: 0 }}
+    <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.5 }}
-      className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5"
-    >
+      className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center">
+          <div className="h-7 w-7 rounded-lg flex items-center justify-center" style={{ background: "var(--app-accent)" }}>
             <Sparkles className="h-3.5 w-3.5 text-white" />
           </div>
           <div>
@@ -44,24 +40,19 @@ export default function AIInsights() {
           <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} />
         </button>
       </div>
-
-      <div className="space-y-2.5">
+      <div className="">
         <AnimatePresence>
           {visible.map((insight, i) => {
-            const idx = aiInsights.indexOf(insight);
+            const idx = data.indexOf(insight);
             return (
-              <motion.div
-                key={idx}
+              <motion.div key={idx}
                 initial={{ opacity: 0, height: 0, marginBottom: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
+                animate={{ opacity: 1, height: "auto", marginBottom: 10 }}
                 exit={{ opacity: 0, height: 0, marginBottom: 0 }}
                 transition={{ duration: 0.25 }}
-                className={`relative rounded-xl border p-3.5 ${typeStyles[insight.type]}`}
-              >
-                <button
-                  onClick={() => setDismissed((d) => [...d, idx])}
-                  className="absolute top-2.5 right-2.5 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition"
-                >
+                className={`relative rounded-xl border p-3.5 ${typeStyles[insight.type]}`}>
+                <button onClick={() => setDismissed((d) => [...d, idx])}
+                  className="absolute top-2.5 right-2.5 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition">
                   <X className="h-3.5 w-3.5" />
                 </button>
                 <div className="flex gap-2.5 pr-5">
@@ -78,7 +69,7 @@ export default function AIInsights() {
         {visible.length === 0 && (
           <div className="text-center py-6">
             <p className="text-sm text-neutral-400">All caught up! No new insights.</p>
-            <button onClick={refresh} className="mt-2 text-xs text-indigo-500 hover:underline">Refresh insights</button>
+            <button onClick={refresh} className="mt-2 text-xs hover:underline" style={{ color: "var(--app-accent)" }}>Refresh insights</button>
           </div>
         )}
       </div>

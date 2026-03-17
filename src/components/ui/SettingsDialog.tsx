@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import {
   X, User, SlidersHorizontal, PiggyBank,
-  Bell, Shield, Palette, Loader2, Check, LogOut,
+  Bell, Shield, Palette, Loader2, LogOut,
 } from "lucide-react";
 import {
   Select, SelectContent, SelectItem,
@@ -13,6 +13,8 @@ import {
 } from "@/components/ui/select";
 import { useSettings } from "@/lib/settings-context";
 import { useT } from "@/lib/i18n-context";
+import { UserMenu } from "@/components/ui/UserMenu";
+import { AccentButton, AccentToggle } from "@/components/ui/AccentButton";
 
 /* ── Data ── */
 const LANGUAGES = [
@@ -73,8 +75,8 @@ const DEFAULTS: Settings = {
 };
 
 const TABS = [
-  { id: "profile",        labelKey: "settings.profile",       icon: User },
-  { id: "preferences",   labelKey: "settings.preferences",   icon: SlidersHorizontal },
+  { id: "profile",       labelKey: "settings.profile",        icon: User },
+  { id: "preferences",   labelKey: "settings.preferences",    icon: SlidersHorizontal },
   { id: "budget",        labelKey: "settings.budget",         icon: PiggyBank },
   { id: "notifications", labelKey: "settings.notifications",  icon: Bell },
   { id: "security",      labelKey: "settings.security",       icon: Shield },
@@ -92,23 +94,6 @@ function SLabel({ children }: { children: React.ReactNode }) {
 function Hr() {
   return <hr className="border-neutral-100 dark:border-neutral-800" />;
 }
-function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
-  return (
-    <button type="button" onClick={() => onChange(!checked)}
-      className={`relative h-6 w-11 rounded-full transition-colors flex-shrink-0 ${checked ? "bg-indigo-500" : "bg-neutral-300 dark:bg-neutral-600"}`}>
-      <span className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${checked ? "translate-x-5" : "translate-x-0"}`} />
-    </button>
-  );
-}
-function SaveBtn({ onClick, saving, saved, t }: { onClick: () => void; saving: boolean; saved: boolean; t: (k: string) => string }) {
-  return (
-    <button onClick={onClick} disabled={saving}
-      className="flex items-center gap-2 rounded-lg bg-indigo-500 hover:bg-indigo-600 disabled:opacity-60 text-white text-sm px-4 py-2 transition">
-      {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : saved ? <Check className="h-3.5 w-3.5" /> : null}
-      {saving ? t("settings.saving") : saved ? t("settings.saved") : t("settings.saveChanges")}
-    </button>
-  );
-}
 
 /* module-level cache — survives tab switches, cleared on sign out */
 let settingsCache: Settings | null = null;
@@ -121,9 +106,14 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
 
   const [activeTab, setActiveTab] = useState("profile");
   const [fullName, setFullName] = useState("");
+  const [originalName, setOriginalName] = useState("");
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imageBase64, setImageBase64] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [profileSaving, setProfileSaving] = useState(false);
   const [profileSaved, setProfileSaved] = useState(false);
   const [settings, setSettings] = useState<Settings>(DEFAULTS);
+  const savedSettingsRef = useRef<Settings>(DEFAULTS);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -135,12 +125,12 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
   const [chartColor, setChartColor] = useState("indigo");
   const fetchedRef = useRef(false);
 
-  const { language: ctxLang, currency: ctxCurrency, setLanguage: applyLanguage, setCurrency: applyCurrency } = useSettings();
+  const { language: ctxLang, currency: ctxCurrency, setLanguage: applyLanguage, setCurrency: applyCurrency, setChartColor: applyChartColor } = useSettings();
   const t = useT();
   const overlayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (user?.name) setFullName(user.name);
+    if (user?.name) { setFullName(user.name); setOriginalName(user.name); }
   }, [user?.name]);
 
   useEffect(() => {
@@ -158,6 +148,7 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
         if (!data.error) {
           const merged = { ...DEFAULTS, ...data };
           settingsCache = merged;
+          savedSettingsRef.current = merged;
           setSettings(merged);
         }
       })
@@ -173,7 +164,7 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
   useEffect(() => {
     try {
       setTheme((localStorage.getItem("theme") as any) || "system");
-      setChartColor(localStorage.getItem("chartColor") || "indigo");
+      setChartColor(localStorage.getItem("chartColor") || "#6366f1");
     } catch {}
     setSettings((s) => ({ ...s, language: ctxLang, currency: ctxCurrency }));
   }, [ctxLang, ctxCurrency]);
@@ -200,6 +191,7 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
       const sym = CURRENCIES.find((c) => c.value === settings.currency)?.symbol ?? "$";
       applyCurrency(settings.currency, sym);
       settingsCache = { ...settings };
+      savedSettingsRef.current = { ...settings };
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
     } finally {
@@ -219,6 +211,17 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
   }
 
   const currencySymbol = CURRENCIES.find((c) => c.value === settings.currency)?.symbol ?? "$";
+  const profileChanged = fullName.trim() !== originalName.trim();
+  const prefsChanged = (
+    settings.language !== savedSettingsRef.current.language ||
+    settings.currency !== savedSettingsRef.current.currency ||
+    settings.showBalance !== savedSettingsRef.current.showBalance ||
+    settings.autoCategorize !== savedSettingsRef.current.autoCategorize
+  );
+  const budgetChanged = (
+    JSON.stringify(settings.budgets) !== JSON.stringify(savedSettingsRef.current.budgets) ||
+    settings.budgetAlerts !== savedSettingsRef.current.budgetAlerts
+  );
 
   if (!open) return null;
 
@@ -226,33 +229,37 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
     <div
       ref={overlayRef}
       onClick={(e) => { if (e.target === overlayRef.current) onClose(); }}
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-3 sm:p-4"
     >
-      <div className="relative flex w-full max-w-3xl h-[580px] rounded-2xl shadow-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700">
+      <div className="relative flex w-full max-w-3xl h-[calc(100dvh-24px)] sm:h-[580px] !max-h-[600px] rounded-2xl shadow-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 overflow-scroll">
 
-        {/* Sidebar */}
-        <div className="w-52 flex-shrink-0 border-r border-neutral-100 dark:border-neutral-800 flex flex-col py-5 px-3 rounded-l-2xl overflow-hidden">
-          <div className="flex items-center gap-2 px-2 mb-6">
-            <Image src="/svg/logo.svg" alt="Logo" width={20} height={20} />
+        {/* Sidebar — icon-only on mobile, icon+label on sm+ */}
+        <div className="flex-shrink-0 border-r border-neutral-100 dark:border-neutral-800 flex flex-col py-4 sm:py-5 px-2 sm:px-3 w-14 sm:w-52">
+          <div className="hidden sm:flex items-center gap-2 px-2 mb-6">
+            <Image src="/images/logo.png" alt="Logo" width={40} height={40} />
             <span className="font-semibold text-sm text-neutral-800 dark:text-neutral-100">Finance</span>
+          </div>
+          <div className="sm:hidden flex justify-center mb-4">
+            <Image src="/images/logo.png" alt="Logo" width={30} height={30} />
           </div>
           <nav className="flex flex-col gap-0.5">
             {TABS.map(({ id, labelKey, icon: Icon }) => (
-              <button key={id} onClick={() => setActiveTab(id)}
-                className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition text-left w-full ${
+              <button key={id} onClick={() => setActiveTab(id)} title={t(labelKey)}
+                style={activeTab === id ? { background: chartColor + "15", color: chartColor } : {}}
+                className={`flex items-center gap-2.5 rounded-lg px-2 sm:px-3 py-2 text-sm transition w-full ${
                   activeTab === id
-                    ? "bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-white font-medium"
+                    ? "font-medium"
                     : "text-neutral-500 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 hover:text-neutral-800 dark:hover:text-neutral-200"
                 }`}>
-                <Icon className="h-4 w-4 flex-shrink-0" />
-                {t(labelKey)}
+                <Icon className="h-4 w-4 flex-shrink-0 mx-auto sm:mx-0" />
+                <span className="hidden sm:inline">{t(labelKey)}</span>
               </button>
             ))}
           </nav>
         </div>
 
         {/* Content */}
-        <div className="flex-1 flex flex-col min-w-0 rounded-r-2xl overflow-hidden">
+        <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
           <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-100 dark:border-neutral-800 flex-shrink-0">
             <h2 className="text-base font-semibold text-neutral-800 dark:text-neutral-100">
               {t(TABS.find((tab) => tab.id === activeTab)?.labelKey ?? "")}
@@ -265,7 +272,7 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
           <div className="flex-1 overflow-y-auto px-6 py-5">
             {loading ? (
               <div className="flex items-center justify-center h-full">
-                <Loader2 className="h-6 w-6 animate-spin text-indigo-500" />
+                <Loader2 className="h-6 w-6 animate-spin" style={{ color: "var(--app-accent)" }} />
               </div>
             ) : (
               <>
@@ -275,15 +282,34 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
                     <div>
                       <SLabel>{t("settings.yourProfile")}</SLabel>
                       <div className="flex items-center gap-4 mb-5">
-                        {user?.image ? (
-                          <div className="h-16 w-16 rounded-full overflow-hidden flex-shrink-0">
-                            <Image src={user.image} alt={fullName || (user.name ?? "User")} width={64} height={64} className="w-full h-full object-cover" />
+                        <div className="relative group flex-shrink-0">
+                          <input
+                            ref={fileInputRef}
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (!file) return;
+                              const reader = new FileReader();
+                              reader.onload = (ev) => {
+                                const result = ev.target?.result as string;
+                                setImagePreview(result);
+                                setImageBase64(result);
+                              };
+                              reader.readAsDataURL(file);
+                            }}
+                          />
+                          <div className="cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+                            <UserMenu
+                              image={imagePreview ?? user?.image}
+                              name={fullName || user?.name}
+                              email={user?.email}
+                              avatarColor={(user as any)?.avatarColor}
+                              size={64}
+                            />
                           </div>
-                        ) : (
-                          <div className="h-16 w-16 rounded-full bg-indigo-500 flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
-                            {fullName?.[0]?.toUpperCase() ?? "U"}
-                          </div>
-                        )}
+                        </div>
                         <div>
                           <p className="font-semibold text-neutral-800 dark:text-neutral-100">{fullName || user?.name}</p>
                           <p className="text-sm text-neutral-500">{user?.email}</p>
@@ -299,18 +325,26 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
                           <input defaultValue={user?.email ?? ""} disabled className="w-full rounded-lg border border-neutral-200 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800/50 px-3 py-2 text-sm text-neutral-500 outline-none cursor-not-allowed" />
                         </div>
                       </div>
-                      <button
-                        disabled={profileSaving}
+                      <AccentButton
+                        className="mt-4 min-w-[120px]"
+                        saving={profileSaving}
+                        saved={profileSaved}
+                        saveLabel={t("settings.saveChanges")}
+                        savingLabel={t("settings.saving")}
+                        savedLabel={t("settings.saved")}
+                        disabled={!profileChanged && !imageBase64}
                         onClick={async () => {
                           setProfileSaving(true);
                           try {
                             const res = await fetch("/api/authentication/update-name", {
                               method: "PATCH",
                               headers: { "Content-Type": "application/json" },
-                              body: JSON.stringify({ name: fullName }),
+                              body: JSON.stringify({ name: fullName, image: imageBase64 }),
                             });
                             if (res.ok) {
-                              await update({ name: fullName });
+                              await update({ user: { name: fullName, image: imageBase64 ?? user?.image } });
+                              setOriginalName(fullName);
+                              setImageBase64(null);
                               setProfileSaved(true);
                               setTimeout(() => setProfileSaved(false), 2500);
                             }
@@ -318,11 +352,7 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
                             setProfileSaving(false);
                           }
                         }}
-                        className="mt-4 flex items-center gap-2 rounded-lg bg-indigo-500 hover:bg-indigo-600 disabled:opacity-60 text-white text-sm px-4 py-2 transition"
-                      >
-                        {profileSaving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : profileSaved ? <Check className="h-3.5 w-3.5" /> : null}
-                        {profileSaving ? t("settings.saving") : profileSaved ? t("settings.saved") : t("settings.saveChanges")}
-                      </button>
+                      />
                     </div>
                     <Hr />
                     <div>
@@ -335,7 +365,6 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
                         Sign Out
                       </button>
                     </div>
-
                   </div>
                 )}
 
@@ -396,18 +425,18 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
                             <p className="text-sm font-medium text-neutral-800 dark:text-neutral-100">{t("settings.showBalance")}</p>
                             <p className="text-xs text-neutral-500">{t("settings.showBalanceDesc")}</p>
                           </div>
-                          <Toggle checked={settings.showBalance} onChange={(v) => patch({ showBalance: v })} />
+                          <AccentToggle checked={settings.showBalance} onChange={(v) => patch({ showBalance: v })} />
                         </div>
                         <div className="flex items-center justify-between gap-4">
                           <div>
                             <p className="text-sm font-medium text-neutral-800 dark:text-neutral-100">{t("settings.autoCategorize")}</p>
                             <p className="text-xs text-neutral-500">{t("settings.autoCategorizeDesc")}</p>
                           </div>
-                          <Toggle checked={settings.autoCategorize} onChange={(v) => patch({ autoCategorize: v })} />
+                          <AccentToggle checked={settings.autoCategorize} onChange={(v) => patch({ autoCategorize: v })} />
                         </div>
                       </div>
                     </div>
-                    <SaveBtn onClick={save} saving={saving} saved={saved} t={t} />
+                    <AccentButton onClick={save} saving={saving} saved={saved} disabled={!prefsChanged} saveLabel={t("settings.saveChanges")} savingLabel={t("settings.saving")} savedLabel={t("settings.saved")} />
                   </div>
                 )}
 
@@ -419,7 +448,7 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
                       <div className="space-y-3">
                         {BUDGET_CATEGORIES.map((cat) => (
                           <div key={cat} className="flex items-center gap-3">
-                            <label className="text-sm text-neutral-700 dark:text-neutral-300 w-36 flex-shrink-0">{cat}</label>
+                            <label className="text-sm text-neutral-700 dark:text-neutral-300 w-28 sm:w-36 flex-shrink-0">{cat}</label>
                             <div className="relative flex-1">
                               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-neutral-400">{currencySymbol}</span>
                               <input
@@ -441,10 +470,10 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
                           <p className="text-sm font-medium text-neutral-800 dark:text-neutral-100">{t("settings.alertNearLimit")}</p>
                           <p className="text-xs text-neutral-500">{t("settings.alertNearLimitDesc")}</p>
                         </div>
-                        <Toggle checked={settings.budgetAlerts} onChange={(v) => patch({ budgetAlerts: v })} />
+                        <AccentToggle checked={settings.budgetAlerts} onChange={(v) => patch({ budgetAlerts: v })} />
                       </div>
                     </div>
-                    <SaveBtn onClick={save} saving={saving} saved={saved} t={t} />
+                    <AccentButton onClick={save} saving={saving} saved={saved} disabled={!budgetChanged} saveLabel={t("settings.saveChanges")} savingLabel={t("settings.saving")} savedLabel={t("settings.saved")} />
                   </div>
                 )}
 
@@ -464,7 +493,7 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
                           <p className="text-sm font-medium text-neutral-800 dark:text-neutral-100">{t(lk)}</p>
                           <p className="text-xs text-neutral-500">{t(dk)}</p>
                         </div>
-                        <Toggle checked={notifs[i]} onChange={(v) => setNotifs((n) => n.map((x, j) => j === i ? v : x))} />
+                        <AccentToggle checked={notifs[i]} onChange={(v) => setNotifs((n) => n.map((x, j) => j === i ? v : x))} />
                       </div>
                     ))}
                   </div>
@@ -481,14 +510,14 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
                             <p className="text-sm font-medium text-neutral-800 dark:text-neutral-100">{t("settings.twoFA")}</p>
                             <p className="text-xs text-neutral-500">{t("settings.twoFADesc")}</p>
                           </div>
-                          <Toggle checked={twoFA} onChange={setTwoFA} />
+                          <AccentToggle checked={twoFA} onChange={setTwoFA} />
                         </div>
                         <div className="flex items-center justify-between gap-4">
                           <div>
                             <p className="text-sm font-medium text-neutral-800 dark:text-neutral-100">{t("settings.loginNotifications")}</p>
                             <p className="text-xs text-neutral-500">{t("settings.loginNotificationsDesc")}</p>
                           </div>
-                          <Toggle checked={loginNotif} onChange={setLoginNotif} />
+                          <AccentToggle checked={loginNotif} onChange={setLoginNotif} />
                         </div>
                       </div>
                     </div>
@@ -500,7 +529,7 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
                           <p className="text-sm font-medium text-neutral-800 dark:text-neutral-100">{t("settings.shareAnalytics")}</p>
                           <p className="text-xs text-neutral-500">{t("settings.shareAnalyticsDesc")}</p>
                         </div>
-                        <Toggle checked={analytics} onChange={setAnalytics} />
+                        <AccentToggle checked={analytics} onChange={setAnalytics} />
                       </div>
                       <button className="mt-4 rounded-lg border border-neutral-200 dark:border-neutral-700 text-sm px-4 py-2 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition">{t("settings.exportData")}</button>
                     </div>
@@ -512,7 +541,7 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
                   <div className="space-y-6">
                     <div>
                       <SLabel>{t("settings.theme")}</SLabel>
-                      <div className="flex gap-3">
+                      <div className="flex gap-2 sm:gap-3">
                         {([
                           { id: "light"  as const, labelKey: "settings.light",        preview: "bg-white border border-neutral-200" },
                           { id: "dark"   as const, labelKey: "settings.dark",         preview: "bg-neutral-800" },
@@ -520,7 +549,7 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
                         ]).map((th) => (
                           <button key={th.id} onClick={() => applyTheme(th.id)}
                             className={`flex flex-col items-center gap-2 rounded-xl border-2 p-3 transition ${theme === th.id ? "border-indigo-500" : "border-neutral-200 dark:border-neutral-700"}`}>
-                            <div className={`h-14 w-20 rounded-lg ${th.preview}`} />
+                            <div className={`h-10 w-14 sm:h-14 sm:w-20 rounded-lg ${th.preview}`} />
                             <span className="text-xs text-neutral-600 dark:text-neutral-400 whitespace-nowrap">{t(th.labelKey)}</span>
                           </button>
                         ))}
@@ -529,27 +558,23 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
                     <Hr />
                     <div>
                       <SLabel>{t("settings.chartColor")}</SLabel>
-                      <div className="flex gap-3 flex-wrap">
-                        {[
-                          { id: "indigo",  bg: "bg-indigo-500" },
-                          { id: "blue",    bg: "bg-blue-500" },
-                          { id: "emerald", bg: "bg-emerald-500" },
-                          { id: "violet",  bg: "bg-violet-500" },
-                          { id: "rose",    bg: "bg-rose-500" },
-                          { id: "amber",   bg: "bg-amber-500" },
-                        ].map((c) => (
-                          <button key={c.id}
-                            onClick={() => { setChartColor(c.id); try { localStorage.setItem("chartColor", c.id); } catch {} }}
-                            className={`h-8 w-8 rounded-full ${c.bg} transition-all ${chartColor === c.id ? "ring-2 ring-offset-2 ring-neutral-700 dark:ring-neutral-300 scale-110" : "ring-2 ring-offset-2 ring-transparent hover:scale-105"}`} />
+                      <div className="flex gap-2 mt-3 flex-wrap">
+                        {["#6366f1","#3b82f6","#10b981","#8b5cf6","#f43f5e","#f59e0b","#06b6d4","#ec4899"].map((hex) => (
+                          <button key={hex} onClick={() => { setChartColor(hex); applyChartColor(hex); }}
+                            className={`h-7 w-7 rounded-full transition-all ${
+                              chartColor === hex ? "ring-2 ring-offset-2 ring-neutral-500 dark:ring-neutral-300 scale-110" : "hover:scale-105"
+                            }`}
+                            style={{ background: hex }} />
                         ))}
                       </div>
-                      <p className="mt-2 text-xs text-neutral-400 capitalize">{t("settings.selected")}: {chartColor}</p>
                     </div>
                   </div>
                 )}
               </>
             )}
           </div>
+
+          
         </div>
       </div>
     </div>
