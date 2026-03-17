@@ -1,19 +1,15 @@
 'use client'
 
-import { signOut } from 'next-auth/react'
+import { signOutAction } from '@/lib/actions'
 
 export default function SignOutButton() {
   const handleSignOut = async () => {
-    // Clear all localStorage
     localStorage.clear()
-
-    // Clear all cookies
     document.cookie.split(';').forEach(cookie => {
       const name = cookie.split('=')[0].trim()
       document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`
     })
-
-    await signOut({ callbackUrl: '/' })
+    await signOutAction()
   }
 
   return (

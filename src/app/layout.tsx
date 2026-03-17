@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { SessionProvider } from "next-auth/react";
 import { Toaster } from "sonner";
 import { SettingsProvider } from "@/lib/settings-context";
 import { I18nProvider } from "@/lib/i18n-context";
@@ -48,13 +47,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <SessionProvider refetchInterval={5 * 60} refetchOnWindowFocus={false}>
-          <SettingsProvider>
+        <SettingsProvider>
             <I18nProvider>
               {children}
             </I18nProvider>
           </SettingsProvider>
-        </SessionProvider>
         <Toaster richColors position="bottom-right" />
       </body>
     </html>

@@ -92,6 +92,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (trigger === 'update' && session?.user?.name) {
         token.name = session.user.name
       }
+      // always sync name from DB so profile updates reflect without re-login
+      if (!user && token.id) {
+        try {
+          const db = await getDb()
+          const dbUser = await db.collection('users').findOne({ email: token.email })
+          if (dbUser?.name) token.name = dbUser.name
+        } catch {}
+      }
       return token
     },
 
@@ -99,7 +107,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (token) {
         session.user.id = token.id as string
         session.user.role = token.role as string
-        session.user.emailVerified = token.emailVerified as boolean
+        (session.user as any).emailVerified = token.emailVerified as boolean
         if (token.name) session.user.name = token.name as string
         session.user.avatarColor = token.avatarColor as string | null
       }
