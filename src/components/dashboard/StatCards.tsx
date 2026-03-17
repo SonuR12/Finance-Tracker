@@ -43,7 +43,7 @@ export default function StatCards({ stats }: { stats: Record<string, number> }) 
             </div>
             <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">{card.title}</p>
             <p className="text-2xl font-bold text-neutral-900 dark:text-white">
-              {currencySymbol}{stats[card.key]?.toLocaleString()}
+              {currencySymbol}{stats[card.key]?.toLocaleString("en-US")}
             </p>
             <p className="text-xs text-neutral-400 mt-1">vs last month</p>
             <div

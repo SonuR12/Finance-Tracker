@@ -6,14 +6,17 @@ import DashboardClient from "./DashboardClient";
 import { SettingsDialog } from "@/components/ui/SettingsDialog";
 import { NOTIFICATIONS } from "./notifications";
 
+import type { DashboardData } from "./DashboardClient";
+
 interface Props {
   name?: string | null;
   email?: string | null;
   image?: string | null;
   avatarColor?: string | null;
+  initialData: DashboardData;
 }
 
-export default function DashboardShell({ name, email, image, avatarColor }: Props) {
+export default function DashboardShell({ name, email, image, avatarColor, initialData }: Props) {
   const [activeTab, setActiveTab] = useState("dashboard");
 
   useEffect(() => {
@@ -32,7 +35,7 @@ export default function DashboardShell({ name, email, image, avatarColor }: Prop
 
   return (
     <div className="flex min-h-screen bg-neutral-50 dark:bg-neutral-950">
-      <SettingsDialog open={settingsOpen} onClose={() => setSettingsOpen(false)} />
+      <SettingsDialog open={settingsOpen} onClose={() => setSettingsOpen(false)} name={name} email={email} image={image} avatarColor={avatarColor} />
       <Sidebar
         name={name}
         email={email}
@@ -53,6 +56,7 @@ export default function DashboardShell({ name, email, image, avatarColor }: Prop
           onSettingsOpen={() => setSettingsOpen(true)}
           readIds={readIds}
           setReadIds={setReadIds}
+          initialData={initialData}
         />
       </div>
     </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useSession, signOut } from "next-auth/react";
+import { signOutAction } from "@/lib/actions";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import {
@@ -100,9 +100,15 @@ let settingsCache: Settings | null = null;
 
 export function clearSettingsCache() { settingsCache = null; }
 
-export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const { data: session, update } = useSession();
-  const user = session?.user;
+export function SettingsDialog({ open, onClose, name: nameProp, email: emailProp, image: imageProp, avatarColor: avatarColorProp }: { 
+  open: boolean; 
+  onClose: () => void;
+  name?: string | null;
+  email?: string | null;
+  image?: string | null;
+  avatarColor?: string | null;
+}) {
+  const user = { name: nameProp, email: emailProp, image: imageProp, avatarColor: avatarColorProp };
 
   const [activeTab, setActiveTab] = useState("profile");
   const [fullName, setFullName] = useState("");
@@ -122,7 +128,7 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
   const [loginNotif, setLoginNotif] = useState(true);
   const [analytics, setAnalytics] = useState(true);
   const [theme, setTheme] = useState<"light" | "dark" | "system">("system");
-  const [chartColor, setChartColor] = useState("indigo");
+  const [chartColor, setChartColor] = useState("");
   const fetchedRef = useRef(false);
 
   const { language: ctxLang, currency: ctxCurrency, setLanguage: applyLanguage, setCurrency: applyCurrency, setChartColor: applyChartColor } = useSettings();
@@ -150,6 +156,12 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
           settingsCache = merged;
           savedSettingsRef.current = merged;
           setSettings(merged);
+          try {
+            localStorage.setItem("language", merged.language);
+            localStorage.setItem("currency", merged.currency);
+            const sym = CURRENCIES.find((c) => c.value === merged.currency)?.symbol ?? "$";
+            localStorage.setItem("currencySymbol", sym);
+          } catch {}
         }
       })
       .catch(() => {})
@@ -166,8 +178,7 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
       setTheme((localStorage.getItem("theme") as any) || "system");
       setChartColor(localStorage.getItem("chartColor") || "#6366f1");
     } catch {}
-    setSettings((s) => ({ ...s, language: ctxLang, currency: ctxCurrency }));
-  }, [ctxLang, ctxCurrency]);
+  }, []);
 
   function patch(p: Partial<Settings>) {
     setSettings((s) => ({ ...s, ...p }));
@@ -187,9 +198,14 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(settings),
       });
-      applyLanguage(settings.language);
       const sym = CURRENCIES.find((c) => c.value === settings.currency)?.symbol ?? "$";
+      applyLanguage(settings.language);
       applyCurrency(settings.currency, sym);
+      try {
+        localStorage.setItem("language", settings.language);
+        localStorage.setItem("currency", settings.currency);
+        localStorage.setItem("currencySymbol", sym);
+      } catch {}
       settingsCache = { ...settings };
       savedSettingsRef.current = { ...settings };
       setSaved(true);
@@ -303,7 +319,7 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
                           <div className="cursor-pointer" onClick={() => fileInputRef.current?.click()}>
                             <UserMenu
                               image={imagePreview ?? user?.image}
-                              name={fullName || user?.name}
+                              name={originalName || user?.name}
                               email={user?.email}
                               avatarColor={(user as any)?.avatarColor}
                               size={64}
@@ -311,7 +327,7 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
                           </div>
                         </div>
                         <div>
-                          <p className="font-semibold text-neutral-800 dark:text-neutral-100">{fullName || user?.name}</p>
+                          <p className="font-semibold text-neutral-800 dark:text-neutral-100">{originalName || user?.name}</p>
                           <p className="text-sm text-neutral-500">{user?.email}</p>
                         </div>
                       </div>
@@ -342,7 +358,6 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
                               body: JSON.stringify({ name: fullName, image: imageBase64 }),
                             });
                             if (res.ok) {
-                              await update({ user: { name: fullName, image: imageBase64 ?? user?.image } });
                               setOriginalName(fullName);
                               setImageBase64(null);
                               setProfileSaved(true);
@@ -358,7 +373,7 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
                     <div>
                       <SLabel>Account</SLabel>
                       <button
-                        onClick={() => signOut()}
+                        onClick={() => signOutAction()}
                         className="flex items-center gap-2 rounded-lg border border-red-200 dark:border-red-800/50 text-sm px-4 py-2 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition"
                       >
                         <LogOut className="h-4 w-4" />

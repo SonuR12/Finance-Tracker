@@ -1,21 +1,15 @@
 "use client";
 
-import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { SettingsDialog } from "@/components/ui/SettingsDialog";
-import { UserMenu, getAvatarColor } from "@/components/ui/UserMenu";
 import { useT } from "@/lib/i18n-context";
 
 
 
 export default function Navbar() {
-  const { data: session } = useSession();
-  const user = session?.user;
   const [scrolled, setScrolled] = useState(false);
-  const [settingsOpen, setSettingsOpen] = useState(false);
   const t = useT();
 
   const NAV_LINKS = [
@@ -33,7 +27,6 @@ export default function Navbar() {
 
   return (
     <>
-      <SettingsDialog open={settingsOpen} onClose={() => setSettingsOpen(false)} />
 
       {/* Floating pill nav */}
       <div className="sticky top-4 z-50 hidden md:flex justify-center pointer-events-none">
@@ -54,18 +47,12 @@ export default function Navbar() {
             }`}
           >
             <div className="h-4 w-px bg-neutral-200 dark:bg-neutral-700 mx-1" />
-            {user ? (
-              <UserMenu image={user.image} name={user.name} email={user.email} onSettings={() => setSettingsOpen(true)} avatarColor={(user as any).avatarColor} />
-            ) : (
-              <>
-                <Link href="/sign-in" className="rounded-full px-4 py-1.5 text-sm text-neutral-600 transition hover:bg-neutral-100 hover:shadow-sm dark:text-neutral-300 dark:hover:bg-neutral-800 whitespace-nowrap">
-                  {t("nav.login")}
-                </Link>
-                <Button asChild size="sm" className="button-gradient text-white rounded-full px-4 h-8 text-sm whitespace-nowrap">
-                  <Link href="/sign-in">{t("nav.getStarted")}</Link>
-                </Button>
-              </>
-            )}
+            <Link href="/sign-in" className="rounded-full px-4 py-1.5 text-sm text-neutral-600 transition hover:bg-neutral-100 hover:shadow-sm dark:text-neutral-300 dark:hover:bg-neutral-800 whitespace-nowrap">
+              {t("nav.login")}
+            </Link>
+            <Button asChild size="sm" className="button-gradient text-white rounded-full px-4 h-8 text-sm whitespace-nowrap">
+              <Link href="/sign-in">{t("nav.getStarted")}</Link>
+            </Button>
           </div>
         </div>
       </div>
@@ -78,18 +65,12 @@ export default function Navbar() {
             Finance
           </Link>
           <div className="flex items-center gap-3">
-            {user ? (
-              <UserMenu image={user.image} name={user.name} email={user.email} onSettings={() => setSettingsOpen(true)} avatarColor={(user as any).avatarColor} />
-            ) : (
-              <>
-                <Link href="/sign-in" className="text-sm text-neutral-600 hover:text-neutral-900 dark:text-neutral-300">
-                  {t("nav.login")}
-                </Link>
-                <Button asChild size="sm" className="button-gradient text-white rounded-full px-5">
-                  <Link href="/sign-in">{t("nav.getStarted")}</Link>
-                </Button>
-              </>
-            )}
+            <Link href="/sign-in" className="text-sm text-neutral-600 hover:text-neutral-900 dark:text-neutral-300">
+              {t("nav.login")}
+            </Link>
+            <Button asChild size="sm" className="button-gradient text-white rounded-full px-5">
+              <Link href="/sign-in">{t("nav.getStarted")}</Link>
+            </Button>
           </div>
         </div>
       </nav>

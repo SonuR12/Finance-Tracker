@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { signOut } from "next-auth/react";
+import { signOutAction } from "@/lib/actions";
 import {
   LayoutDashboard, TrendingUp, TrendingDown, PiggyBank,
   CreditCard, BarChart3, Wallet, Bell, Settings, LogOut,
@@ -94,9 +94,9 @@ export default function Sidebar({ name, email, image, avatarColor, activeTab, on
                         : "text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 hover:text-neutral-800 dark:hover:text-neutral-200"
                     } ${collapsed && !forMobile ? "justify-center" : ""}`}
                   >
-                    {isActive && (
+                    {/* {isActive && (
                       <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 rounded-r-full" style={{ background: chartColor }} />
-                    )}
+                    )} */}
                     <Icon className="h-4 w-4 flex-shrink-0" />
                     {(!collapsed || forMobile) && <span className="flex-1 text-left">{item.label}</span>}
                     {item.id === "notifications" && unreadCount > 0 && (!collapsed || forMobile) && (
@@ -124,7 +124,7 @@ export default function Sidebar({ name, email, image, avatarColor, activeTab, on
 
   return (
     <>
-      <SettingsDialog open={settingsOpen} onClose={() => setSettingsOpen(false)} />
+      <SettingsDialog open={settingsOpen} onClose={() => setSettingsOpen(false)} name={name} email={email} image={image} avatarColor={avatarColor} />
 
       {/* Desktop sidebar */}
       <aside className={`hidden lg:flex flex-col h-screen sticky top-0 border-r border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 transition-all duration-300 flex-shrink-0 ${collapsed ? "w-[68px]" : "w-60"}`}>
@@ -171,7 +171,7 @@ export default function Sidebar({ name, email, image, avatarColor, activeTab, on
                   <p className="text-xs font-semibold text-neutral-800 dark:text-neutral-100 truncate leading-none">{name}</p>
                   <p className="text-[10px] text-neutral-400 truncate mt-0.5">{email}</p>
                 </div>
-                <button onClick={() => signOut({ callbackUrl: "/" })} className="text-neutral-400 hover:text-rose-500 hover:cursor-pointer transition flex-shrink-0" title="Sign out">
+                <button onClick={() => signOutAction()} className="text-neutral-400 hover:text-rose-500 hover:cursor-pointer transition flex-shrink-0" title="Sign out">
                   <LogOut className="h-3.5 w-3.5" />
                 </button>
               </>
@@ -218,7 +218,7 @@ export default function Sidebar({ name, email, image, avatarColor, activeTab, on
                       <p className="text-xs font-semibold text-neutral-800 dark:text-neutral-100 truncate leading-none">{name}</p>
                       <p className="text-[10px] text-neutral-400 truncate mt-0.5">{email}</p>
                     </div>
-                    <button onClick={() => signOut({ callbackUrl: "/" })} className="text-neutral-400 hover:text-rose-500 transition flex-shrink-0" title="Sign out">
+                    <button onClick={() => signOutAction()} className="text-neutral-400 hover:text-rose-500 transition flex-shrink-0" title="Sign out">
                       <LogOut className="h-3.5 w-3.5" />
                     </button>
                   </div>

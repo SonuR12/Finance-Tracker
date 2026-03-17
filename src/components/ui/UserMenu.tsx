@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { signOut } from "next-auth/react";
+import { signOutAction } from "@/lib/actions";
 import { Settings, LogOut } from "lucide-react";
 
 const COLORS = [
@@ -75,7 +75,7 @@ export function UserMenu({ image, name, email, onSettings, size = 36, avatarColo
             </button>
           )}
           <button
-            onClick={() => signOut({ callbackUrl: "/" })}
+            onClick={() => signOutAction()}
             className="flex w-full items-center gap-2 px-4 py-2 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition"
           >
             <LogOut className="h-4 w-4" />

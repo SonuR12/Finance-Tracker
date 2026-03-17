@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { signOut } from "next-auth/react";
+import { signOutAction } from "@/lib/actions";
 import { Bell, Settings, LogOut, Home, LayoutDashboard, Menu, X } from "lucide-react";
 import { SettingsDialog } from "@/components/ui/SettingsDialog";
 import { useSettings } from "@/lib/settings-context";
@@ -68,7 +68,7 @@ export default function DashboardNav({ name, email, image }: Props) {
                 <p className="text-[10px] text-neutral-400 mt-0.5 truncate max-w-[120px]">{email}</p>
               </div>
             </div>
-            <button onClick={() => signOut({ callbackUrl: "/" })}
+            <button onClick={() => signOutAction()}
               className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition">
               <LogOut className="h-3.5 w-3.5" /> Sign out
             </button>
@@ -95,7 +95,7 @@ export default function DashboardNav({ name, email, image }: Props) {
             <Link href="/" className="flex items-center gap-2 px-2 py-2 rounded-lg text-sm text-neutral-600 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800">
               <Home className="h-4 w-4" /> Home
             </Link>
-            <button onClick={() => signOut({ callbackUrl: "/" })}
+            <button onClick={() => signOutAction()}
               className="flex w-full items-center gap-2 px-2 py-2 rounded-lg text-sm text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30">
               <LogOut className="h-4 w-4" /> Sign out
             </button>

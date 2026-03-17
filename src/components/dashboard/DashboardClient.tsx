@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, Bell, BarChart3, ArrowLeftRight, TrendingUp, TrendingDown, PiggyBank, Target, Wallet, CreditCard, Receipt, ShieldCheck, Loader2, X } from "lucide-react";
+import { Sparkles, Bell, BarChart3, ArrowLeftRight, TrendingUp, TrendingDown, PiggyBank, Target, Wallet, CreditCard, Receipt, ShieldCheck, X } from "lucide-react";
 import { UserMenu } from "@/components/ui/UserMenu";
 import StatCards from "./StatCards";
 import IncomeExpenseChart from "./IncomeExpenseChart";
@@ -13,7 +13,7 @@ import RecentTransactions from "./RecentTransactions";
 import AIInsights from "./AIInsights";
 import { NOTIFICATIONS } from "./notifications";
 
-interface Props { name?: string | null; image?: string | null; activeTab: string; onMobileMenuOpen?: () => void; onSettingsOpen?: () => void; readIds: number[]; setReadIds: React.Dispatch<React.SetStateAction<number[]>>; }
+interface Props { name?: string | null; image?: string | null; activeTab: string; onMobileMenuOpen?: () => void; onSettingsOpen?: () => void; readIds: number[]; setReadIds: React.Dispatch<React.SetStateAction<number[]>>; initialData: DashboardData; }
 
 export interface DashboardData {
   stats: { totalBalance: number; monthlyIncome: number; monthlyExpenses: number; totalSavings: number };
@@ -25,7 +25,7 @@ export interface DashboardData {
   aiInsights: any[];
 }
 
-/* module-level cache — survives tab switches, never re-fetches — same as settingsCache in SettingsDialog */
+/* module-level cache — client-only, survives tab switches */
 let dashboardCache: DashboardData | null = null;
 
 function getGreeting() {
@@ -180,13 +180,11 @@ function TabContent({ tab, name, d, readIds, setReadIds }: { tab: string; name?:
   }
 }
 
-export default function DashboardClient({ name, image, activeTab, onMobileMenuOpen, onSettingsOpen, readIds, setReadIds }: Props) {
+export default function DashboardClient({ name, image, activeTab, onMobileMenuOpen, onSettingsOpen, readIds, setReadIds, initialData }: Props) {
   const info = TAB_TITLES[activeTab] ?? TAB_TITLES["dashboard"];
   const Icon = info.icon;
 
-  const [data, setData] = useState<DashboardData | null>(dashboardCache);
-  const [loading, setLoading] = useState(false);
-  const fetchedRef = useRef(false);
+  const [data] = useState<DashboardData>(initialData);
   const [notifOpen, setNotifOpen] = useState(false);
   const [atBottom, setAtBottom] = useState(false);
   const notifRef = useRef<HTMLDivElement>(null);
@@ -200,18 +198,6 @@ export default function DashboardClient({ name, image, activeTab, onMobileMenuOp
   }, []);
 
   const unreadCount = NOTIFICATIONS.filter((n) => n.unread && !readIds.includes(n.id)).length;
-
-  useEffect(() => {
-    if (fetchedRef.current) return;
-    if (dashboardCache) { setData(dashboardCache); return; }
-    fetchedRef.current = true;
-    setLoading(true);
-    fetch("/api/dashboard")
-      .then((r) => r.json())
-      .then((d) => { dashboardCache = d; setData(d); })
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, []);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -343,13 +329,7 @@ export default function DashboardClient({ name, image, activeTab, onMobileMenuOp
       </header>
 
       <main className="flex-1 px-4 sm:px-6 py-4 pt-4 lg:pt-6">
-        {loading ? (
-          <div className="flex items-center justify-center h-80">
-            <Loader2 className="h-6 w-6 animate-spin" style={{ color: "var(--app-accent)" }} />
-          </div>
-        ) : data ? (
-          <TabContent tab={activeTab} name={name} d={data} readIds={readIds} setReadIds={setReadIds} />
-        ) : null}
+        <TabContent tab={activeTab} name={name} d={data} readIds={readIds} setReadIds={setReadIds} />
       </main>
     </div>
   );
