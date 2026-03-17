@@ -6,7 +6,7 @@ export async function POST(req: Request) {
     const { email } = await req.json()
     const db = await getDb()
     const user = await db.collection('users').findOne(
-      { email, provider: 'credentials' },
+      { email, provider: { $in: ['credentials', 'both'] } },
       { projection: { emailVerified: 1, name: 1 } }
     )
     if (!user) return NextResponse.json({ exists: false })

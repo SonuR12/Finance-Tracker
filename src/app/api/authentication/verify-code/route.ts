@@ -27,16 +27,25 @@ export async function POST(req: Request) {
     const avatarColor = AVATAR_COLORS[Math.floor(Math.random() * AVATAR_COLORS.length)]
 
     const db = await getDb()
-    await db.collection('users').insertOne({
-      email: pending.email,
-      name: pending.name,
-      password: pending.password,
-      role: 'user',
-      provider: 'credentials',
-      emailVerified: true,
-      avatarColor,
-      createdAt: new Date(),
-    })
+    const existing = await db.collection('users').findOne({ email: pending.email })
+    if (existing) {
+      // Google user adding credentials — merge
+      await db.collection('users').updateOne(
+        { email: pending.email },
+        { $set: { password: pending.password, provider: 'both', emailVerified: true } }
+      )
+    } else {
+      await db.collection('users').insertOne({
+        email: pending.email,
+        name: pending.name,
+        password: pending.password,
+        role: 'user',
+        provider: 'credentials',
+        emailVerified: true,
+        avatarColor,
+        createdAt: new Date(),
+      })
+    }
 
     pendingUsers.delete(email)
 

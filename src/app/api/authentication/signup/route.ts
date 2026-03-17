@@ -17,8 +17,8 @@ export async function POST(req: Request) {
     }
 
     const db = await getDb()
-    const existing = await db.collection('users').findOne({ email, provider: 'credentials' })
-    if (existing) {
+    const existing = await db.collection('users').findOne({ email })
+    if (existing && existing.provider !== 'google') {
       return NextResponse.json({ error: 'Account already exists. Please sign in.' }, { status: 400 })
     }
 

@@ -8,7 +8,7 @@ export async function POST(req: Request) {
     const { email } = await req.json()
 
     const db = await getDb()
-    const user = await db.collection('users').findOne({ email, provider: 'credentials' })
+    const user = await db.collection('users').findOne({ email, provider: { $in: ['credentials', 'both'] } })
     if (!user) {
       return NextResponse.json({ error: 'No account found with this email' }, { status: 404 })
     }
