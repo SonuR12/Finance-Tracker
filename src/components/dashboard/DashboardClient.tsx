@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useSettings } from "@/lib/settings-context";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, Bell, BarChart3, ArrowLeftRight, TrendingUp, TrendingDown, PiggyBank, Target, Wallet, CreditCard, Receipt, ShieldCheck, X } from "lucide-react";
+import Image from "next/image";
+import { Sparkles, Bell, BarChart3, ArrowLeftRight, TrendingUp, TrendingDown, PiggyBank, Target, Wallet, CreditCard, Receipt, ShieldCheck, X, Send } from "lucide-react";
 import { UserMenu } from "@/components/ui/UserMenu";
 import StatCards from "./StatCards";
 import IncomeExpenseChart from "./IncomeExpenseChart";
@@ -200,7 +202,7 @@ export default function DashboardClient({ name, image, activeTab, onMobileMenuOp
   const unreadCount = NOTIFICATIONS.filter((n) => n.unread && !readIds.includes(n.id)).length;
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col h-full overflow-hidden">
       <header className="sticky top-0 z-30 h-14 flex items-center justify-between sm:pl-5 sm:pr-5 pr-6 pl-2 border-b border-neutral-200 dark:border-neutral-800 bg-white/80 dark:bg-neutral-900/80 backdrop-blur-md flex-shrink-0">
         {/* Left: hamburger on mobile, tab title on desktop */}
         <div className="flex items-center gap-2.5">
@@ -328,9 +330,229 @@ export default function DashboardClient({ name, image, activeTab, onMobileMenuOp
         </div>
       </header>
 
-      <main className="flex-1 px-4 sm:px-6 py-4 pt-4 lg:pt-6">
+      <main className="flex-1 overflow-y-auto px-4 sm:px-6 py-4 pt-4 lg:pt-6">
         <TabContent tab={activeTab} name={name} d={data} readIds={readIds} setReadIds={setReadIds} />
       </main>
+
+      <AIFloatingButton insights={data.aiInsights} data={data} />
     </div>
   );
 }
+
+function buildContext(insights: any[], data: DashboardData, currency: string, currencySymbol: string, language: string): string {
+  const sym = currencySymbol;
+  const txList = data.transactions
+    .slice(0, 10)
+    .map((t: any) => `  ${t.icon} ${t.name} (${t.category}): ${t.amount > 0 ? "+" : ""}${sym}${Math.abs(t.amount)} on ${t.date}`)
+    .join("\n");
+  const budgetList = data.budgets
+    .map((b: any) => `  ${b.category}: spent ${sym}${b.spent} of ${sym}${b.limit} limit${b.spent > b.limit ? " [OVER BUDGET]" : ""}`)
+    .join("\n");
+  const spendingList = data.spendingByCategory
+    .map((s: any) => `  ${s.name}: ${sym}${s.value}`)
+    .join("\n");
+  const weeklyList = data.weeklySpending
+    .map((w: any) => `  ${w.day}: ${sym}${w.amount}`)
+    .join("\n");
+  const insightList = insights.map((i: any) => `  [${i.type}] ${i.title}: ${i.desc}`).join("\n");
+
+  return [
+    `User currency: ${currency} (${sym}) — always use this currency symbol in all monetary values`,
+    `User language: ${language} — always respond in this language`,
+    `Today's date: ${new Date().toDateString()}`,
+    `
+FINANCIAL SUMMARY:`,
+    `  Total Balance: ${sym}${data.stats.totalBalance}`,
+    `  Monthly Income: ${sym}${data.stats.monthlyIncome}`,
+    `  Monthly Expenses: ${sym}${data.stats.monthlyExpenses}`,
+    `  Total Savings: ${sym}${data.stats.totalSavings}`,
+    `  Savings Rate: ${Math.round((data.stats.totalSavings / data.stats.monthlyIncome) * 100)}%`,
+    `
+RECENT TRANSACTIONS (last 10):`,
+    txList,
+    `
+BUDGET STATUS:`,
+    budgetList,
+    `
+SPENDING BY CATEGORY:`,
+    spendingList,
+    `
+WEEKLY SPENDING:`,
+    weeklyList,
+    `
+AI INSIGHTS:`,
+    insightList,
+  ].join("\n");
+}
+
+function AIFloatingButton({ insights, data }: { insights: any[]; data: DashboardData }) {
+  const { currency, currencySymbol, language } = useSettings();
+  const STORAGE_KEY = "ai_chat_history";
+  const [open, setOpen] = useState(false);
+  const [input, setInput] = useState("");
+  const [messages, setMessages] = useState<{ role: "user" | "ai"; text: string }[]>(() => {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "[]"); } catch { return []; }
+  });
+  const [loading, setLoading] = useState(false);
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(messages)); } catch {}
+  }, [messages]);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, loading]);
+
+  useEffect(() => {
+    if (open) bottomRef.current?.scrollIntoView({ behavior: "instant" });
+  }, [open]);
+
+  async function handleSend(override?: string) {
+    const trimmed = (typeof override === "string" ? override : input).trim();
+    if (!trimmed || loading) return;
+    const userMsg = { role: "user" as const, text: trimmed };
+    setMessages((m) => [...m, userMsg]);
+    setInput("");
+    setLoading(true);
+    try {
+      const history = [...messages, userMsg].map((m) => ({
+        role: m.role === "user" ? "user" : "assistant",
+        content: m.text,
+      }));
+      const context = buildContext(insights, data, currency, currencySymbol, language);
+      const res = await fetch("/api/ai", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: history, context }),
+      });
+      const json = await res.json();
+      setMessages((m) => [...m, { role: "ai", text: json.reply ?? json.error ?? "Something went wrong." }]);
+    } catch {
+      setMessages((m) => [...m, { role: "ai", text: "Network error. Please try again." }]);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <>
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: 16, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 16, scale: 0.96 }}
+            transition={{ duration: 0.2 }}
+            className="fixed bottom-24 right-5 z-50 w-100 h-100 rounded-2xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 shadow-2xl shadow-black/15 flex flex-col overflow-hidden"
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-100 dark:border-neutral-800" style={{ background: "color-mix(in srgb, var(--app-accent) 8%, transparent)" }}>
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-4 w-4" style={{ color: "var(--app-accent)" }} />
+                <p className="text-sm font-semibold text-neutral-800 dark:text-neutral-100">AI Finance Assistant</p>
+              </div>
+              <div className="flex items-center gap-1">
+                {messages.length > 0 && (
+                  <button onClick={() => setMessages([])} className="text-[10px] px-2 py-0.5 rounded-lg text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition">Clear</button>
+                )}
+                <button onClick={() => setOpen(false)} className="p-1 rounded-lg text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition">
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Messages */}
+            <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3 min-h-0">
+              {messages.length === 0 && (
+                <div className="py-2">
+                  <Image src="/Images/chatbot-icon.jpg" alt="AI" width={32} height={32} className="mx-auto mb-2 rounded-full" />
+                  <p className="text-xs text-neutral-400 text-center mb-3">Ask me anything about your finances!</p>
+                  <div className="flex flex-col gap-1.5">
+                    {[
+                      "How can I reduce my expenses?",
+                      "Show my recent transactions",
+                      "Which budget am I over?",
+                      "Where am I spending the most?",
+                      "Stock market today?",
+                      "How to improve my savings rate?",
+                    ].map((q) => (
+                      <button key={q} onClick={() => handleSend(q)}
+                        className="text-xs px-3 py-2 hover:cursor-pointer rounded-xl border border-neutral-200 dark:border-neutral-700 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition text-left">
+                        {q}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {messages.map((m, i) => (
+                <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
+                  <div className={`max-w-[85%] px-3 py-2 rounded-xl text-xs leading-relaxed ${
+                    m.role === "user"
+                      ? "text-white rounded-br-sm"
+                      : "bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 rounded-bl-sm"
+                  }`} style={m.role === "user" ? { background: "var(--app-accent)" } : {}}>
+                    {m.role === "user" ? m.text : (
+                      <div className="space-y-1.5">
+                        {m.text
+                          .split(/(?<=[.!?])\ +|\n+/)
+                          .map(s => s.trim())
+                          .filter(Boolean)
+                          .map((sentence, j) => (
+                            <p key={j}>{sentence}</p>
+                          ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+              {loading && (
+                <div className="flex justify-start">
+                  <div className="px-3 py-2 rounded-xl rounded-bl-sm bg-neutral-100 dark:bg-neutral-800 text-xs text-neutral-400 italic tracking-wide">
+                    Analysing...
+                  </div>
+                </div>
+              )}
+              <div ref={bottomRef} />
+            </div>
+
+            {/* Input */}
+            <div className="px-3 py-3 border-t border-neutral-100 dark:border-neutral-800 flex gap-2">
+              <input
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleSend()}
+                placeholder="Ask about your finances…"
+                className="flex-1 text-xs px-3 py-2 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-100 placeholder-neutral-400 outline-none focus:border-current transition"
+              />
+              <button
+                onClick={() => handleSend()}
+                disabled={!input.trim() || loading}
+                className="h-8 w-8 rounded-xl flex items-center justify-center text-white transition disabled:opacity-40"
+                style={{ background: "var(--app-accent)" }}
+              >
+                <Send className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* FAB */}
+      <motion.button
+        onClick={() => setOpen((v) => !v)}
+        whileHover={{ scale: 1.08 }}
+        whileTap={{ scale: 0.94 }}
+        className="fixed bottom-6 right-5 z-50 h-14 w-14 rounded-2xl overflow-hidden shadow-xl shadow-black/20 transition"
+      >
+        <AnimatePresence mode="wait">
+          {open
+            ? <motion.span key="x" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.15 }} className="flex items-center justify-center h-full w-full bg-neutral-800"><X className="h-5 w-5 text-white" /></motion.span>
+            : <motion.span key="img" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }} className="block h-full w-full"><Image src="/Images/chatbot-icon.jpg" alt="AI Assistant" fill className="object-cover" /></motion.span>
+          }
+        </AnimatePresence>
+      </motion.button>
+    </>
+  );
+}
+

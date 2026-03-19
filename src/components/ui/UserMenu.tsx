@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { signOutAction } from "@/lib/actions";
+import { signOut } from "next-auth/react";
 import { Settings, LogOut } from "lucide-react";
 
 const COLORS = [
@@ -46,10 +46,10 @@ export function UserMenu({ image, name, email, onSettings, size = 36, avatarColo
   }, []);
 
   return (
-    <div ref={ref} className="relative">
-      <button onClick={() => setOpen((v) => !v)} className="focus:outline-none flex-shrink-0">
+    <div ref={ref} className="relative flex items-center">
+      <button onClick={() => setOpen((v) => !v)} className="focus:outline-none flex-shrink-0 flex items-center justify-center">
         {image ? (
-          <div style={{ width: size, height: size }} className="rounded-full overflow-hidden">
+          <div style={{ width: size, height: size }} className="rounded-full !w-7 !h-7 sm:!h-full sm:!w-full overflow-hidden">
             <Image src={image} alt={name ?? "User"} width={size} height={size} className="w-full h-full object-cover" />
           </div>
         ) : (
@@ -60,7 +60,7 @@ export function UserMenu({ image, name, email, onSettings, size = 36, avatarColo
       </button>
 
       {open && (
-        <div className="absolute right-0 mt-2 w-52 rounded-xl border border-neutral-200 bg-white shadow-lg dark:border-neutral-700 dark:bg-neutral-900 overflow-hidden z-50">
+        <div className="absolute right-0 mt-48 w-52 rounded-xl border border-neutral-200 bg-white shadow-lg dark:border-neutral-700 dark:bg-neutral-900 overflow-hidden z-50">
           <div className="px-4 py-3 border-b border-neutral-100 dark:border-neutral-800">
             <p className="text-sm font-semibold text-neutral-800 dark:text-neutral-100 truncate">{name}</p>
             {email && <p className="text-xs text-neutral-500 truncate">{email}</p>}
@@ -75,7 +75,7 @@ export function UserMenu({ image, name, email, onSettings, size = 36, avatarColo
             </button>
           )}
           <button
-            onClick={() => signOutAction()}
+            onClick={() => signOut({ callbackUrl: "/" })}
             className="flex w-full items-center gap-2 px-4 py-2 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition"
           >
             <LogOut className="h-4 w-4" />

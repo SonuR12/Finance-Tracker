@@ -5,12 +5,17 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useT } from "@/lib/i18n-context";
+import { useSession } from "next-auth/react";
+import { UserMenu } from "@/components/ui/UserMenu";
+import { SettingsDialog } from "@/components/ui/SettingsDialog";
 
 
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const t = useT();
+  const { data: session, status } = useSession();
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   const NAV_LINKS = [
     { label: t("nav.home"), href: "/" },
@@ -47,12 +52,25 @@ export default function Navbar() {
             }`}
           >
             <div className="h-4 w-px bg-neutral-200 dark:bg-neutral-700 mx-1" />
-            <Link href="/sign-in" className="rounded-full px-4 py-1.5 text-sm text-neutral-600 transition hover:bg-neutral-100 hover:shadow-sm dark:text-neutral-300 dark:hover:bg-neutral-800 whitespace-nowrap">
-              {t("nav.login")}
-            </Link>
-            <Button asChild size="sm" className="button-gradient text-white rounded-full px-4 h-8 text-sm whitespace-nowrap">
-              <Link href="/sign-in">{t("nav.getStarted")}</Link>
-            </Button>
+            {status === "loading" ? null : session?.user ? (
+              <UserMenu
+                image={session.user.image}
+                name={session.user.name}
+                email={session.user.email}
+                avatarColor={(session.user as any).avatarColor}
+                size={32}
+                onSettings={() => setSettingsOpen(true)}
+              />
+            ) : (
+              <>
+                <Link href="/sign-in" className="rounded-full px-4 py-1.5 text-sm text-neutral-600 transition hover:bg-neutral-100 hover:shadow-sm dark:text-neutral-300 dark:hover:bg-neutral-800 whitespace-nowrap">
+                  {t("nav.login")}
+                </Link>
+                <Button asChild size="sm" className="button-gradient text-white rounded-full px-4 h-8 text-sm whitespace-nowrap">
+                  <Link href="/sign-in">{t("nav.getStarted")}</Link>
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -64,16 +82,39 @@ export default function Navbar() {
             <Image src="/images/logo.png" alt="Logo" width={40} height={40} />
             Finance
           </Link>
-          <div className="flex items-center gap-3">
-            <Link href="/sign-in" className="text-sm text-neutral-600 hover:text-neutral-900 dark:text-neutral-300">
-              {t("nav.login")}
-            </Link>
-            <Button asChild size="sm" className="button-gradient text-white rounded-full px-5">
-              <Link href="/sign-in">{t("nav.getStarted")}</Link>
-            </Button>
+          <div className="flex items-center gap-3 h-full">
+            {status === "loading" ? null : session?.user ? (
+              <UserMenu
+                image={session.user.image}
+                name={session.user.name}
+                email={session.user.email}
+                avatarColor={(session.user as any).avatarColor}
+                size={32}
+                onSettings={() => setSettingsOpen(true)}
+              />
+            ) : (
+              <>
+                <Link href="/sign-in" className="text-sm text-neutral-600 hover:text-neutral-900 dark:text-neutral-300">
+                  {t("nav.login")}
+                </Link>
+                <Button asChild size="sm" className="button-gradient text-white rounded-full px-5">
+                  <Link href="/sign-in">{t("nav.getStarted")}</Link>
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </nav>
+      {session?.user && (
+        <SettingsDialog
+          open={settingsOpen}
+          onClose={() => setSettingsOpen(false)}
+          name={session.user.name}
+          email={session.user.email}
+          image={session.user.image}
+          avatarColor={(session.user as any).avatarColor}
+        />
+      )}
     </>
   );
 }

@@ -34,7 +34,7 @@ export default function DashboardShell({ name, email, image, avatarColor, initia
   const unreadCount = NOTIFICATIONS.filter((n) => n.unread && !readIds.includes(n.id)).length;
 
   return (
-    <div className="flex min-h-screen bg-neutral-50 dark:bg-neutral-950">
+    <div className="flex h-screen overflow-hidden bg-neutral-50 dark:bg-neutral-950">
       <SettingsDialog open={settingsOpen} onClose={() => setSettingsOpen(false)} name={name} email={email} image={image} avatarColor={avatarColor} />
       <Sidebar
         name={name}
@@ -47,7 +47,7 @@ export default function DashboardShell({ name, email, image, avatarColor, initia
         onMobileOpenChange={setMobileOpen}
         unreadCount={unreadCount}
       />
-      <div className="flex-1 min-w-0 flex flex-col">
+      <div className="flex-1 min-w-0 flex flex-col overflow-hidden">
         <DashboardClient
           name={name}
           image={image}

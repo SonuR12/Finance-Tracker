@@ -1,6 +1,6 @@
 "use client";
 
-import { signOutAction } from "@/lib/actions";
+import { signOut } from "next-auth/react";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import {
@@ -373,7 +373,7 @@ export function SettingsDialog({ open, onClose, name: nameProp, email: emailProp
                     <div>
                       <SLabel>Account</SLabel>
                       <button
-                        onClick={() => signOutAction()}
+                        onClick={() => signOut({ callbackUrl: "/" })}
                         className="flex items-center gap-2 rounded-lg border border-red-200 dark:border-red-800/50 text-sm px-4 py-2 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition"
                       >
                         <LogOut className="h-4 w-4" />

@@ -105,6 +105,7 @@ export default function SignInPage() {
       const result = await signIn('credentials', { email, password, redirect: false })
       if (result?.ok && !result?.error) {
         toast.success(`Welcome back, ${dbName || 'back'}! 👋`)
+        router.push('/dashboard')
       } else {
         toast.error('Incorrect password. Please try again.')
       }
