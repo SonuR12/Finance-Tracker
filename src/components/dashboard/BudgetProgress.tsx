@@ -13,7 +13,7 @@ export default function BudgetProgress({ data }: { data: any[] }) {
       <div className="flex items-center justify-between mb-5">
         <div>
           <h3 className="font-semibold text-neutral-900 dark:text-white">Budget Tracker</h3>
-          <p className="text-xs text-neutral-400 mt-0.5">January 2025</p>
+          <p className="text-xs text-neutral-400 mt-0.5">March 2025</p>
         </div>
         <span className="text-xs text-neutral-400">
           {data.filter((b) => b.spent <= b.limit).length}/{data.length} on track

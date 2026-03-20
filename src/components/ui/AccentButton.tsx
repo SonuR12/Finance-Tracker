@@ -1,39 +1,33 @@
 "use client";
 
-import { Loader2, Check } from "lucide-react";
+// Backward-compat re-exports — use AppButton directly in new code
+export { AppButton as AccentButton } from "@/components/ui/AppButton";
 
-interface AccentButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  saving?: boolean;
-  saved?: boolean;
-  saveLabel?: string;
-  savingLabel?: string;
-  savedLabel?: string;
+import { useSettings } from "@/lib/settings-context";
+
+function lighten(hex: string, amt: number) {
+  const m = hex.replace("#", "").match(/.{2}/g);
+  if (!m) return hex;
+  return "#" + m.map((x) => Math.min(255, Math.round(parseInt(x, 16) + 255 * amt)).toString(16).padStart(2, "0")).join("");
 }
-
-export function AccentButton({
-  saving, saved, saveLabel = "Save Changes", savingLabel = "Saving...", savedLabel = "Saved",
-  children, className = "", disabled, ...props
-}: AccentButtonProps) {
-  const label = saving ? savingLabel : saved ? savedLabel : saveLabel;
-  return (
-    <button
-      {...props}
-      disabled={disabled || saving || saved}
-      style={{ background: "var(--app-accent)" }}
-      className={`inline-flex items-center justify-center gap-2 rounded-lg text-white text-sm px-4 py-2 transition disabled:opacity-40 ${className}`}
-    >
-      {saving && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-      {saved && <Check className="h-3.5 w-3.5" />}
-      {children ?? label}
-    </button>
-  );
+function darken(hex: string, amt: number) {
+  const m = hex.replace("#", "").match(/.{2}/g);
+  if (!m) return hex;
+  return "#" + m.map((x) => Math.max(0, Math.round(parseInt(x, 16) * (1 - amt))).toString(16).padStart(2, "0")).join("");
 }
 
 export function AccentToggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
+  const { chartColor } = useSettings();
   return (
-    <button type="button" onClick={() => onChange(!checked)}
-      style={checked ? { background: "var(--app-accent)" } : {}}
-      className={`relative h-6 w-11 rounded-full transition-colors flex-shrink-0 ${checked ? "" : "bg-neutral-300 dark:bg-neutral-600"}`}>
+    <button
+      type="button"
+      onClick={() => onChange(!checked)}
+      style={checked ? {
+        background: `linear-gradient(to bottom, ${lighten(chartColor, 0.15)}, ${darken(chartColor, 0.20)})`,
+        boxShadow: `0 0 8px ${chartColor}44`,
+      } : {}}
+      className={`relative h-6 w-11 rounded-full transition-colors flex-shrink-0 ${checked ? "" : "bg-neutral-300 dark:bg-neutral-600"}`}
+    >
       <span className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${checked ? "translate-x-5" : "translate-x-0"}`} />
     </button>
   );

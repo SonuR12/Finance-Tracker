@@ -2,56 +2,90 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
+import { useEffect, useState, useCallback } from "react";
 import { useT } from "@/lib/i18n-context";
 import { useSession } from "next-auth/react";
+import { useSettings } from "@/lib/settings-context";
 import { UserMenu } from "@/components/ui/UserMenu";
 import { SettingsDialog } from "@/components/ui/SettingsDialog";
+import QuickAppearance from "@/components/ui/QuickAppearance";
+import { AppButton } from "@/components/ui/AppButton";
 
+function lighten(hex: string, amt: number) {
+  const m = hex.replace("#", "").match(/.{2}/g);
+  if (!m) return hex;
+  return "#" + m.map((x) => Math.min(255, Math.round(parseInt(x, 16) + 255 * amt)).toString(16).padStart(2, "0")).join("");
+}
+function darken(hex: string, amt: number) {
+  const m = hex.replace("#", "").match(/.{2}/g);
+  if (!m) return hex;
+  return "#" + m.map((x) => Math.max(0, Math.round(parseInt(x, 16) * (1 - amt))).toString(16).padStart(2, "0")).join("");
+}
 
-
-export default function Navbar() {
+export default function Navbar({ showLinks = true }: { showLinks?: boolean }) {
   const [scrolled, setScrolled] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("#home");
   const t = useT();
   const { data: session, status } = useSession();
-  const [settingsOpen, setSettingsOpen] = useState(false);
+  const { chartColor } = useSettings();
 
   const NAV_LINKS = [
-    { label: t("nav.home"), href: "/" },
-    { label: t("nav.features"), href: "/#features" },
-    { label: t("nav.pricing"), href: "/#pricing" },
-    { label: t("nav.testimonials"), href: "/#testimonials" },
+    { label: t("nav.home"),         href: "#home" },
+    { label: t("nav.features"),     href: "#features" },
+    { label: t("nav.testimonials"), href: "#testimonials" },
+    { label: t("nav.pricing"),      href: "#pricing" },
   ];
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 20);
+      for (const item of NAV_LINKS) {
+        const section = document.querySelector(item.href);
+        if (section && section.getBoundingClientRect().top <= 150 && section.getBoundingClientRect().bottom > 150) {
+          setActiveSection(item.href);
+          break;
+        }
+      }
+    };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  const scrollToSection = useCallback((href: string) => {
+    setActiveSection(href);
+    requestAnimationFrame(() => setTimeout(() => {
+      const section = document.querySelector(href);
+      if (section) section.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 100));
+  }, []);
+
   return (
     <>
+      {/* Floating pill nav — desktop only */}
+      {showLinks && <div className="fixed top-4 left-0 right-0 z-50 hidden md:flex justify-center pointer-events-none">
+        <div className="pointer-events-auto flex items-center gap-1 rounded-full shadow-sm px-2 py-1 backdrop-blur-md bg-white/75 dark:bg-black/60 border border-black/10 dark:border-white/10">
+          {NAV_LINKS.map((item) => {
+            const isActive = activeSection === item.href;
+            return (
+              <button
+                key={item.label}
+                onClick={() => scrollToSection(item.href)}
+                className="rounded-full px-4 py-1.5 text-sm transition-colors cursor-pointer"
+                style={isActive
+                  ? { color: chartColor, background: `${chartColor}18` }
+                  : undefined
+                }
+              >
+                <span className={isActive ? "" : "text-black/55 dark:text-white/60 hover:text-black dark:hover:text-white"}>
+                  {item.label}
+                </span>
+              </button>
+            );
+          })}
 
-      {/* Floating pill nav */}
-      <div className="sticky top-4 z-50 hidden md:flex justify-center pointer-events-none">
-        <div className="pointer-events-auto flex items-center gap-1 rounded-full border border-neutral-200 bg-white/80 backdrop-blur-md shadow-sm px-2 py-1 dark:border-neutral-700 dark:bg-neutral-900/80">
-          {NAV_LINKS.map((item) => (
-            <Link
-              key={item.label}
-              href={item.href}
-              className="rounded-full px-4 py-1.5 text-sm text-neutral-600 transition hover:bg-neutral-100 hover:shadow-sm dark:text-neutral-300 dark:hover:bg-neutral-800"
-            >
-              {item.label}
-            </Link>
-          ))}
-
-          <div
-            className={`flex items-center gap-1 transition-all duration-300 ${
-              scrolled ? "max-w-xs opacity-100 ml-1" : "max-w-0 opacity-0 overflow-hidden"
-            }`}
-          >
-            <div className="h-4 w-px bg-neutral-200 dark:bg-neutral-700 mx-1" />
+          <div className={`flex items-center gap-1 transition-all duration-300 ${scrolled ? "max-w-xs opacity-100 ml-1" : "max-w-0 opacity-0 overflow-hidden"}`}>
+            <div className="h-4 w-px mx-1 bg-black/10 dark:bg-white/10" />
             {status === "loading" ? null : session?.user ? (
               <UserMenu
                 image={session.user.image}
@@ -63,26 +97,35 @@ export default function Navbar() {
               />
             ) : (
               <>
-                <Link href="/sign-in" className="rounded-full px-4 py-1.5 text-sm text-neutral-600 transition hover:bg-neutral-100 hover:shadow-sm dark:text-neutral-300 dark:hover:bg-neutral-800 whitespace-nowrap">
+                <QuickAppearance />
+                <Link href="/sign-in" className="rounded-full px-4 py-1.5 text-sm transition-colors whitespace-nowrap text-black/50 dark:text-white/55 hover:bg-black/5 dark:hover:bg-white/8 hover:text-black dark:hover:text-white !border-0">
                   {t("nav.login")}
                 </Link>
-                <Button asChild size="sm" className="button-gradient text-white rounded-full px-4 h-8 text-sm whitespace-nowrap">
-                  <Link href="/sign-in">{t("nav.getStarted")}</Link>
-                </Button>
+                <AppButton
+                  variant="primary"
+                  size="sm"
+                  className="navbar-cta whitespace-nowrap rounded-full !border-0"
+                  onClick={() => window.location.href = "/sign-in"}
+                >
+                  {t("nav.getStarted")}
+                </AppButton>
               </>
             )}
           </div>
         </div>
-      </div>
+      </div>}
 
       {/* Top bar */}
       <nav className="absolute top-0 z-40 w-full">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <Link href="/" className="flex items-center gap-2 font-bold text-lg">
-            <Image src="/images/logo.png" alt="Logo" width={40} height={40} />
-            Finance
+        <div className="mx-auto flex h-14 sm:h-16 max-w-7xl items-center justify-between px-3 sm:px-6 lg:px-8">
+          <Link href="/" className="flex items-center gap-2">
+            <Image src="/svg/logo.svg" alt="Logo" width={40} height={40} />
+            <div className="flex flex-col leading-none">
+              <span className="font-bold text-base" style={{ color: chartColor }}>Finance</span>
+              <span className="font-medium text-[10px] tracking-widest uppercase text-neutral-500 dark:text-neutral-400">Track</span>
+            </div>
           </Link>
-          <div className="flex items-center gap-3 h-full">
+          <div className="flex items-center gap-3">
             {status === "loading" ? null : session?.user ? (
               <UserMenu
                 image={session.user.image}
@@ -94,17 +137,24 @@ export default function Navbar() {
               />
             ) : (
               <>
-                <Link href="/sign-in" className="text-sm text-neutral-600 hover:text-neutral-900 dark:text-neutral-300">
+                <QuickAppearance />
+                <Link href="/sign-in" className="text-sm text-black/50 dark:text-white/55 transition-colors !border-0">
                   {t("nav.login")}
                 </Link>
-                <Button asChild size="sm" className="button-gradient text-white rounded-full px-5">
-                  <Link href="/sign-in">{t("nav.getStarted")}</Link>
-                </Button>
+                <AppButton
+                  variant="primary"
+                  size="sm"
+                  className="navbar-cta rounded-full !border-0"
+                  onClick={() => window.location.href = "/sign-in"}
+                >
+                  {t("nav.getStarted")}
+                </AppButton>
               </>
             )}
           </div>
         </div>
       </nav>
+
       {session?.user && (
         <SettingsDialog
           open={settingsOpen}

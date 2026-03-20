@@ -4,6 +4,7 @@ import { useMemo, useState, useTransition } from "react";
 import { motion } from "framer-motion";
 import { useSettings } from "@/lib/settings-context";
 import { Search } from "lucide-react";
+import { AppButton } from "@/components/ui/AppButton";
 
 export default function RecentTransactions({ data }: { data: any[] }) {
   const { currencySymbol } = useSettings();
@@ -34,15 +35,15 @@ export default function RecentTransactions({ data }: { data: any[] }) {
         </div>
         <div className="flex gap-1.5">
           {(["all", "income", "expense"] as const).map((f) => (
-            <button key={f} onClick={() => setFilter(f)}
-              style={filter === f ? { background: "var(--app-accent)" } : {}}
-              className={`text-xs px-2.5 py-1 rounded-full capitalize transition ${
-                filter === f
-                  ? "text-white"
-                  : "bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-700"
-              }`}>
+            <AppButton
+              key={f}
+              variant={filter === f ? "primary" : "subtle"}
+              size="sm"
+              className="rounded-full capitalize"
+              onClick={() => setFilter(f)}
+            >
               {f}
-            </button>
+            </AppButton>
           ))}
         </div>
       </div>

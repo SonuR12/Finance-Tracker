@@ -131,12 +131,12 @@ export default function Sidebar({ name, email, image, avatarColor, activeTab, on
         <div className={`flex items-center h-14 px-4 border-b border-neutral-200 dark:border-neutral-800 flex-shrink-0 ${collapsed ? "justify-center" : "justify-between"}`}>
           {!collapsed && (
             <Link href="/" className="flex items-center gap-2">
-              <Image src="/images/logo.png" alt="Logo" width={22} height={22} />
+              <Image src="/svg/logo.svg" alt="Logo" width={22} height={22} />
               <span className="font-bold text-sm text-neutral-800 dark:text-neutral-100">Finance</span>
             </Link>
           )}
           {collapsed && (
-            <Link href="/"><Image src="/images/logo.png" alt="Logo" width={22} height={22} /></Link>
+            <Link href="/"><Image src="/svg/logo.svg" alt="Logo" width={22} height={22} /></Link>
           )}
           <button
             onClick={() => setCollapsed((v) => !v)}
@@ -196,7 +196,7 @@ export default function Sidebar({ name, email, image, avatarColor, activeTab, on
             >
               <div className="flex items-center justify-between h-14 px-4 border-b border-neutral-200 dark:border-neutral-800">
                 <Link href="/" className="flex items-center gap-2">
-                  <Image src="/images/logo.png" alt="Logo" width={22} height={22} />
+                  <Image src="/svg/logo.svg" alt="Logo" width={22} height={22} />
                   <span className="font-bold text-sm text-neutral-800 dark:text-neutral-100">Finance</span>
                 </Link>
                 <button onClick={() => onMobileOpenChange(false)} className="p-1.5 rounded-lg text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition">

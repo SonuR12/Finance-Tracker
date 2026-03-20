@@ -3,6 +3,8 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useSettings } from "./settings-context";
 
+import enMessages from "../messages/en.json";
+
 type Messages = Record<string, any>;
 
 const I18nContext = createContext<{ t: (key: string) => string }>({
@@ -26,7 +28,7 @@ function resolve(obj: Messages, key: string): string {
 
 export function I18nProvider({ children }: { children: React.ReactNode }) {
   const { language } = useSettings();
-  const [messages, setMessages] = useState<Messages>({});
+  const [messages, setMessages] = useState<Messages>(enMessages);
 
   useEffect(() => {
     loadMessages(language).then(setMessages);

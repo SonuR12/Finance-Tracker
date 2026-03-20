@@ -15,6 +15,7 @@ import { useSettings } from "@/lib/settings-context";
 import { useT } from "@/lib/i18n-context";
 import { UserMenu } from "@/components/ui/UserMenu";
 import { AccentButton, AccentToggle } from "@/components/ui/AccentButton";
+import { AppButton } from "@/components/ui/AppButton";
 
 /* ── Data ── */
 const LANGUAGES = [
@@ -252,11 +253,11 @@ export function SettingsDialog({ open, onClose, name: nameProp, email: emailProp
         {/* Sidebar — icon-only on mobile, icon+label on sm+ */}
         <div className="flex-shrink-0 border-r border-neutral-100 dark:border-neutral-800 flex flex-col py-4 sm:py-5 px-2 sm:px-3 w-14 sm:w-52">
           <div className="hidden sm:flex items-center gap-2 px-2 mb-6">
-            <Image src="/images/logo.png" alt="Logo" width={40} height={40} />
+            <Image src="/svg/logo.svg" alt="Logo" width={40} height={40} />
             <span className="font-semibold text-sm text-neutral-800 dark:text-neutral-100">Finance</span>
           </div>
           <div className="sm:hidden flex justify-center mb-4">
-            <Image src="/images/logo.png" alt="Logo" width={30} height={30} />
+            <Image src="/svg/logo.svg" alt="Logo" width={30} height={30} />
           </div>
           <nav className="flex flex-col gap-0.5">
             {TABS.map(({ id, labelKey, icon: Icon }) => (
@@ -372,13 +373,14 @@ export function SettingsDialog({ open, onClose, name: nameProp, email: emailProp
                     <Hr />
                     <div>
                       <SLabel>Account</SLabel>
-                      <button
+                      <AppButton
+                        variant="danger"
                         onClick={() => signOut({ callbackUrl: "/" })}
-                        className="flex items-center gap-2 rounded-lg border border-red-200 dark:border-red-800/50 text-sm px-4 py-2 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition"
+                        className="flex items-center gap-2"
                       >
                         <LogOut className="h-4 w-4" />
                         Sign Out
-                      </button>
+                      </AppButton>
                     </div>
                   </div>
                 )}
@@ -546,7 +548,7 @@ export function SettingsDialog({ open, onClose, name: nameProp, email: emailProp
                         </div>
                         <AccentToggle checked={analytics} onChange={setAnalytics} />
                       </div>
-                      <button className="mt-4 rounded-lg border border-neutral-200 dark:border-neutral-700 text-sm px-4 py-2 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition">{t("settings.exportData")}</button>
+                      <AppButton variant="subtle" onClick={() => {}}>{t("settings.exportData")}</AppButton>
                     </div>
                   </div>
                 )}

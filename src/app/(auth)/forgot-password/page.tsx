@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { AppButton } from '@/components/ui/AppButton'
 
 export default function ForgotPasswordPage() {
   const [loading, setLoading] = useState(false)
@@ -12,8 +13,7 @@ export default function ForgotPasswordPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    // TODO: call your password reset API here
-    await new Promise((r) => setTimeout(r, 1000)) // simulate request
+    await new Promise((r) => setTimeout(r, 1000))
     setLoading(false)
     setSubmitted(true)
   }
@@ -43,12 +43,9 @@ export default function ForgotPasswordPage() {
                 Reset link sent to <span className="font-semibold">{email}</span>
               </p>
             </div>
-            <button
-              onClick={() => router.push('/sign-in')}
-              className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-6 py-3 rounded-xl hover:from-indigo-600 hover:to-purple-700 transition-all duration-300 font-semibold transform hover:-translate-y-0.5"
-            >
+            <AppButton variant="primary" size="lg" className="w-full rounded-xl" onClick={() => router.push('/sign-in')}>
               Back to Sign in
-            </button>
+            </AppButton>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -61,23 +58,10 @@ export default function ForgotPasswordPage() {
               disabled={loading}
               className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-900 dark:text-white placeholder-gray-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all"
             />
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-6 py-3 rounded-xl hover:from-indigo-600 hover:to-purple-700 hover:shadow-lg hover:shadow-indigo-500/30 transition-all duration-300 font-semibold disabled:opacity-50 disabled:cursor-not-allowed transform hover:-translate-y-0.5"
-            >
-              {loading ? (
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              ) : null}
-              <span>{loading ? 'Sending...' : 'Send Reset Link'}</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => router.push('/sign-in')}
-              className="w-full text-sm text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-            >
+            <AppButton type="submit" variant="primary" size="lg" saving={loading} saveLabel="Send Reset Link" savingLabel="Sending..." className="w-full rounded-xl" />
+            <AppButton type="button" variant="ghost" size="md" className="w-full" onClick={() => router.push('/sign-in')}>
               ← Back to Sign in
-            </button>
+            </AppButton>
           </form>
         )}
       </div>
