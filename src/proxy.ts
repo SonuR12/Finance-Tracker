@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 // ─── Route lists — update these as your app grows ───────────────────────────
 
 /** Accessible by anyone, no session required */
-const PUBLIC_ROUTES = ["/", "/sign-in", "/sign-up"];
+const PUBLIC_ROUTES = ["/", "/sign-in", "/sign-up", "/about", "/blog", "/careers", "/privacy-policy", "/terms-of-service"];
 
 /** Prefixes that must never be intercepted (NextAuth API routes) */
 const BYPASS_PREFIXES = ["/api/auth"];
