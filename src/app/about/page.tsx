@@ -30,7 +30,21 @@ const stack = [
 
 const VALUE_ICONS = [Shield, Zap, Heart, Globe, BarChart3, Users];
 
-const fadeUp = { initial: { opacity: 0, y: 24 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true }, transition: { duration: 0.55 } };
+const fadeUp = {
+  initial: { opacity: 0, y: 20 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, margin: "-60px" },
+  transition: { duration: 0.6, ease: [0.25, 0.1, 0.25, 1] },
+};
+
+const stackContainer = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.05, delayChildren: 0.05 } },
+};
+const stackItem = {
+  hidden: { opacity: 0, y: 16 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.25, 0.1, 0.25, 1] } },
+};
 
 export default function AboutPage() {
   const { chartColor } = useSettings();
@@ -111,10 +125,16 @@ export default function AboutPage() {
             <h2 className="text-3xl sm:text-4xl font-bold text-neutral-900 dark:text-white">{t("about.techTitle")}</h2>
             <p className="text-neutral-500 dark:text-neutral-400 max-w-xl mx-auto">{t("about.techSubtitle")}</p>
           </motion.div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+          <motion.div
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3"
+            variants={stackContainer}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.05 }}
+          >
             {stack.map((item, i) => (
-              <motion.div key={i} {...fadeUp} transition={{ duration: 0.45, delay: i * 0.04 }}
-                className="group rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5 flex gap-4 items-start transition-all duration-300 hover:-translate-y-0.5"
+              <motion.div key={i} variants={stackItem} style={{ willChange: "opacity, transform" }}
+                className="group rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5 flex gap-4 items-start transition-colors duration-300 hover:-translate-y-0.5"
                 onMouseEnter={(e) => (e.currentTarget.style.borderColor = chartColor)}
                 onMouseLeave={(e) => (e.currentTarget.style.borderColor = "")}
               >
@@ -130,7 +150,7 @@ export default function AboutPage() {
                 </div>
               </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
