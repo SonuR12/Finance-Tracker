@@ -3,7 +3,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import Link from "next/link";
 import { useT } from "@/lib/i18n-context";
 import { useSettings } from "@/lib/settings-context";
 import { useSession } from "next-auth/react";
@@ -130,9 +129,17 @@ export default function Hero() {
               : <>{t("hero.cta")}<ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" /></>
             }
           </AppButton>
-          <Link href="#features"  className="hero-btn-ghost text-xs !py-3.5 !px-6">
+          <button
+            className="hero-btn-ghost text-xs !py-3.5 !px-6"
+            onClick={() => {
+              const el = document.querySelector("#features");
+              if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = chartColor)}
+            onMouseLeave={(e) => (e.currentTarget.style.color = "")}
+          >
             {t("hero.demo")}
-          </Link>
+          </button>
         </motion.div>
 
         {/* Social proof */}
