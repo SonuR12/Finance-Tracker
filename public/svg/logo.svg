@@ -1,12 +1,25 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
-  <!-- Rounded square background -->
-  <rect width="32" height="32" rx="8" fill="#6366f1"/>
-  <!-- Bar chart bars -->
-  <rect x="6" y="18" width="4" height="8" rx="1.5" fill="white" opacity="0.5"/>
-  <rect x="12" y="13" width="4" height="13" rx="1.5" fill="white" opacity="0.75"/>
-  <rect x="18" y="8" width="4" height="18" rx="1.5" fill="white"/>
-  <!-- Trend line -->
-  <polyline points="8,17 14,12 20,7 26,5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.9"/>
-  <!-- Dot at tip -->
-  <circle cx="26" cy="5" r="2" fill="white"/>
+  <!-- Background with gradient feel via two rects -->
+  <rect width="32" height="32" rx="9" fill="#4f46e5"/>
+  <rect width="32" height="32" rx="9" fill="url(#grad)" opacity="0.6"/>
+
+  <defs>
+    <linearGradient id="grad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#818cf8"/>
+      <stop offset="100%" stop-color="#312e81"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Coin circle -->
+  <circle cx="16" cy="15" r="9" stroke="white" stroke-width="1.5" opacity="0.25"/>
+
+  <!-- Dollar sign vertical bar -->
+  <line x1="16" y1="9" x2="16" y2="21" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
+
+  <!-- Dollar sign top arc -->
+  <path d="M13.5 11.5 Q13.5 9.5 16 9.5 Q18.5 9.5 18.5 11.5 Q18.5 13.5 16 13.5 Q13.5 13.5 13.5 15.5 Q13.5 17.5 16 17.5 Q18.5 17.5 18.5 15.5" stroke="white" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+
+  <!-- Upward spark / AI arrow top-right -->
+  <polyline points="20,10 23,7 26,9" stroke="#a5f3fc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <circle cx="26" cy="9" r="1.4" fill="#a5f3fc"/>
 </svg>
