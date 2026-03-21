@@ -71,13 +71,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             createdAt: new Date(),
           })
         } else {
-          // merge: keep existing _id, add google image, update provider to 'both'
+          // merge: keep existing _id, add google image
+          // if they had credentials (or both), preserve that — never downgrade to 'google'
+          const newProvider = existing.provider === 'credentials' || existing.provider === 'both' ? 'both' : 'google'
           await db.collection('users').updateOne(
             { email: user.email },
             { $set: {
               googleImage: user.image,
               emailVerified: true,
-              provider: existing.provider === 'credentials' ? 'both' : 'google',
+              provider: newProvider,
             }}
           )
         }
