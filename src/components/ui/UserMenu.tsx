@@ -28,11 +28,12 @@ interface UserMenuProps {
   name?: string | null;
   email?: string | null;
   onSettings?: () => void;
-  size?: number;
+  width?: number;
+  height?: number;
   avatarColor?: string | null;
 }
 
-export function UserMenu({ image, name, email, onSettings, size = 36, avatarColor }: UserMenuProps) {
+export function UserMenu({ image, name, email, onSettings, width = 36, height = 36, avatarColor }: UserMenuProps) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const color = avatarColor ?? getAvatarColor(name ?? "U");
@@ -49,11 +50,11 @@ export function UserMenu({ image, name, email, onSettings, size = 36, avatarColo
     <div ref={ref} className="relative flex items-center">
       <button onClick={() => setOpen((v) => !v)} className="focus:outline-none flex-shrink-0 flex items-center justify-center">
         {image ? (
-          <div style={{ width: size, height: size }} className="rounded-full !w-7 !h-7  overflow-hidden">
-            <Image src={image} alt={name ?? "User"} width={size} height={size} className="w-full h-full object-cover" />
+          <div style={{ width, height }} className="rounded-full overflow-hidden">
+            <Image src={image} alt={name ?? "User"} width={width} height={height} className="w-full h-full object-cover" />
           </div>
         ) : (
-          <div style={{ width: size, height: size, fontSize: size * 0.35 }} className={`flex items-center justify-center rounded-full font-bold text-white ${color}`}>
+          <div style={{ width, height, fontSize: Math.min(width, height) * 0.35 }} className={`flex items-center justify-center rounded-full font-bold text-white ${color}`}>
             {getInitials(name ?? "U")}
           </div>
         )}

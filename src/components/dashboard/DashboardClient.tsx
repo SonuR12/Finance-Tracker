@@ -355,7 +355,7 @@ export default function DashboardClient({ name, image, activeTab, onMobileMenuOp
 
           {/* User menu (mobile only) — same as home page */}
           <div className="lg:hidden">
-            <UserMenu image={image} name={name} onSettings={onSettingsOpen} size={36} />
+            <UserMenu image={image} name={name} onSettings={onSettingsOpen} width={28} height={28} />
           </div>
         </div>
       </header>

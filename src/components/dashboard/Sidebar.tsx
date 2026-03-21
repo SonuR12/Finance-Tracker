@@ -161,7 +161,7 @@ export default function Sidebar({ name, email, image, avatarColor, activeTab, on
             )}
           </button>
           <div className={`flex items-center gap-2.5 px-3 py-2 rounded-xl bg-neutral-100 dark:bg-neutral-800 ${collapsed ? "justify-center" : ""}`}>
-            <UserMenu image={image} name={name} email={email} onSettings={onSettingsOpen} size={28} avatarColor={avatarColor} />
+            <UserMenu image={image} name={name} email={email} onSettings={onSettingsOpen} width={28} height={28} avatarColor={avatarColor} />
             {!collapsed && (
               <>
                 <div className="flex-1 min-w-0">
@@ -210,7 +210,7 @@ export default function Sidebar({ name, email, image, avatarColor, activeTab, on
                     <Settings className="h-4 w-4" /> {t("settings.title")}
                   </button>
                   <div className="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-neutral-100 dark:bg-neutral-800">
-                    <UserMenu image={image} name={name} email={email} onSettings={() => { onMobileOpenChange(false); onSettingsOpen(); }} size={28} avatarColor={avatarColor} />
+                    <UserMenu image={image} name={name} email={email} onSettings={() => { onMobileOpenChange(false); onSettingsOpen(); }} width={28} height={28} avatarColor={avatarColor} />
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-semibold text-neutral-800 dark:text-neutral-100 truncate leading-none">{name}</p>
                       <p className="text-[10px] text-neutral-400 truncate mt-0.5">{email}</p>

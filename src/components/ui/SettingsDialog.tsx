@@ -304,7 +304,8 @@ export function SettingsDialog({ open, onClose, name: nameProp, email: emailProp
                               name={originalName || user?.name}
                               email={user?.email}
                               avatarColor={(user as any)?.avatarColor}
-                              size={64}
+                              width={64}
+                              height={64}
                             />
                           </div>
                         </div>
@@ -550,7 +551,8 @@ export function SettingsDialog({ open, onClose, name: nameProp, email: emailProp
                           { id: "system" as const, labelKey: "settings.followSystem", preview: "bg-gradient-to-r from-white to-neutral-800" },
                         ]).map((th) => (
                           <button key={th.id} onClick={() => applyTheme(th.id)}
-                            className={`flex flex-col items-center gap-2 rounded-xl border-2 p-3 transition ${theme === th.id ? "border-indigo-500" : "border-neutral-200 dark:border-neutral-700"}`}>
+                            className={`flex flex-col items-center gap-2 rounded-xl border-2 p-3 transition ${theme === th.id ? "" : "border-neutral-200 dark:border-neutral-700"}`}
+                            style={theme === th.id ? { borderColor: chartColor } : {}}>
                             <div className={`h-10 w-14 sm:h-14 sm:w-20 rounded-lg ${th.preview}`} />
                             <span className="text-xs text-neutral-600 dark:text-neutral-400 whitespace-nowrap">{t(th.labelKey)}</span>
                           </button>

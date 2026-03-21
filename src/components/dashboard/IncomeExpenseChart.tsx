@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { useSettings } from "@/lib/settings-context";
 import { useT } from "@/lib/i18n-context";
 
@@ -39,7 +39,7 @@ export default function IncomeExpenseChart({ data }: { data: any[] }) {
               <stop offset="95%" stopColor="#fb7185" stopOpacity={0} />
             </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" className="dark:[&>line]:stroke-neutral-800" />
+
           <XAxis dataKey="month" tick={{ fontSize: 11, fill: "#9ca3af" }} axisLine={false} tickLine={false} />
           <YAxis tick={{ fontSize: 11, fill: "#9ca3af" }} axisLine={false} tickLine={false}
             tickFormatter={(v) => `${currencySymbol}${(v / 1000).toFixed(1)}k`} />

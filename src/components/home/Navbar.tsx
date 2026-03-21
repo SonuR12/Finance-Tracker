@@ -92,7 +92,8 @@ export default function Navbar({ showLinks = true }: { showLinks?: boolean }) {
                 name={session.user.name}
                 email={session.user.email}
                 avatarColor={(session.user as any).avatarColor}
-                size={32}
+                width={32}
+                height={32}
                 onSettings={() => setSettingsOpen(true)}
               />
             ) : (
@@ -132,7 +133,8 @@ export default function Navbar({ showLinks = true }: { showLinks?: boolean }) {
                 name={session.user.name}
                 email={session.user.email}
                 avatarColor={(session.user as any).avatarColor}
-                size={32}
+                width={32}
+                height={32}
                 onSettings={() => setSettingsOpen(true)}
               />
             ) : (
