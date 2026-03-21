@@ -1,7 +1,8 @@
 "use client";
 
-const S = ({ className = "" }: { className?: string }) => (
-  <div className={`animate-pulse rounded-lg bg-neutral-200 dark:bg-neutral-800 ${className}`} />
+import React from "react";
+const S = ({ className = "", style }: { className?: string; style?: React.CSSProperties }) => (
+  <div className={`animate-pulse rounded-lg bg-neutral-200 dark:bg-neutral-800 ${className}`} style={style} />
 );
 
 /* ── Stat Cards ── */
