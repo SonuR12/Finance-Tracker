@@ -17,6 +17,10 @@ export default function AIInsights({ data }: { data: any[] }) {
   const [atBottom, setAtBottom] = useState(false);
   const t = useT();
 
+  function checkBottom(el: HTMLElement) {
+    setAtBottom(el.scrollHeight - el.scrollTop <= el.clientHeight + 4);
+  }
+
   const fakeData = [
     { type: "warning", title: "Entertainment over budget", desc: "You've exceeded your entertainment budget by $10. Consider cutting streaming services.", icon: "⚠️" },
     { type: "tip",     title: "Great savings this month!", desc: "You saved 33% of your income — $200 more than last month. Keep it up!", icon: "🎉" },
@@ -59,10 +63,8 @@ export default function AIInsights({ data }: { data: any[] }) {
         <div
           id="insights-scroll"
           className="overflow-y-auto h-full"
-          onScroll={(e) => {
-            const el = e.currentTarget;
-            setAtBottom(el.scrollHeight - el.scrollTop <= el.clientHeight + 4);
-          }}
+          ref={(el) => { if (el) checkBottom(el); }}
+          onScroll={(e) => checkBottom(e.currentTarget)}
         >
           <AnimatePresence>
             {visible.map((insight, i) => {

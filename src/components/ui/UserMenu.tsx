@@ -76,7 +76,7 @@ export function UserMenu({ image, name, email, onSettings, width = 36, height = 
             </button>
           )}
           <button
-            onClick={() => signOut({ callbackUrl: "/" })}
+            onClick={() => { try { localStorage.removeItem("ai_chat_history"); } catch {} signOut({ callbackUrl: "/" }); }}
             className="flex w-full items-center gap-2 px-4 py-2 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition"
           >
             <LogOut className="h-4 w-4" />

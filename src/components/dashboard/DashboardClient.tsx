@@ -603,7 +603,9 @@ function AIFloatingButton({ insights, data }: { insights: any[]; data: Dashboard
                         >
                           {isUser ? m.text : (
                             <div className="space-y-1.5">
-                              {m.text.split(/\n+/).map(s => s.trim()).filter(Boolean).map((s, j) => <p key={j}>{s}</p>)}
+                              {m.text.split(/\n+/).map(s => s.trim()).filter(Boolean).map((s, j) => (
+                                <p key={j} dangerouslySetInnerHTML={{ __html: s.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>') }} />
+                              ))}
                             </div>
                           )}
                         </div>

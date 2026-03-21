@@ -12,7 +12,12 @@ export default function RecentTransactions({ data }: { data: any[] }) {
   const t = useT();
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | "income" | "expense">("all");
+  const [atBottom, setAtBottom] = useState(false);
   const [, startTransition] = useTransition();
+
+  function checkBottom(el: HTMLElement) {
+    setAtBottom(el.scrollHeight - el.scrollTop <= el.clientHeight + 4);
+  }
 
 
     const fakeData = [
@@ -95,22 +100,45 @@ export default function RecentTransactions({ data }: { data: any[] }) {
           </p>
         </div>
       ) : (
-        <div className="space-y-1 flex-1 overflow-y-auto pr-1 min-h-0">
-          {filtered.map((tx) => (
-            <div key={tx.id}
-              className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-neutral-50 dark:hover:bg-neutral-800/60 transition">
-              <div className="h-9 w-9 rounded-xl bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center text-base flex-shrink-0">
-                {tx.icon}
+        <div className="relative flex-1 min-h-0">
+          <div
+            id="tx-scroll"
+            className="space-y-1 h-full overflow-y-auto pr-1"
+            ref={(el) => { if (el) checkBottom(el); }}
+            onScroll={(e) => checkBottom(e.currentTarget)}
+          >
+            {filtered.map((tx) => (
+              <div key={tx.id}
+                className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-neutral-50 dark:hover:bg-neutral-800/60 transition">
+                <div className="h-9 w-9 rounded-xl bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center text-base flex-shrink-0">
+                  {tx.icon}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-neutral-800 dark:text-neutral-100 truncate">{tx.name}</p>
+                  <p className="text-xs text-neutral-400 truncate">{tx.category} · {tx.date}</p>
+                </div>
+                <span className={`text-sm font-semibold flex-shrink-0 ${tx.amount > 0 ? "text-emerald-500" : "text-neutral-700 dark:text-neutral-300"}`}>
+                  {tx.amount > 0 ? "+" : ""}{currencySymbol}{Math.abs(tx.amount).toFixed(2)}
+                </span>
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-neutral-800 dark:text-neutral-100 truncate">{tx.name}</p>
-                <p className="text-xs text-neutral-400 truncate">{tx.category} · {tx.date}</p>
-              </div>
-              <span className={`text-sm font-semibold flex-shrink-0 ${tx.amount > 0 ? "text-emerald-500" : "text-neutral-700 dark:text-neutral-300"}`}>
-                {tx.amount > 0 ? "+" : ""}{currencySymbol}{Math.abs(tx.amount).toFixed(2)}
-              </span>
+            ))}
+          </div>
+          {!atBottom && filtered.length > 0 && (
+            <div className="absolute bottom-2 right-2">
+              <button
+                onClick={() => {
+                  const el = document.getElementById("tx-scroll");
+                  if (el) el.scrollBy({ top: 120, behavior: "smooth" });
+                }}
+                className="flex items-center justify-center h-7 w-7 rounded-full text-white shadow-md transition"
+                style={{ background: "var(--app-accent)" }}
+              >
+                <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
             </div>
-          ))}
+          )}
         </div>
       )}
     </motion.div>

@@ -168,7 +168,7 @@ export default function Sidebar({ name, email, image, avatarColor, activeTab, on
                   <p className="text-xs font-semibold text-neutral-800 dark:text-neutral-100 truncate leading-none">{name}</p>
                   <p className="text-[10px] text-neutral-400 truncate mt-0.5">{email}</p>
                 </div>
-                <button onClick={() => signOut({ callbackUrl: "/" })} className="text-neutral-400 hover:text-rose-500 hover:cursor-pointer transition flex-shrink-0" title="Sign out">
+                <button onClick={() => { try { localStorage.removeItem("ai_chat_history"); } catch {} signOut({ callbackUrl: "/" }); }} className="text-neutral-400 hover:text-rose-500 hover:cursor-pointer transition flex-shrink-0" title="Sign out">
                   <LogOut className="h-3.5 w-3.5" />
                 </button>
               </>
@@ -215,7 +215,7 @@ export default function Sidebar({ name, email, image, avatarColor, activeTab, on
                       <p className="text-xs font-semibold text-neutral-800 dark:text-neutral-100 truncate leading-none">{name}</p>
                       <p className="text-[10px] text-neutral-400 truncate mt-0.5">{email}</p>
                     </div>
-                    <button onClick={() => signOut({ callbackUrl: "/" })} className="text-neutral-400 hover:text-rose-500 transition flex-shrink-0" title="Sign out">
+                    <button onClick={() => { try { localStorage.removeItem("ai_chat_history"); } catch {} signOut({ callbackUrl: "/" }); }} className="text-neutral-400 hover:text-rose-500 transition flex-shrink-0" title="Sign out">
                       <LogOut className="h-3.5 w-3.5" />
                     </button>
                   </div>
