@@ -105,8 +105,8 @@ function DashboardHome({ name, d }: { name?: string | null; d: DashboardData }) 
         <WeeklyChart data={d.weeklySpending} />
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2"><RecentTransactions data={d.transactions} /></div>
-        <BudgetProgress data={d.budgets} />
+        <div className="lg:col-span-2 h-[380px]"><RecentTransactions data={d.transactions} /></div>
+        <div className="h-[380px]"><BudgetProgress data={d.budgets} /></div>
       </div>
     </div>
   );
