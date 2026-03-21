@@ -3,7 +3,7 @@
 import PageLayout from "@/components/home/PageLayout";
 import { useSettings } from "@/lib/settings-context";
 import { useT } from "@/lib/i18n-context";
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import Image from "next/image";
 import { BarChart3, Shield, Zap, Heart, Globe, Users } from "lucide-react";
 
@@ -33,15 +33,15 @@ const VALUE_ICONS = [Shield, Zap, Heart, Globe, BarChart3, Users];
 const fadeUp = {
   initial: { opacity: 0, y: 20 },
   whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "-60px" },
-  transition: { duration: 0.6, ease: [0.25, 0.1, 0.25, 1] },
+  viewport: { once: true as const },
+  transition: { duration: 0.6, ease: [0.25, 0.1, 0.25, 1] as const },
 };
 
-const stackContainer = {
+const stackContainer: Variants = {
   hidden: {},
   show: { transition: { staggerChildren: 0.05, delayChildren: 0.05 } },
 };
-const stackItem = {
+const stackItem: Variants = {
   hidden: { opacity: 0, y: 16 },
   show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.25, 0.1, 0.25, 1] } },
 };
