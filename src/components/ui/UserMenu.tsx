@@ -49,7 +49,7 @@ export function UserMenu({ image, name, email, onSettings, size = 36, avatarColo
     <div ref={ref} className="relative flex items-center">
       <button onClick={() => setOpen((v) => !v)} className="focus:outline-none flex-shrink-0 flex items-center justify-center">
         {image ? (
-          <div style={{ width: size, height: size }} className="rounded-full !w-7 !h-7 sm:!h-full sm:!w-full overflow-hidden">
+          <div style={{ width: size, height: size }} className="rounded-full !w-7 !h-7  overflow-hidden">
             <Image src={image} alt={name ?? "User"} width={size} height={size} className="w-full h-full object-cover" />
           </div>
         ) : (

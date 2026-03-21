@@ -78,7 +78,7 @@ function DashboardHome({ name, d }: { name?: string | null; d: DashboardData }) 
     return "dashboard.goodEvening";
   })();
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}
         className="flex items-center justify-between">
         <div>
@@ -97,7 +97,7 @@ function DashboardHome({ name, d }: { name?: string | null; d: DashboardData }) 
       </motion.div>
       <StatCards stats={d.stats} />
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2 h-[320px]"><IncomeExpenseChart data={d.monthlyData} /></div>
+        <div className="lg:col-span-2 lg:h-[320px]"><IncomeExpenseChart data={d.monthlyData} /></div>
         <div className="h-[320px]"><AIInsights data={d.aiInsights} /></div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -105,8 +105,8 @@ function DashboardHome({ name, d }: { name?: string | null; d: DashboardData }) 
         <WeeklyChart data={d.weeklySpending} />
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2 h-[380px]"><RecentTransactions data={d.transactions} /></div>
-        <div className="h-[380px]"><BudgetProgress data={d.budgets} /></div>
+        <div className="lg:col-span-2 h-[420px] sm:h-[380px]"><RecentTransactions data={d.transactions} /></div>
+        <div className="h-[420px] sm:h-[380px]"><BudgetProgress data={d.budgets} /></div>
       </div>
     </div>
   );

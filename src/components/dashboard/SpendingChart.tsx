@@ -29,11 +29,11 @@ export default function SpendingChart({ data }: { data: any[] }) {
         <h3 className="font-semibold text-neutral-900 dark:text-white">Spending by Category</h3>
         <p className="text-xs text-neutral-400 mt-0.5">This month</p>
       </div>
-      <div className="flex items-center gap-4">
+      <div className="flex flex-col sm:flex-row items-center gap-4">
         <div className="relative flex-shrink-0">
-          <ResponsiveContainer width={160} height={160}>
+          <ResponsiveContainer width={140} height={140}>
             <PieChart>
-              <Pie data={data} cx="50%" cy="50%" innerRadius={48} outerRadius={76}
+              <Pie data={data} cx="50%" cy="50%" innerRadius={40} outerRadius={65}
                 dataKey="value" labelLine={false} label={CustomLabel}>
                 {data.map((entry, i) => <Cell key={i} fill={entry.color} stroke="none" />)}
               </Pie>
@@ -48,7 +48,7 @@ export default function SpendingChart({ data }: { data: any[] }) {
             <p className="text-sm font-bold text-neutral-900 dark:text-white">{currencySymbol}{total.toLocaleString()}</p>
           </div>
         </div>
-        <div className="flex-1 space-y-2 min-w-0">
+        <div className="flex-1 grid grid-cols-2 sm:grid-cols-1 gap-x-4 gap-y-2 w-full min-w-0">
           {data.map((cat) => (
             <div key={cat.name} className="flex items-center gap-2">
               <span className="h-2.5 w-2.5 rounded-full flex-shrink-0" style={{ background: cat.color }} />
