@@ -45,7 +45,7 @@ export default function Footer() {
             <Link href="/" className="flex items-center gap-2">
               <Image src="/svg/logo.svg" alt="Logo" width={40} height={40} />
               <div className="flex flex-col leading-none">
-                <span className="font-bold text-base" style={{ color: chartColor }}>Finance</span>
+                <span className="font-bold text-base" style={{ color: "var(--app-accent)" }}>Finance</span>
                 <span className="font-medium text-[10px] tracking-widest uppercase text-neutral-500 dark:text-neutral-400">Track</span>
               </div>
             </Link>
@@ -75,7 +75,7 @@ export default function Footer() {
                     <Link
                       href={item.href}
                       className="text-sm text-neutral-500 dark:text-neutral-400 transition-colors hover:text-neutral-900 dark:hover:text-neutral-100"
-                      onMouseEnter={(e) => (e.currentTarget.style.color = chartColor)}
+                      onMouseEnter={(e) => (e.currentTarget.style.color = "var(--app-accent)")}
                       onMouseLeave={(e) => (e.currentTarget.style.color = "")}
                     >
                       {item.label}

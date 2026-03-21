@@ -1,9 +1,11 @@
+import { Suspense } from "react";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import DashboardShell from "@/components/dashboard/DashboardShell";
 import { computeDashboardData } from "@/app/api/dashboard/route";
+import DashboardSkeleton from "@/components/ui/skeleton/DashboardSkeleton";
 
-export default async function DashboardPage() {
+async function DashboardContent() {
   const session = await auth();
   if (!session?.user) redirect("/sign-in");
 
@@ -25,5 +27,13 @@ export default async function DashboardPage() {
       avatarColor={session.user.avatarColor}
       initialData={initialData}
     />
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <Suspense fallback={<DashboardSkeleton />}>
+      <DashboardContent />
+    </Suspense>
   );
 }

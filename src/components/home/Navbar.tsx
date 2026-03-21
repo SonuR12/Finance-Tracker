@@ -73,7 +73,7 @@ export default function Navbar({ showLinks = true }: { showLinks?: boolean }) {
                 onClick={() => scrollToSection(item.href)}
                 className="rounded-full px-4 py-1.5 text-sm transition-colors cursor-pointer"
                 style={isActive
-                  ? { color: chartColor, background: `${chartColor}18` }
+                  ? { color: "var(--app-accent)", background: "color-mix(in srgb, var(--app-accent) 9%, transparent)" }
                   : undefined
                 }
               >
@@ -121,7 +121,7 @@ export default function Navbar({ showLinks = true }: { showLinks?: boolean }) {
           <Link href="/" className="flex items-center gap-2">
             <Image src="/svg/logo.svg" alt="Logo" width={40} height={40} />
             <div className="flex flex-col leading-none">
-              <span className="font-bold text-base" style={{ color: chartColor }}>Finance</span>
+              <span className="font-bold text-base" style={{ color: "var(--app-accent)" }}>Finance</span>
               <span className="font-medium text-[10px] tracking-widest uppercase text-neutral-500 dark:text-neutral-400">Track</span>
             </div>
           </Link>

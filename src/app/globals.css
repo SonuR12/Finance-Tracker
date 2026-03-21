@@ -124,6 +124,11 @@
   body {
     @apply bg-background text-foreground;
   }
+  input:focus-visible, textarea:focus-visible {
+    border-color: var(--app-accent) !important;
+    box-shadow: none !important;
+    outline: none;
+  }
 }
 
 
@@ -271,7 +276,6 @@
    HEADLINE
 ───────────────────────────────────────── */
 .hero-headline {
-  font-size: clamp(2.2rem, 8vw, 5.5rem);
   font-weight: 800;
   line-height: 1.05;
   letter-spacing: -0.03em;
@@ -309,16 +313,19 @@
 .hero-btn-primary {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px 24px;
+  gap: 6px;
+  padding: 6px 12px;
   border-radius: 9999px;
-  font-size: 0.95rem;
+  font-size: 0.75rem;
   font-weight: 600;
   color: #fff;
   border: none;
   cursor: pointer;
   text-decoration: none;
   transition: opacity 0.2s, box-shadow 0.2s;
+}
+@media (min-width: 640px) {
+  .hero-btn-primary { padding: 12px 24px; font-size: 0.95rem; gap: 8px; }
 }
 .hero-btn-primary:hover {
   opacity: 0.88;
@@ -327,10 +334,10 @@
 .hero-btn-ghost {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px 24px;
+  gap: 6px;
+  padding: 6px 12px;
   border-radius: 9999px;
-  font-size: 0.95rem;
+  font-size: 0.75rem;
   font-weight: 600;
   color: rgba(255,255,255,0.75);
   background: transparent;
@@ -338,6 +345,9 @@
   cursor: pointer;
   text-decoration: none;
   transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+@media (min-width: 640px) {
+  .hero-btn-ghost { padding: 12px 24px; font-size: 0.95rem; gap: 8px; }
 }
 .hero-btn-ghost:hover {
   border-color: rgba(255,255,255,0.3);

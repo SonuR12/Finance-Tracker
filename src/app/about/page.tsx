@@ -66,7 +66,7 @@ export default function AboutPage() {
       <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
           <motion.div {...fadeUp} className="space-y-5">
-            <p className="text-5xl font-semibold uppercase tracking-widest" style={{ color: chartColor }}>{t("about.storyLabel")}</p>
+            <p className="text-4xl sm:text-5xl font-semibold uppercase tracking-widest" style={{ color: chartColor }}>{t("about.storyLabel")}</p>
             <h2 className="text-3xl sm:text-4xl font-bold text-neutral-900 dark:text-white">{t("about.storyTitle")}</h2>
             <p className="text-neutral-500 dark:text-neutral-400 leading-relaxed">{t("about.storyP1")}</p>
             <p className="text-neutral-500 dark:text-neutral-400 leading-relaxed">{t("about.storyP2")}</p>

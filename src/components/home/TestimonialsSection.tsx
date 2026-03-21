@@ -20,20 +20,20 @@ export default function TestimonialsSection() {
   const { chartColor } = useSettings();
 
   return (
-    <section id="testimonials" className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8">
+    <section id="testimonials" className="py-12 sm:py-24 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
         <motion.div
-          className="text-center mb-10 sm:mb-16 space-y-3"
+          className="text-center mb-8 sm:mb-16 space-y-2 sm:space-y-3"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <p className="text-lgfont-medium uppercase tracking-widest" style={{ color: chartColor }}>{t("testimonials.label")}</p>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-neutral-900 dark:text-neutral-100">
+          <p className="text-xs sm:text-sm font-medium uppercase tracking-widest" style={{ color: "var(--app-accent)" }}>{t("testimonials.label")}</p>
+          <h2 className="text-xl sm:text-3xl md:text-4xl font-bold text-neutral-900 dark:text-neutral-100">
             {t("testimonials.title")}
           </h2>
-          <p className="text-neutral-500 dark:text-neutral-400 max-w-xl mx-auto">
+          <p className="text-sm text-neutral-500 dark:text-neutral-400 max-w-xl mx-auto hidden sm:block">
             {t("testimonials.subtitle")}
           </p>
         </motion.div>
@@ -45,35 +45,57 @@ export default function TestimonialsSection() {
           viewport={{ once: true, amount: 0.1 }}
           variants={{
             hidden: {},
-            show: { transition: { staggerChildren: 0.07, delayChildren: 0 } },
+            show: { transition: { staggerChildren: 0.07 } },
           }}
         >
           {testimonials.map((item, index) => (
             <motion.div
               key={index}
-              className="rounded-2xl border-2 border-neutral-100 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-6 space-y-4 transition-colors duration-300"
-              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.borderColor = chartColor; }}
+              className={`rounded-2xl border border-neutral-100 dark:border-neutral-800 bg-white dark:bg-neutral-900 transition-colors duration-300 ${index >= 3 ? "hidden sm:flex sm:flex-col" : "flex flex-col"}`}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.borderColor = "var(--app-accent)"; }}
               onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.borderColor = ""; }}
               variants={{
                 hidden: { opacity: 0, y: 20 },
                 show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] } },
               }}
             >
-              <div className="flex gap-0.5">
-                {Array.from({ length: item.rating }).map((_, i) => (
-                  <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
-                ))}
+              {/* Mobile: horizontal compact layout */}
+              <div className="flex sm:hidden items-start gap-3 p-4">
+                <Image src={item.image} alt={item.name} width={40} height={40} className="rounded-full object-cover w-10 h-10 flex-shrink-0 mt-0.5" />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between mb-1">
+                    <div>
+                      <div className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{item.name}</div>
+                      <div className="text-xs" style={{ color: "var(--app-accent)" }}>{item.role}</div>
+                    </div>
+                    <div className="flex gap-0.5 flex-shrink-0">
+                      {Array.from({ length: item.rating }).map((_, i) => (
+                        <Star key={i} className="h-3 w-3 fill-amber-400 text-amber-400" />
+                      ))}
+                    </div>
+                  </div>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed line-clamp-2">
+                    &ldquo;{item.quote}&rdquo;
+                  </p>
+                </div>
               </div>
 
-              <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">
-                &ldquo;{item.quote}&rdquo;
-              </p>
-
-              <div className="flex items-center gap-3 pt-2 border-t border-neutral-100 dark:border-neutral-800">
-                <Image src={item.image} alt={item.name} width={40} height={40} className="rounded-full object-cover w-10 h-10" />
-                <div>
-                  <div className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{item.name}</div>
-                  <div className="text-xs" style={{ color: chartColor }}>{item.role}</div>
+              {/* Desktop: original card layout */}
+              <div className="hidden sm:flex flex-col p-6 space-y-4 flex-1">
+                <div className="flex gap-0.5">
+                  {Array.from({ length: item.rating }).map((_, i) => (
+                    <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
+                  ))}
+                </div>
+                <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed flex-1">
+                  &ldquo;{item.quote}&rdquo;
+                </p>
+                <div className="flex items-center gap-3 pt-2 border-t border-neutral-100 dark:border-neutral-800">
+                  <Image src={item.image} alt={item.name} width={40} height={40} className="rounded-full object-cover w-10 h-10" />
+                  <div>
+                    <div className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{item.name}</div>
+                    <div className="text-xs" style={{ color: "var(--app-accent)" }}>{item.role}</div>
+                  </div>
                 </div>
               </div>
             </motion.div>

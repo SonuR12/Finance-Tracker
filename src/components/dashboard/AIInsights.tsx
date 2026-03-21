@@ -17,7 +17,18 @@ export default function AIInsights({ data }: { data: any[] }) {
   const [atBottom, setAtBottom] = useState(false);
   const t = useT();
 
-  const visible = data.filter((_, i) => !dismissed.includes(i));
+  const fakeData = [
+    { type: "warning", title: "Entertainment over budget", desc: "You've exceeded your entertainment budget by $10. Consider cutting streaming services.", icon: "⚠️" },
+    { type: "tip",     title: "Great savings this month!", desc: "You saved 33% of your income — $200 more than last month. Keep it up!", icon: "🎉" },
+    { type: "info",   title: "Recurring charge detected", desc: "Amazon Prime renews in 3 days for $14.99. Make sure you still need this.", icon: "🔔" },
+    { type: "tip",    title: "Investment opportunity", desc: "Based on your savings rate, you could invest $500/month and grow $72K in 10 years.", icon: "📈" },
+    { type: "warning", title: "High food spending", desc: "Food expenses are 20% above your 3-month average. Try meal prepping to save.", icon: "🍔" },
+    { type: "info",   title: "Salary credited", desc: "Your salary of $5,400 was credited today. Consider allocating 20% to savings.", icon: "💰" },
+    { type: "tip",    title: "Reduce subscriptions", desc: "You have 6 active subscriptions totalling $89/month. Review unused ones.", icon: "📺" },
+    { type: "warning", title: "Travel budget exceeded", desc: "You've spent $450 of your $400 travel budget this month.", icon: "✈️" },
+  ];
+
+  const visible = fakeData.filter((_, i) => !dismissed.includes(i));
 
   function refresh() {
     setLoading(true);
@@ -27,7 +38,7 @@ export default function AIInsights({ data }: { data: any[] }) {
   return (
     <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.5 }}
-      className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5 flex flex-col h-[330px]">
+      className="rounded-2xl h-full border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5 flex flex-col">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <div className="h-7 w-7 rounded-lg flex items-center justify-center" style={{ background: "var(--app-accent)" }}>
@@ -44,10 +55,10 @@ export default function AIInsights({ data }: { data: any[] }) {
         </button>
       </div>
 
-      <div className="relative">
+      <div className="relative flex-1 min-h-0">
         <div
           id="insights-scroll"
-          className="overflow-y-auto max-h-64"
+          className="overflow-y-auto h-full"
           onScroll={(e) => {
             const el = e.currentTarget;
             setAtBottom(el.scrollHeight - el.scrollTop <= el.clientHeight + 4);
@@ -55,7 +66,7 @@ export default function AIInsights({ data }: { data: any[] }) {
         >
           <AnimatePresence>
             {visible.map((insight, i) => {
-              const idx = data.indexOf(insight);
+              const idx = fakeData.indexOf(insight);
               return (
                 <motion.div key={idx}
                   initial={{ opacity: 0, height: 0, marginBottom: 0 }}
@@ -86,7 +97,7 @@ export default function AIInsights({ data }: { data: any[] }) {
           )}
         </div>
 
-        {!atBottom && visible.length > 0 && (
+        {visible.length > 0 && !atBottom && (
           <div className="absolute bottom-2 right-2">
             <button
               onClick={() => {

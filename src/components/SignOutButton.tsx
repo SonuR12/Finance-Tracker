@@ -5,7 +5,10 @@ import { AppButton } from '@/components/ui/AppButton'
 
 export default function SignOutButton() {
   return (
-    <AppButton variant="danger" onClick={() => signOut({ callbackUrl: '/' })}>
+    <AppButton variant="danger" onClick={() => {
+      try { localStorage.removeItem("ai_chat_history"); } catch {}
+      signOut({ callbackUrl: '/' });
+    }}>
       Sign out
     </AppButton>
   )

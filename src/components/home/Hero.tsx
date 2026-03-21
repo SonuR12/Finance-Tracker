@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -9,12 +9,6 @@ import { useSettings } from "@/lib/settings-context";
 import { useSession } from "next-auth/react";
 import { ArrowRight, LayoutDashboard } from "lucide-react";
 import { AppButton } from "@/components/ui/AppButton";
-
-function hexToRgb(hex: string): string {
-  const m = hex.replace("#", "").match(/.{2}/g);
-  if (!m || m.length < 3) return "99,102,241";
-  return m.slice(0, 3).map((x) => parseInt(x, 16)).join(",");
-}
 
 const GRADIENTS: Record<string, string> = {
   "#6366f1": "linear-gradient(90deg, #6366f1 0%, #a78bfa 25%, #38bdf8 50%, #a78bfa 75%, #6366f1 100%)",
@@ -36,6 +30,9 @@ export default function Hero() {
   const { chartColor } = useSettings();
   const { data: session } = useSession();
   const imageRef = useRef<HTMLDivElement>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => { setMounted(true); }, []);
 
   useEffect(() => {
     const el = imageRef.current;
@@ -46,8 +43,6 @@ export default function Hero() {
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  const rgb = hexToRgb(chartColor);
 
   return (
     // Hero is always a dark section — black bg regardless of theme
@@ -60,7 +55,7 @@ export default function Hero() {
         style={{
           position: "absolute", top: -120, left: "50%", transform: "translateX(-50%)",
           width: 900, height: 600, pointerEvents: "none",
-          background: `radial-gradient(ellipse at 50% 0%, rgba(${rgb},0.28) 0%, rgba(${rgb},0.1) 40%, transparent 70%)`,
+          background: "radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--app-accent) 28%, transparent) 0%, color-mix(in srgb, var(--app-accent) 10%, transparent) 40%, transparent 70%)",
         }}
       />
 
@@ -73,15 +68,15 @@ export default function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           className="hero-pill group mb-6 sm:mb-10"
-          style={{ borderColor: `${chartColor}40` }}
+          style={{ borderColor: "color-mix(in srgb, var(--app-accent) 25%, transparent)" }}
         >
-          <span className="hero-pill-dot" style={{ background: chartColor, boxShadow: `0 0 6px 2px ${chartColor}99` }} />
+          <span className="hero-pill-dot" style={{ background: "var(--app-accent)", boxShadow: "0 0 6px 2px color-mix(in srgb, var(--app-accent) 60%, transparent)" }} />
           <span className="text-sm text-white/70">{t("hero.aiInsights")}</span>
           <ArrowRight className="h-3.5 w-3.5 text-white/70 transition-transform group-hover:translate-x-0.5" />
         </motion.a>
 
         {/* Headline */}
-        <h1 className="hero-headline">
+        <h1 className="hero-headline text-[3rem] sm:text-[4.5rem] lg:text-[5.5rem]">
           <motion.span
             className="block"
             initial={{ opacity: 0, y: 24 }}
@@ -99,6 +94,7 @@ export default function Hero() {
           </motion.span>
           <motion.span
             className="block"
+            suppressHydrationWarning
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.65, delay: 0.22 }}
@@ -107,7 +103,7 @@ export default function Hero() {
               backgroundClip: "text",
               WebkitTextFillColor: "transparent",
               color: "transparent",
-              backgroundImage: getGradient(chartColor),
+              backgroundImage: mounted ? getGradient(chartColor) : getGradient("#6366f1"),
               backgroundSize: "200% auto",
               animation: "shimmerMove 3s linear infinite",
             }}
@@ -124,9 +120,9 @@ export default function Hero() {
         {/* Buttons */}
         <motion.div className="flex flex-wrap items-center justify-center gap-3 mt-8" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55, delay: 0.58 }}>
           <AppButton
-            variant="primary" size="lg"
-            className="hero-btn-primary group rounded-full !border-0"
-            style={{ boxShadow: `0 0 24px ${chartColor}55, inset 0 1px 0 rgba(255,255,255,0.2)` }}
+            variant="primary"
+            className="hero-btn-primary group rounded-full !border-0 text-xs !py-2 !px-4 sm:!py-3.5 sm:!px-6"
+            style={{ boxShadow: "0 0 24px color-mix(in srgb, var(--app-accent) 33%, transparent), inset 0 1px 0 rgba(255,255,255,0.2)" }}
             onClick={() => window.location.href = session?.user ? "/dashboard" : "/sign-in"}
           >
             {session?.user
@@ -134,13 +130,13 @@ export default function Hero() {
               : <>{t("hero.cta")}<ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" /></>
             }
           </AppButton>
-          <Link href="#features" className="hero-btn-ghost">
+          <Link href="#features"  className="hero-btn-ghost text-xs !py-2 !px-4 sm:!py-3.5 sm:!px-6">
             {t("hero.demo")}
           </Link>
         </motion.div>
 
         {/* Social proof */}
-        <motion.p className="mt-6 text-sm text-black/35 dark:text-white/35" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.75 }}>
+        <motion.p className="hidden sm:block mt-6 text-sm text-black/35 dark:text-white/35" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.75 }}>
           {t("hero.trustedBy")} <span className="text-black/60 dark:text-white/60 font-medium">50,000+</span> {t("hero.users")} · {t("hero.free")} · {t("hero.noCard")}
         </motion.p>
 
@@ -149,7 +145,7 @@ export default function Hero() {
           <div
             ref={imageRef}
             className="heroimage relative w-full min-h-[380px] sm:min-h-[480px] md:min-h-[580px] overflow-hidden rounded-xl"
-            style={{ border: "1px solid rgba(255,255,255,0.08)", boxShadow: `0 0 0 1px ${chartColor}22, 0 40px 100px rgba(0,0,0,0.8), 0 0 80px ${chartColor}14` }}
+            style={{ border: "1px solid rgba(255,255,255,0.08)", boxShadow: "0 0 0 1px color-mix(in srgb, var(--app-accent) 13%, transparent), 0 40px 100px rgba(0,0,0,0.8), 0 0 80px color-mix(in srgb, var(--app-accent) 8%, transparent)" }}
           >
             <Image
               src="/Images/hero.jpeg"

@@ -5,7 +5,7 @@ import { useSettings } from "@/lib/settings-context";
 import { useT } from "@/lib/i18n-context";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import { Sparkles, Bell, BarChart3, ArrowLeftRight, TrendingUp, TrendingDown, PiggyBank, Target, Wallet, CreditCard, Receipt, ShieldCheck, X, Send } from "lucide-react";
+import { Sparkles, Bell, BarChart3, ArrowLeftRight, TrendingUp, TrendingDown, PiggyBank, Target, Wallet, CreditCard, Receipt, ShieldCheck, X, Send, Trash2, Bot } from "lucide-react";
 import { UserMenu } from "@/components/ui/UserMenu";
 import StatCards from "./StatCards";
 import IncomeExpenseChart from "./IncomeExpenseChart";
@@ -97,8 +97,8 @@ function DashboardHome({ name, d }: { name?: string | null; d: DashboardData }) 
       </motion.div>
       <StatCards stats={d.stats} />
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2"><IncomeExpenseChart data={d.monthlyData} /></div>
-        <AIInsights data={d.aiInsights} />
+        <div className="lg:col-span-2 h-[320px]"><IncomeExpenseChart data={d.monthlyData} /></div>
+        <div className="h-[320px]"><AIInsights data={d.aiInsights} /></div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <SpendingChart data={d.spendingByCategory} />
@@ -116,47 +116,42 @@ function NotificationsTab({ readIds, setReadIds }: { readIds: number[]; setReadI
   const t = useT();
   const unread = NOTIFICATIONS.filter((n) => n.unread && !readIds.includes(n.id)).length;
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
+    <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: 0.1 }}
+      className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5 flex flex-col h-full overflow-hidden">
+      <div className="flex items-center justify-between mb-4">
         <div>
-          <p className="text-base font-semibold text-neutral-800 dark:text-neutral-100">{t("dashboard.notifications")}</p>
+          <h3 className="font-semibold text-neutral-900 dark:text-white">{t("dashboard.notifications")}</h3>
           {unread > 0 && <p className="text-xs text-neutral-400 mt-0.5">{unread} {t("dashboard.unread")}</p>}
         </div>
         {unread > 0 && (
-          <button
-            onClick={() => setReadIds(NOTIFICATIONS.filter((n) => n.unread).map((n) => n.id))}
-            className="text-xs hover:underline" style={{ color: "var(--app-accent)" }}
-          >
+          <button onClick={() => setReadIds(NOTIFICATIONS.filter((n) => n.unread).map((n) => n.id))}
+            className="text-xs hover:underline" style={{ color: "var(--app-accent)" }}>
             {t("dashboard.markAllRead")}
           </button>
         )}
       </div>
-      <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 overflow-hidden">
+      <div className="flex-1 overflow-y-auto space-y-1 pr-1 min-h-0">
         {NOTIFICATIONS.map((n) => {
           const isUnread = n.unread && !readIds.includes(n.id);
           return (
-            <button
-              key={n.id}
-              onClick={() => setReadIds((r) => [...r, n.id])}
-              className={`w-full flex items-start gap-4 px-5 py-4 hover:bg-neutral-50 dark:hover:bg-neutral-800/60 transition text-left border-b border-neutral-100 dark:border-neutral-800 last:border-0`}
-              style={isUnread ? { background: "var(--app-accent)10" } : {}}
-            >
-              <span className="text-2xl leading-none mt-0.5 flex-shrink-0">{n.icon}</span>
+            <button key={n.id} onClick={() => setReadIds((r) => [...r, n.id])}
+              className="w-full flex items-start gap-3 p-2.5 rounded-xl hover:bg-neutral-50 dark:hover:bg-neutral-800/60 transition text-left"
+              style={isUnread ? { background: "var(--app-accent)08" } : {}}>
+              <span className="text-xl leading-none mt-0.5 flex-shrink-0">{n.icon}</span>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between gap-2">
-                  <p className={`text-sm ${isUnread ? "font-semibold text-neutral-800 dark:text-neutral-100" : "font-medium text-neutral-600 dark:text-neutral-300"}`}>
-                    {n.title}
-                  </p>
+                  <p className={`text-sm truncate ${isUnread ? "font-semibold text-neutral-800 dark:text-neutral-100" : "font-medium text-neutral-600 dark:text-neutral-300"}`}>{n.title}</p>
                   <span className="text-xs text-neutral-400 flex-shrink-0">{n.time}</span>
                 </div>
-                <p className="text-sm text-neutral-400 mt-0.5">{n.desc}</p>
+                <p className="text-xs text-neutral-400 mt-0.5">{n.desc}</p>
               </div>
-              {isUnread && <span className="h-2 w-2 rounded-full flex-shrink-0 mt-2" style={{ background: "var(--app-accent)" }} />}
+              {isUnread && <span className="h-2 w-2 rounded-full flex-shrink-0 mt-1.5" style={{ background: "var(--app-accent)" }} />}
             </button>
           );
         })}
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -172,16 +167,16 @@ function TabContent({ tab, name, d, readIds, setReadIds }: { tab: string; name?:
         <WeeklyChart data={d.weeklySpending} />
       </div>
     );
-    case "ai-insights":  return <AIInsights data={d.aiInsights} />;
-    case "transactions": return <RecentTransactions data={d.transactions} />;
+    case "ai-insights":  return <div className="h-[calc(100vh-7rem)]"><AIInsights data={d.aiInsights} /></div>;
+    case "transactions": return <div className="h-[calc(100vh-7rem)]"><RecentTransactions data={d.transactions} /></div>;
     case "expenses":     return (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <SpendingChart data={d.spendingByCategory} />
         <WeeklyChart data={d.weeklySpending} />
       </div>
     );
-    case "budget":       return <BudgetProgress data={d.budgets} />;
-    case "notifications": return <NotificationsTab readIds={readIds} setReadIds={setReadIds} />;
+    case "budget":       return <div className="h-[calc(100vh-7rem)]"><BudgetProgress data={d.budgets} /></div>;
+    case "notifications": return <div className="h-[calc(100vh-7rem)]"><NotificationsTab readIds={readIds} setReadIds={setReadIds} /></div>;
     default:             return <ComingSoon tab={tab} />;
   }
 }
@@ -391,17 +386,40 @@ AI INSIGHTS:`,
   ].join("\n");
 }
 
+type ChatMsg = { role: "user" | "ai"; text: string; time: string };
+
+function nowTime() {
+  return new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+}
+
+function TypingDots() {
+  return (
+    <div className="flex items-center gap-1 px-1 py-0.5">
+      {[0, 1, 2].map((i) => (
+        <motion.span
+          key={i}
+          className="h-1.5 w-1.5 rounded-full bg-neutral-400 dark:bg-neutral-500 block"
+          animate={{ y: [0, -4, 0] }}
+          transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.15, ease: "easeInOut" }}
+        />
+      ))}
+    </div>
+  );
+}
+
 function AIFloatingButton({ insights, data }: { insights: any[]; data: DashboardData }) {
   const t = useT();
-  const { currency, currencySymbol, language } = useSettings();
+  const { currency, currencySymbol, language, chartColor } = useSettings();
   const STORAGE_KEY = "ai_chat_history";
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
-  const [messages, setMessages] = useState<{ role: "user" | "ai"; text: string }[]>(() => {
+  const [focused, setFocused] = useState(false);
+  const [messages, setMessages] = useState<ChatMsg[]>(() => {
     try { return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "[]"); } catch { return []; }
   });
   const [loading, setLoading] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(messages)); } catch {}
@@ -412,13 +430,16 @@ function AIFloatingButton({ insights, data }: { insights: any[]; data: Dashboard
   }, [messages, loading]);
 
   useEffect(() => {
-    if (open) bottomRef.current?.scrollIntoView({ behavior: "instant" });
+    if (open) {
+      bottomRef.current?.scrollIntoView({ behavior: "instant" });
+      setTimeout(() => inputRef.current?.focus(), 120);
+    }
   }, [open]);
 
   async function handleSend(override?: string) {
     const trimmed = (typeof override === "string" ? override : input).trim();
     if (!trimmed || loading) return;
-    const userMsg = { role: "user" as const, text: trimmed };
+    const userMsg: ChatMsg = { role: "user", text: trimmed, time: nowTime() };
     setMessages((m) => [...m, userMsg]);
     setInput("");
     setLoading(true);
@@ -434,112 +455,185 @@ function AIFloatingButton({ insights, data }: { insights: any[]; data: Dashboard
         body: JSON.stringify({ messages: history, context }),
       });
       const json = await res.json();
-      setMessages((m) => [...m, { role: "ai", text: json.reply ?? json.error ?? "Something went wrong." }]);
+      setMessages((m) => [...m, { role: "ai", text: json.reply ?? json.error ?? "Something went wrong.", time: nowTime() }]);
     } catch {
-      setMessages((m) => [...m, { role: "ai", text: "Network error. Please try again." }]);
+      setMessages((m) => [...m, { role: "ai", text: "Network error. Please try again.", time: nowTime() }]);
     } finally {
       setLoading(false);
     }
   }
+
+  const suggestions = [
+    t("dashboard.suggestedQ1"),
+    t("dashboard.suggestedQ2"),
+    t("dashboard.suggestedQ3"),
+    t("dashboard.suggestedQ4"),
+  ];
 
   return (
     <>
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{ opacity: 0, y: 16, scale: 0.96 }}
+            initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 16, scale: 0.96 }}
-            transition={{ duration: 0.2 }}
-            className="fixed bottom-24 right-5 z-50 w-100 h-100 rounded-2xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 shadow-2xl shadow-black/15 flex flex-col overflow-hidden"
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            transition={{ duration: 0.22, ease: "easeOut" }}
+            className="fixed bottom-22 right-4 sm:right-5 z-50 flex flex-col rounded-2xl overflow-hidden shadow-2xl shadow-black/20 border border-neutral-200 dark:border-neutral-700/80 bg-white dark:bg-neutral-900"
+            style={{ width: "min(360px, calc(100vw - 2rem))", height: "min(580px, calc(100dvh - 300px))" }}
           >
-            {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-100 dark:border-neutral-800" style={{ background: "color-mix(in srgb, var(--app-accent) 8%, transparent)" }}>
-              <div className="flex items-center gap-2">
-                <Sparkles className="h-4 w-4" style={{ color: "var(--app-accent)" }} />
-                <p className="text-sm font-semibold text-neutral-800 dark:text-neutral-100">{t("dashboard.aiAssistant")}</p>
+            {/* ── Header ── */}
+            <div
+              className="flex items-center justify-between px-4 py-3 flex-shrink-0"
+              style={{ background: `linear-gradient(135deg, ${chartColor}ee, ${chartColor}99)` }}
+            >
+              <div className="flex items-center gap-2.5">
+                <div className="relative">
+                  <div className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center">
+                    <Bot className="h-4 w-4 text-white" />
+                  </div>
+                  <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-400 border-2 border-white" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-white leading-none">{t("dashboard.aiAssistant")}</p>
+                  <p className="text-[10px] text-white/70 mt-0.5">
+                    {loading ? "Analysing…" : "Online · Finance AI"}
+                  </p>
+                </div>
               </div>
               <div className="flex items-center gap-1">
                 {messages.length > 0 && (
-                  <button onClick={() => setMessages([])} className="text-[10px] px-2 py-0.5 rounded-lg text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition">{t("dashboard.clear")}</button>
+                  <button
+                    onClick={() => setMessages([])}
+                    className="p-1.5 rounded-lg text-white/70 hover:text-white hover:bg-white/15 transition"
+                    title="Clear chat"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
                 )}
-                <button onClick={() => setOpen(false)} className="p-1 rounded-lg text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition">
+                <button
+                  onClick={() => setOpen(false)}
+                  className="p-1.5 rounded-lg text-white/70 hover:text-white hover:bg-white/15 transition"
+                >
                   <X className="h-3.5 w-3.5" />
                 </button>
               </div>
             </div>
 
-            {/* Messages */}
-            <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3 min-h-0">
-              {messages.length === 0 && (
-                <div className="py-2">
-                  <Image src="/Images/chatbot-icon.jpg" alt="AI" width={32} height={32} className="mx-auto mb-2 rounded-full" />
-                  <p className="text-xs text-neutral-400 text-center mb-3">{t("dashboard.askFinances")}</p>
-                  <div className="flex flex-col gap-1.5">
-                    {[
-                      t("dashboard.suggestedQ1"),
-                      t("dashboard.suggestedQ2"),
-                      t("dashboard.suggestedQ3"),
-                      t("dashboard.suggestedQ4"),
-                      t("dashboard.suggestedQ5"),
-                      t("dashboard.suggestedQ6"),
-                    ].map((q) => (
-                      <button key={q} onClick={() => handleSend(q)}
-                        className="text-xs px-3 py-2 hover:cursor-pointer rounded-xl border border-neutral-200 dark:border-neutral-700 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition text-left">
+            {/* ── Messages ── */}
+            <div className="flex-1 overflow-y-auto px-3 py-4 space-y-4 min-h-0 bg-neutral-50 dark:bg-neutral-950/40">
+              {messages.length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-full gap-4 px-2">
+                  <div className="h-14 w-14 rounded-2xl flex items-center justify-center shadow-lg" style={{ background: `linear-gradient(135deg, ${chartColor}dd, ${chartColor}88)` }}>
+                    <Sparkles className="h-7 w-7 text-white" />
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm font-semibold text-neutral-700 dark:text-neutral-200">{t("dashboard.aiAssistant")}</p>
+                    <p className="text-xs text-neutral-400 mt-1">{t("dashboard.askFinances")}</p>
+                  </div>
+                  <div className="w-full flex flex-col gap-2 mt-1">
+                    {suggestions.map((q) => (
+                      <button
+                        key={q}
+                        onClick={() => handleSend(q)}
+                        className="text-xs px-3 py-2.5 rounded-xl border border-neutral-200 dark:border-neutral-700 text-neutral-600 dark:text-neutral-400 hover:text-white transition text-left flex items-center gap-2 group"
+                        style={{ background: "transparent" }}
+                        onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = chartColor; (e.currentTarget as HTMLButtonElement).style.borderColor = chartColor; (e.currentTarget as HTMLButtonElement).style.color = "white"; }}
+                        onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "transparent"; (e.currentTarget as HTMLButtonElement).style.borderColor = ""; (e.currentTarget as HTMLButtonElement).style.color = ""; }}
+                      >
+                        <Sparkles className="h-3 w-3 flex-shrink-0 opacity-50 group-hover:opacity-100" />
                         {q}
                       </button>
                     ))}
                   </div>
                 </div>
-              )}
-              {messages.map((m, i) => (
-                <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
-                  <div className={`max-w-[85%] px-3 py-2 rounded-xl text-xs leading-relaxed ${
-                    m.role === "user"
-                      ? "text-white rounded-br-sm"
-                      : "bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 rounded-bl-sm"
-                  }`} style={m.role === "user" ? { background: "var(--app-accent)" } : {}}>
-                    {m.role === "user" ? m.text : (
-                      <div className="space-y-1.5">
-                        {m.text
-                          .split(/(?<=[.!?])\ +|\n+/)
-                          .map(s => s.trim())
-                          .filter(Boolean)
-                          .map((sentence, j) => (
-                            <p key={j}>{sentence}</p>
-                          ))}
+              ) : (
+                messages.map((m, i) => {
+                  const isUser = m.role === "user";
+                  const showAvatar = !isUser && (i === 0 || messages[i - 1]?.role === "user");
+                  return (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.18 }}
+                      className={`flex items-end gap-2 ${isUser ? "justify-end" : "justify-start"}`}
+                    >
+                      {/* AI avatar */}
+                      {!isUser && (
+                        <div className="flex-shrink-0 h-6 w-6 rounded-full flex items-center justify-center mb-0.5" style={{ background: showAvatar ? `linear-gradient(135deg, ${chartColor}cc, ${chartColor}77)` : "transparent" }}>
+                          {showAvatar && <Bot className="h-3.5 w-3.5 text-white" />}
+                        </div>
+                      )}
+                      <div className={`flex flex-col gap-1 max-w-[78%] ${isUser ? "items-end" : "items-start"}`}>
+                        <div
+                          className={`px-3 py-2.5 text-xs leading-relaxed ${
+                            isUser
+                              ? "text-white rounded-2xl rounded-br-sm shadow-sm"
+                              : "bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-200 rounded-2xl rounded-bl-sm border border-neutral-100 dark:border-neutral-700 shadow-sm"
+                          }`}
+                          style={isUser ? { background: `${chartColor}cc` } : {}}
+                        >
+                          {isUser ? m.text : (
+                            <div className="space-y-1.5">
+                              {m.text.split(/\n+/).map(s => s.trim()).filter(Boolean).map((s, j) => <p key={j}>{s}</p>)}
+                            </div>
+                          )}
+                        </div>
+                        <span className="text-[10px] text-neutral-400 px-1">{m.time}</span>
                       </div>
-                    )}
-                  </div>
-                </div>
-              ))}
+                    </motion.div>
+                  );
+                })
+              )}
+
+              {/* Typing indicator */}
               {loading && (
-                <div className="flex justify-start">
-                  <div className="px-3 py-2 rounded-xl rounded-bl-sm bg-neutral-100 dark:bg-neutral-800 text-xs text-neutral-400 italic tracking-wide">
-                    {t("dashboard.analysing")}
+                <motion.div
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex items-end gap-2"
+                >
+                  <div className="flex-shrink-0 h-6 w-6 rounded-full flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${chartColor}cc, ${chartColor}77)` }}>
+                    <Bot className="h-3.5 w-3.5 text-white" />
                   </div>
-                </div>
+                  <div className="px-3 py-2.5 rounded-2xl rounded-bl-sm bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 shadow-sm">
+                    <TypingDots />
+                  </div>
+                </motion.div>
               )}
               <div ref={bottomRef} />
             </div>
 
-            {/* Input */}
-            <div className="px-3 py-3 border-t border-neutral-100 dark:border-neutral-800 flex gap-2">
-              <input
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSend()}
-                placeholder={t("dashboard.askPlaceholder")}
-                className="flex-1 text-xs px-3 py-2 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-100 placeholder-neutral-400 outline-none focus:border-current transition"
-              />
-              <button
-                onClick={() => handleSend()}
-                disabled={!input.trim() || loading}
-                className="h-8 w-8 rounded-xl flex items-center justify-center text-white transition disabled:opacity-40"
-                style={{ background: "var(--app-accent)" }}
+            {/* ── Input ── */}
+            <div className="px-3 py-3 border-t border-neutral-100 dark:border-neutral-800 bg-white dark:bg-neutral-900 flex-shrink-0">
+              <div
+                className="flex items-center gap-2 px-3 py-2 rounded-xl border transition-all duration-150 bg-neutral-50 dark:bg-neutral-800"
+                style={{
+                  borderColor: focused ? chartColor : undefined,
+                  boxShadow: focused ? `0 0 0 3px ${chartColor}22` : undefined,
+                }}
               >
-                <Send className="h-3.5 w-3.5" />
-              </button>
+                <input
+                  ref={inputRef}
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSend()}
+                  onFocus={() => setFocused(true)}
+                  onBlur={() => setFocused(false)}
+                  placeholder={t("dashboard.askPlaceholder")}
+                  className="flex-1 text-xs bg-transparent text-neutral-800 dark:text-neutral-100 placeholder-neutral-400 outline-none"
+                />
+                <button
+                  onClick={() => handleSend()}
+                  disabled={!input.trim() || loading}
+                  className="h-7 w-7 rounded-lg flex items-center justify-center text-white transition-all disabled:opacity-35 flex-shrink-0"
+                  style={{ background: chartColor }}
+                >
+                  <Send className="h-3 w-3" />
+                </button>
+              </div>
+              <p className="text-[10px] text-neutral-400 text-center mt-1.5">AI · Finance Assistant</p>
             </div>
           </motion.div>
         )}
@@ -550,11 +644,12 @@ function AIFloatingButton({ insights, data }: { insights: any[]; data: Dashboard
         onClick={() => setOpen((v) => !v)}
         whileHover={{ scale: 1.08 }}
         whileTap={{ scale: 0.94 }}
-        className="fixed bottom-6 right-5 z-50 h-14 w-14 rounded-2xl overflow-hidden shadow-xl shadow-black/20 transition"
+        className="fixed bottom-6 right-4 sm:right-5 z-50 h-14 w-14 rounded-2xl overflow-hidden shadow-xl transition"
+        style={{ boxShadow: open ? `0 8px 32px ${chartColor}55` : undefined }}
       >
         <AnimatePresence mode="wait">
           {open
-            ? <motion.span key="x" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.15 }} className="flex items-center justify-center h-full w-full bg-neutral-800"><X className="h-5 w-5 text-white" /></motion.span>
+            ? <motion.span key="x" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.15 }} className="flex items-center justify-center h-full w-full" style={{ background: chartColor }}><X className="h-5 w-5 text-white" /></motion.span>
             : <motion.span key="img" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }} className="block h-full w-full"><Image src="/Images/chatbot-icon.jpg" alt="AI Assistant" fill className="object-cover" /></motion.span>
           }
         </AnimatePresence>

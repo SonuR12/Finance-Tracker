@@ -26,24 +26,30 @@ const Ctx = createContext<SettingsCtx>({
   applyTheme: () => {},
 });
 
-function getLS(key: string, fallback: string) {
-  if (typeof window === "undefined") return fallback;
-  try { return localStorage.getItem(key) || fallback; } catch { return fallback; }
-}
-
 export function SettingsProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLang] = useState(() => getLS("language", "en"));
-  const [currency, setCurr] = useState(() => getLS("currency", "USD"));
-  const [currencySymbol, setCurrSymbol] = useState(() => getLS("currencySymbol", "$"));
-  const [chartColor, setChartColorState] = useState(() => getLS("chartColor", "#6366f1"));
-  const [theme, setThemeState] = useState<"light" | "dark" | "system">(
-    () => getLS("theme", "system") as "light" | "dark" | "system"
-  );
+  const [language, setLang] = useState("en");
+  const [currency, setCurr] = useState("USD");
+  const [currencySymbol, setCurrSymbol] = useState("$");
+  const [chartColor, setChartColorState] = useState(() => {
+    if (typeof window === "undefined") return "#6366f1";
+    try { return localStorage.getItem("chartColor") || "#6366f1"; } catch { return "#6366f1"; }
+  });
+  const [theme, setThemeState] = useState<"light" | "dark" | "system">(() => {
+    if (typeof window === "undefined") return "system";
+    try { return (localStorage.getItem("theme") || "system") as "light" | "dark" | "system"; } catch { return "system"; }
+  });
 
   useEffect(() => {
     try {
+      const lang = localStorage.getItem("language") || "en";
+      const curr = localStorage.getItem("currency") || "USD";
+      const sym  = localStorage.getItem("currencySymbol") || "$";
+      setLang(lang);
+      setCurr(curr);
+      setCurrSymbol(sym);
+      document.documentElement.lang = lang;
       document.documentElement.style.setProperty("--app-accent", chartColor);
-      document.documentElement.lang = language;
+      document.documentElement.style.setProperty("--ring", chartColor);
     } catch {}
   }, []);
 
@@ -65,6 +71,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   function setChartColor(v: string) {
     setChartColorState(v);
     document.documentElement.style.setProperty("--app-accent", v);
+    document.documentElement.style.setProperty("--ring", v);
     try { localStorage.setItem("chartColor", v); } catch {}
   }
 

@@ -2,23 +2,6 @@
 
 import { forwardRef } from "react";
 import { Loader2, Check } from "lucide-react";
-import { useSettings } from "@/lib/settings-context";
-
-function lighten(hex: string, amt: number) {
-  const m = hex.replace("#", "").match(/.{2}/g);
-  if (!m) return hex;
-  return "#" + m.map((x) => Math.min(255, Math.round(parseInt(x, 16) + 255 * amt)).toString(16).padStart(2, "0")).join("");
-}
-function darken(hex: string, amt: number) {
-  const m = hex.replace("#", "").match(/.{2}/g);
-  if (!m) return hex;
-  return "#" + m.map((x) => Math.max(0, Math.round(parseInt(x, 16) * (1 - amt))).toString(16).padStart(2, "0")).join("");
-}
-function hexToRgb(hex: string) {
-  const m = hex.replace("#", "").match(/.{2}/g);
-  if (!m || m.length < 3) return "99,102,241";
-  return m.slice(0, 3).map((x) => parseInt(x, 16)).join(",");
-}
 
 export type AppButtonVariant = "primary" | "ghost" | "outline" | "danger" | "subtle";
 
@@ -36,7 +19,7 @@ interface AppButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 const SIZE = {
   sm: "px-3 py-1.5 text-xs gap-1.5",
   md: "px-4 py-2 text-sm gap-2",
-  lg: "px-8 py-3 text-base gap-2",
+  lg: "px-4 py-1.5 text-xs gap-1.5 sm:px-8 sm:py-3 sm:text-base sm:gap-2",
 };
 
 const AppButton = forwardRef<HTMLButtonElement, AppButtonProps>(
@@ -50,23 +33,20 @@ const AppButton = forwardRef<HTMLButtonElement, AppButtonProps>(
     },
     ref
   ) => {
-    const { chartColor } = useSettings();
-    const rgb = hexToRgb(chartColor);
-
     const label = saving ? savingLabel : saved ? savedLabel : saveLabel;
     const content = children ?? label;
 
     const variantStyle: React.CSSProperties =
       variant === "primary"
         ? {
-            background: `linear-gradient(to bottom, ${lighten(chartColor, 0.20)}, ${darken(chartColor, 0.28)})`,
-            boxShadow: `0 0 12px ${chartColor}55, inset 0 1px 0 ${lighten(chartColor, 0.20)}`,
+            background: "linear-gradient(to bottom, color-mix(in srgb, var(--app-accent) 80%, white), color-mix(in srgb, var(--app-accent) 72%, black))",
+            boxShadow: "0 0 12px color-mix(in srgb, var(--app-accent) 33%, transparent), inset 0 1px 0 color-mix(in srgb, var(--app-accent) 80%, white)",
           }
         : variant === "outline"
         ? {
-            color: chartColor,
-            border: `1.5px solid rgba(${rgb},0.35)`,
-            background: `rgba(${rgb},0.06)`,
+            color: "var(--app-accent)",
+            border: "1.5px solid color-mix(in srgb, var(--app-accent) 35%, transparent)",
+            background: "color-mix(in srgb, var(--app-accent) 6%, transparent)",
           }
         : {};
 

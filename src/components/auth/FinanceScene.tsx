@@ -1,349 +1,307 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useRef, useMemo } from 'react'
+import { Canvas, useFrame, useThree } from '@react-three/fiber'
+import { Float, MeshDistortMaterial, Sparkles, Trail, OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
+import { motion } from 'framer-motion'
 
-export function FinanceScene() {
-  const mountRef = useRef<HTMLDivElement>(null)
+// ── Floating credit card ──────────────────────────────────────────────────────
+function CreditCard() {
+  const groupRef = useRef<THREE.Group>(null)
+  const { pointer } = useThree()
 
-  useEffect(() => {
-    const mount = mountRef.current!
-    const w = mount.clientWidth || 600
-    const h = mount.clientHeight || 800
+  // Canvas texture for card face
+  const cardTexture = useMemo(() => {
+    const canvas = document.createElement('canvas')
+    canvas.width = 512; canvas.height = 320
+    const ctx = canvas.getContext('2d')!
 
-    // ── Renderer ──
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
-    renderer.setSize(w, h)
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-    renderer.shadowMap.enabled = true
-    mount.appendChild(renderer.domElement)
+    // Background gradient
+    const grad = ctx.createLinearGradient(0, 0, 512, 320)
+    grad.addColorStop(0, '#1e1b4b')
+    grad.addColorStop(0.5, '#312e81')
+    grad.addColorStop(1, '#4c1d95')
+    ctx.fillStyle = grad
+    ctx.roundRect(0, 0, 512, 320, 24)
+    ctx.fill()
 
-    // ── Scene / Camera ──
-    const scene = new THREE.Scene()
-    const camera = new THREE.PerspectiveCamera(50, w / h, 0.1, 100)
-    camera.position.set(0, 0, 7)
+    // Shine overlay
+    const shine = ctx.createLinearGradient(0, 0, 300, 200)
+    shine.addColorStop(0, 'rgba(255,255,255,0.08)')
+    shine.addColorStop(1, 'rgba(255,255,255,0)')
+    ctx.fillStyle = shine
+    ctx.roundRect(0, 0, 512, 320, 24)
+    ctx.fill()
 
-    // ── Lights — bright so colors show ──
-    scene.add(new THREE.AmbientLight(0xffffff, 1.2))
-    const d1 = new THREE.DirectionalLight(0xffffff, 2)
-    d1.position.set(5, 8, 5)
-    scene.add(d1)
-    const d2 = new THREE.DirectionalLight(0xa78bfa, 1.2)
-    d2.position.set(-5, -3, 3)
-    scene.add(d2)
-    const d3 = new THREE.DirectionalLight(0x38bdf8, 0.8)
-    d3.position.set(0, -5, 4)
-    scene.add(d3)
-
-    // ── Material helpers ──
-    const phong = (color: number, emissive = 0x000000, shininess = 80) =>
-      new THREE.MeshPhongMaterial({ color, emissive, shininess })
-
-    const basic = (color: number) => new THREE.MeshBasicMaterial({ color })
-
-    // ── Canvas texture helper ──
-    const canvasTex = (draw: (ctx: CanvasRenderingContext2D, s: number) => void, size = 256) => {
-      const c = document.createElement('canvas')
-      c.width = size; c.height = size
-      const ctx = c.getContext('2d')!
-      draw(ctx, size)
-      return new THREE.CanvasTexture(c)
+    // Chip
+    ctx.fillStyle = '#f59e0b'
+    ctx.roundRect(48, 90, 72, 54, 6)
+    ctx.fill()
+    ctx.strokeStyle = '#d97706'
+    ctx.lineWidth = 1.5
+    for (let i = 1; i < 3; i++) {
+      ctx.beginPath(); ctx.moveTo(48, 90 + i * 18); ctx.lineTo(120, 90 + i * 18); ctx.stroke()
     }
+    ctx.beginPath(); ctx.moveTo(84, 90); ctx.lineTo(84, 144); ctx.stroke()
 
-    // ── Glow Sphere ──
-    const sphereMesh = new THREE.Mesh(
-      new THREE.SphereGeometry(1.3, 64, 64),
-      new THREE.MeshPhongMaterial({ color: 0x6366f1, emissive: 0x4338ca, transparent: true, opacity: 0.22, shininess: 30 })
-    )
-    sphereMesh.position.set(0, 0.3, -1.2)
-    scene.add(sphereMesh)
-
-    // ── Orbit Rings ──
-    const ringDefs = [
-      { r: 1.7, tube: 0.045, color: 0xa78bfa, emissive: 0x7c3aed, opacity: 0.8, sx: 0.35, sz: 0.18 },
-      { r: 2.15, tube: 0.03, color: 0x38bdf8, emissive: 0x0284c7, opacity: 0.7, sx: 0.12, sz: 0.28 },
-    ]
-    const rings = ringDefs.map(({ r, tube, color, emissive, opacity, sx, sz }) => {
-      const mesh = new THREE.Mesh(
-        new THREE.TorusGeometry(r, tube, 16, 100),
-        new THREE.MeshPhongMaterial({ color, emissive, shininess: 100, transparent: true, opacity })
-      )
-      mesh.position.set(0, 0.3, -0.5)
-      scene.add(mesh)
-      return { mesh, sx, sz }
-    })
-
-    // ── Credit Card ──
-    const cardGroup = new THREE.Group()
-    scene.add(cardGroup)
-
-    // Card front face — gradient canvas texture
-    const cardFaceTex = canvasTex((ctx, s) => {
-      const grad = ctx.createLinearGradient(0, 0, s, s)
-      grad.addColorStop(0, '#312e81')
-      grad.addColorStop(0.5, '#4f46e5')
-      grad.addColorStop(1, '#7c3aed')
-      ctx.fillStyle = grad
-      ctx.fillRect(0, 0, s, s)
-      // subtle shine
-      const shine = ctx.createLinearGradient(0, 0, s * 0.6, s * 0.4)
-      shine.addColorStop(0, 'rgba(255,255,255,0.12)')
-      shine.addColorStop(1, 'rgba(255,255,255,0)')
-      ctx.fillStyle = shine
-      ctx.fillRect(0, 0, s, s)
-    })
-
-    // Card back face — dark stripe
-    const cardBackTex = canvasTex((ctx, s) => {
-      ctx.fillStyle = '#1e1b4b'
-      ctx.fillRect(0, 0, s, s)
-      ctx.fillStyle = '#111827'
-      ctx.fillRect(0, s * 0.3, s, s * 0.22)
-    })
-
-    // Per-face materials
-    const cardMats = [
-      new THREE.MeshPhongMaterial({ color: 0x4f46e5, emissive: 0x312e81, shininess: 60 }), // right
-      new THREE.MeshPhongMaterial({ color: 0x4f46e5, emissive: 0x312e81, shininess: 60 }), // left
-      new THREE.MeshPhongMaterial({ color: 0x6366f1, emissive: 0x4338ca, shininess: 60 }), // top
-      new THREE.MeshPhongMaterial({ color: 0x6366f1, emissive: 0x4338ca, shininess: 60 }), // bottom
-      new THREE.MeshPhongMaterial({ map: cardFaceTex, shininess: 80 }),                    // front
-      new THREE.MeshPhongMaterial({ map: cardBackTex, shininess: 40 }),                    // back
-    ]
-    const cardBody = new THREE.Mesh(new THREE.BoxGeometry(2.2, 1.35, 0.08), cardMats)
-    cardGroup.add(cardBody)
-
-    // Gold chip
-    const chip = new THREE.Mesh(
-      new THREE.BoxGeometry(0.38, 0.28, 0.05),
-      new THREE.MeshPhongMaterial({ color: 0xf59e0b, emissive: 0xb45309, shininess: 120 })
-    )
-    chip.position.set(-0.6, 0.2, 0.065)
-    cardGroup.add(chip)
-
-    // Chip grid lines
-    ;[-0.07, 0, 0.07].forEach((y) => {
-      const l = new THREE.Mesh(
-        new THREE.BoxGeometry(0.36, 0.013, 0.01),
-        new THREE.MeshPhongMaterial({ color: 0xd97706, emissive: 0x92400e })
-      )
-      l.position.set(-0.6, 0.2 + y, 0.095)
-      cardGroup.add(l)
-    })
-    ;[-0.1, 0.1].forEach((x) => {
-      const l = new THREE.Mesh(
-        new THREE.BoxGeometry(0.013, 0.26, 0.01),
-        new THREE.MeshPhongMaterial({ color: 0xd97706, emissive: 0x92400e })
-      )
-      l.position.set(-0.6 + x, 0.2, 0.095)
-      cardGroup.add(l)
-    })
-
-    // Card number dots (4 groups of 4)
-    const dotColors = [0xa5b4fc, 0x818cf8, 0xa5b4fc, 0x818cf8]
-    ;[-0.72, -0.24, 0.24, 0.72].forEach((gx, gi) => {
-      ;[-0.04, 0.04].forEach((dx) => {
-        const dot = new THREE.Mesh(
-          new THREE.SphereGeometry(0.035, 8, 8),
-          new THREE.MeshPhongMaterial({ color: dotColors[gi], emissive: 0x4338ca, shininess: 80 })
-        )
-        dot.position.set(gx + dx, -0.2, 0.065)
-        cardGroup.add(dot)
+    // Card number dots
+    ctx.fillStyle = 'rgba(255,255,255,0.6)'
+    ;[100, 180, 260, 340].forEach(gx => {
+      ;[0, 14].forEach(dx => {
+        ctx.beginPath(); ctx.arc(gx + dx, 210, 5, 0, Math.PI * 2); ctx.fill()
       })
     })
+
+    // FINANCE text
+    ctx.fillStyle = 'rgba(255,255,255,0.9)'
+    ctx.font = 'bold 28px system-ui'
+    ctx.fillText('FINANCE', 48, 280)
 
     // Contactless arcs
-    ;[0.17, 0.26, 0.35].forEach((r, i) => {
-      const arc = new THREE.Mesh(
-        new THREE.TorusGeometry(r, 0.014, 8, 24, Math.PI * 0.65),
-        new THREE.MeshPhongMaterial({ color: 0x818cf8, emissive: 0x6366f1, shininess: 100, transparent: true, opacity: 0.9 - i * 0.2 })
-      )
-      arc.position.set(0.78, 0.2, 0.065)
-      arc.rotation.z = -Math.PI * 0.18
-      cardGroup.add(arc)
-    })
-
-    // ₹ on card front
-    const rupeeCardTex = canvasTex((ctx, s) => {
-      ctx.clearRect(0, 0, s, s)
-      ctx.fillStyle = '#a5b4fc'
-      ctx.font = `bold ${s * 0.7}px serif`
-      ctx.textAlign = 'center'
-      ctx.textBaseline = 'middle'
-      ctx.fillText('₹', s / 2, s / 2)
-    })
-    const rupeeOnCard = new THREE.Mesh(
-      new THREE.PlaneGeometry(0.35, 0.35),
-      new THREE.MeshBasicMaterial({ map: rupeeCardTex, transparent: true })
-    )
-    rupeeOnCard.position.set(0.72, 0.22, 0.07)
-    cardGroup.add(rupeeOnCard)
-
-    cardGroup.position.set(0, 0.6, 0)
-
-    // ── Rupee Coins ──
-    const makeRupeeCoinTex = (coinColor: string) => canvasTex((ctx, s) => {
-      // coin face gradient
-      const grad = ctx.createRadialGradient(s * 0.4, s * 0.35, s * 0.05, s / 2, s / 2, s * 0.5)
-      grad.addColorStop(0, '#ffffff')
-      grad.addColorStop(0.4, coinColor)
-      grad.addColorStop(1, '#00000066')
-      ctx.fillStyle = grad
+    ctx.strokeStyle = 'rgba(255,255,255,0.5)'
+    ctx.lineWidth = 2.5
+    ;[22, 34, 46].forEach(r => {
       ctx.beginPath()
-      ctx.arc(s / 2, s / 2, s * 0.48, 0, Math.PI * 2)
-      ctx.fill()
-      // ₹ symbol
-      ctx.fillStyle = '#ffffff'
-      ctx.font = `bold ${s * 0.52}px serif`
-      ctx.textAlign = 'center'
-      ctx.textBaseline = 'middle'
-      ctx.fillText('₹', s / 2, s / 2)
+      ctx.arc(420, 120, r, -Math.PI * 0.4, Math.PI * 0.4)
+      ctx.stroke()
     })
 
-    const coinConfigs = [
-      { pos: [-2.0, 1.4, 0.2] as [number,number,number], speed: 1.3, color: 0x6366f1, hex: '#6366f1', delay: 0 },
-      { pos: [2.0, 1.0, 0.4] as [number,number,number], speed: 0.9, color: 0xa78bfa, hex: '#a78bfa', delay: 1.2 },
-      { pos: [0.3, 2.3, -0.3] as [number,number,number], speed: 1.6, color: 0x38bdf8, hex: '#38bdf8', delay: 0.6 },
-      { pos: [-1.4, -0.5, 0.6] as [number,number,number], speed: 1.1, color: 0xfbbf24, hex: '#fbbf24', delay: 2.0 },
-      { pos: [1.5, -0.3, 0.5] as [number,number,number], speed: 0.7, color: 0x34d399, hex: '#34d399', delay: 0.3 },
-    ]
-
-    const coins = coinConfigs.map(({ pos, speed, color, hex, delay }) => {
-      const group = new THREE.Group()
-      group.position.set(...pos)
-
-      // Disc
-      const disc = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.32, 0.32, 0.08, 40),
-        new THREE.MeshPhongMaterial({ color, emissive: new THREE.Color(color).multiplyScalar(0.4), shininess: 120 })
-      )
-      group.add(disc)
-
-      // Gold rim
-      const rim = new THREE.Mesh(
-        new THREE.TorusGeometry(0.32, 0.028, 8, 40),
-        new THREE.MeshPhongMaterial({ color: 0xfbbf24, emissive: 0xb45309, shininess: 150 })
-      )
-      rim.rotation.x = Math.PI / 2
-      group.add(rim)
-
-      // ₹ face (top)
-      const face = new THREE.Mesh(
-        new THREE.CircleGeometry(0.28, 32),
-        new THREE.MeshBasicMaterial({ map: makeRupeeCoinTex(hex), transparent: true })
-      )
-      face.rotation.x = -Math.PI / 2
-      face.position.y = 0.042
-      group.add(face)
-
-      // ₹ face (bottom mirror)
-      const faceB = face.clone()
-      faceB.rotation.x = Math.PI / 2
-      faceB.position.y = -0.042
-      group.add(faceB)
-
-      scene.add(group)
-      return { group, speed, delay, baseY: pos[1] }
-    })
-
-    // ── Bar Chart ──
-    const barGroup = new THREE.Group()
-    barGroup.position.set(0, -1.5, 0)
-    scene.add(barGroup)
-
-    const barDefs = [
-      { h: 0.55, x: -1.1, color: 0x818cf8, emissive: 0x4338ca },
-      { h: 0.95, x: -0.55, color: 0x6366f1, emissive: 0x4338ca },
-      { h: 0.72, x: 0,    color: 0xa78bfa, emissive: 0x7c3aed },
-      { h: 1.2,  x: 0.55, color: 0x38bdf8, emissive: 0x0284c7 },
-      { h: 0.85, x: 1.1,  color: 0x34d399, emissive: 0x059669 },
-    ]
-    barDefs.forEach(({ h, x, color, emissive }) => {
-      const bar = new THREE.Mesh(
-        new THREE.BoxGeometry(0.3, h, 0.3),
-        new THREE.MeshPhongMaterial({ color, emissive, shininess: 60 })
-      )
-      bar.position.set(x, h / 2, 0)
-      barGroup.add(bar)
-    })
-
-    // ── Floating particles ──
-    const particleGeo = new THREE.BufferGeometry()
-    const count = 80
-    const positions = new Float32Array(count * 3)
-    const pColors = new Float32Array(count * 3)
-    const palette = [
-      new THREE.Color(0x6366f1), new THREE.Color(0xa78bfa),
-      new THREE.Color(0x38bdf8), new THREE.Color(0xfbbf24), new THREE.Color(0x34d399),
-    ]
-    for (let i = 0; i < count; i++) {
-      positions[i * 3]     = (Math.random() - 0.5) * 8
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 8
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 4
-      const c = palette[Math.floor(Math.random() * palette.length)]
-      pColors[i * 3] = c.r; pColors[i * 3 + 1] = c.g; pColors[i * 3 + 2] = c.b
-    }
-    particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3))
-    particleGeo.setAttribute('color', new THREE.BufferAttribute(pColors, 3))
-    const particles = new THREE.Points(
-      particleGeo,
-      new THREE.PointsMaterial({ size: 0.06, vertexColors: true, transparent: true, opacity: 0.8 })
-    )
-    scene.add(particles)
-
-    // ── Resize ──
-    const onResize = () => {
-      const nw = mount.clientWidth, nh = mount.clientHeight
-      camera.aspect = nw / nh
-      camera.updateProjectionMatrix()
-      renderer.setSize(nw, nh)
-    }
-    window.addEventListener('resize', onResize)
-
-    // ── Animation Loop ──
-    let animId: number
-    const clock = new THREE.Clock()
-
-    const animate = () => {
-      animId = requestAnimationFrame(animate)
-      const t = clock.getElapsedTime()
-
-      sphereMesh.rotation.x = t * 0.18
-      sphereMesh.rotation.y = t * 0.25
-
-      rings.forEach(({ mesh, sx, sz }) => {
-        mesh.rotation.x = t * sx
-        mesh.rotation.z = t * sz
-      })
-
-      cardGroup.rotation.y = t * 0.8
-      cardGroup.position.y = Math.sin(t * 0.6) * 0.15 + 0.6
-
-      coins.forEach(({ group, speed, delay, baseY }) => {
-        const ct = t + delay
-        group.rotation.y = ct * speed
-        group.rotation.x = Math.sin(ct * 0.5) * 0.25
-        group.position.y = baseY + Math.sin(ct * 1.2) * 0.18
-      })
-
-      barGroup.rotation.y = Math.sin(t * 0.25) * 0.18
-
-      particles.rotation.y = t * 0.04
-      particles.rotation.x = t * 0.02
-
-      scene.rotation.y = Math.sin(t * 0.1) * 0.08
-
-      renderer.render(scene, camera)
-    }
-    animate()
-
-    return () => {
-      cancelAnimationFrame(animId)
-      window.removeEventListener('resize', onResize)
-      renderer.dispose()
-      mount.removeChild(renderer.domElement)
-    }
+    return new THREE.CanvasTexture(canvas)
   }, [])
 
-  return <div ref={mountRef} className="w-full h-full" />
+  useFrame((state) => {
+    if (!groupRef.current) return
+    const t = state.clock.elapsedTime
+    // Smooth mouse tracking
+    groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, pointer.x * 0.4, 0.05)
+    groupRef.current.rotation.x = THREE.MathUtils.lerp(groupRef.current.rotation.x, -pointer.y * 0.25, 0.05)
+    groupRef.current.position.y = Math.sin(t * 0.6) * 0.12
+  })
+
+  const cardMats = useMemo(() => [
+    new THREE.MeshStandardMaterial({ color: '#312e81', roughness: 0.3, metalness: 0.4 }),
+    new THREE.MeshStandardMaterial({ color: '#312e81', roughness: 0.3, metalness: 0.4 }),
+    new THREE.MeshStandardMaterial({ color: '#4c1d95', roughness: 0.3, metalness: 0.4 }),
+    new THREE.MeshStandardMaterial({ color: '#4c1d95', roughness: 0.3, metalness: 0.4 }),
+    new THREE.MeshStandardMaterial({ map: cardTexture, roughness: 0.15, metalness: 0.5 }),
+    new THREE.MeshStandardMaterial({ color: '#1e1b4b', roughness: 0.4, metalness: 0.3 }),
+  ], [cardTexture])
+
+  return (
+    <group ref={groupRef} position={[0, 0.3, 0]}>
+      <mesh geometry={new THREE.BoxGeometry(3.2, 2, 0.1)} material={cardMats} castShadow />
+      {/* Gold chip */}
+      <mesh position={[-0.9, 0.28, 0.06]}>
+        <boxGeometry args={[0.45, 0.34, 0.04]} />
+        <meshStandardMaterial color="#f59e0b" roughness={0.2} metalness={0.8} />
+      </mesh>
+    </group>
+  )
+}
+
+// ── Orbiting torus ring ───────────────────────────────────────────────────────
+function OrbitRing({ radius, tube, speed, tiltX, tiltZ, color }: {
+  radius: number; tube: number; speed: number; tiltX: number; tiltZ: number; color: string
+}) {
+  const ref = useRef<THREE.Mesh>(null)
+  useFrame((state) => {
+    if (!ref.current) return
+    ref.current.rotation.y = state.clock.elapsedTime * speed
+  })
+  return (
+    <mesh ref={ref} rotation={[tiltX, 0, tiltZ]}>
+      <torusGeometry args={[radius, tube, 16, 120]} />
+      <meshStandardMaterial color={color} roughness={0.1} metalness={0.9} transparent opacity={0.7} />
+    </mesh>
+  )
+}
+
+// ── Floating coin sphere ──────────────────────────────────────────────────────
+function Coin({ position, color, speed, delay }: {
+  position: [number, number, number]; color: string; speed: number; delay: number
+}) {
+  const ref = useRef<THREE.Mesh>(null)
+  useFrame((state) => {
+    if (!ref.current) return
+    const t = state.clock.elapsedTime + delay
+    ref.current.rotation.y = t * speed
+    ref.current.rotation.x = Math.sin(t * 0.4) * 0.3
+    ref.current.position.y = position[1] + Math.sin(t * 0.9) * 0.15
+  })
+  return (
+    <mesh ref={ref} position={position} castShadow>
+      <cylinderGeometry args={[0.22, 0.22, 0.06, 40]} />
+      <meshStandardMaterial color={color} roughness={0.1} metalness={0.85} />
+    </mesh>
+  )
+}
+
+// ── Glowing core sphere ───────────────────────────────────────────────────────
+function GlowSphere() {
+  const ref = useRef<THREE.Mesh>(null)
+  useFrame((state) => {
+    if (!ref.current) return
+    ref.current.rotation.x = state.clock.elapsedTime * 0.15
+    ref.current.rotation.y = state.clock.elapsedTime * 0.22
+  })
+  return (
+    <mesh ref={ref} position={[0, 0, -1.5]}>
+      <sphereGeometry args={[1.1, 64, 64]} />
+      <MeshDistortMaterial
+        color="#6366f1"
+        emissive="#4338ca"
+        emissiveIntensity={0.6}
+        roughness={0.2}
+        metalness={0.3}
+        distort={0.35}
+        speed={1.5}
+        transparent
+        opacity={0.25}
+      />
+    </mesh>
+  )
+}
+
+// ── Scene ─────────────────────────────────────────────────────────────────────
+function Scene() {
+  return (
+    <>
+      {/* Lights */}
+      <ambientLight intensity={0.6} />
+      <directionalLight position={[5, 8, 5]} intensity={2.5} color="#ffffff" castShadow />
+      <directionalLight position={[-4, -2, 3]} intensity={1.5} color="#a78bfa" />
+      <pointLight position={[0, 0, 3]} intensity={2} color="#6366f1" distance={8} />
+      <pointLight position={[3, 2, 1]} intensity={1} color="#38bdf8" distance={6} />
+
+      <GlowSphere />
+
+      {/* Orbit rings */}
+      <OrbitRing radius={2.2} tube={0.025} speed={0.4}  tiltX={0.5}  tiltZ={0.1}  color="#a78bfa" />
+      <OrbitRing radius={2.8} tube={0.018} speed={-0.28} tiltX={0.2}  tiltZ={0.55} color="#38bdf8" />
+      <OrbitRing radius={3.3} tube={0.014} speed={0.18}  tiltX={1.1}  tiltZ={0.3}  color="#6366f1" />
+
+      {/* Credit card with Float wrapper for extra bounce */}
+      <Float speed={1.4} rotationIntensity={0} floatIntensity={0.3}>
+        <CreditCard />
+      </Float>
+
+      {/* Floating coins */}
+      <Coin position={[-2.6,  1.2,  0.3]} color="#f59e0b" speed={1.4} delay={0}   />
+      <Coin position={[ 2.5,  0.8,  0.5]} color="#a78bfa" speed={0.9} delay={1.2} />
+      <Coin position={[ 0.4,  2.4, -0.2]} color="#38bdf8" speed={1.7} delay={0.6} />
+      <Coin position={[-1.8, -1.0,  0.7]} color="#34d399" speed={1.1} delay={2.0} />
+      <Coin position={[ 2.0, -0.8,  0.4]} color="#f472b6" speed={0.7} delay={0.4} />
+
+      {/* Sparkle particles from Drei */}
+      <Sparkles
+        count={120}
+        scale={8}
+        size={1.2}
+        speed={0.3}
+        opacity={0.6}
+        color="#a78bfa"
+      />
+      <Sparkles
+        count={60}
+        scale={6}
+        size={0.8}
+        speed={0.5}
+        opacity={0.4}
+        color="#38bdf8"
+      />
+    </>
+  )
+}
+
+// ── Export ────────────────────────────────────────────────────────────────────
+export function FinanceScene() {
+  return (
+    <div className="relative w-full h-full bg-[#06040f]">
+
+      {/* Grid lines matching hero */}
+      <div
+        className="absolute inset-0 pointer-events-none z-10"
+        style={{
+          backgroundImage: 'linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)',
+          backgroundSize: '48px 48px',
+          WebkitMaskImage: 'radial-gradient(ellipse 80% 70% at 50% 40%, black 30%, transparent 100%)',
+          maskImage: 'radial-gradient(ellipse 80% 70% at 50% 40%, black 30%, transparent 100%)',
+        }}
+      />
+
+      {/* Accent glow */}
+      <div
+        className="absolute inset-0 pointer-events-none z-10"
+        style={{ background: 'radial-gradient(ellipse 70% 40% at 50% 0%, color-mix(in srgb, var(--app-accent) 22%, transparent) 0%, transparent 60%)' }}
+      />
+
+      <Canvas
+        camera={{ position: [0, 0, 7], fov: 48 }}
+        gl={{ antialias: true, alpha: true }}
+        dpr={[1, 2]}
+        style={{ position: 'absolute', inset: 0 }}
+      >
+        <Scene />
+      </Canvas>
+
+      {/* Overlay UI */}
+      <div className="absolute inset-0 z-20 flex flex-col justify-between p-9 pointer-events-none">
+        {/* Logo */}
+        <motion.div
+          initial={{ opacity: 0, y: -14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="flex items-center gap-2.5"
+        >
+          <img src="/svg/logo.svg" alt="Finance" className="w-8 h-8 object-contain" />
+          <span className="text-lg font-bold text-white tracking-tight">Finance</span>
+        </motion.div>
+
+        {/* Bottom */}
+        <div className="space-y-3">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55, delay: 0.4 }}
+          >
+            <p className="text-[11px] font-semibold uppercase tracking-widest mb-1.5" style={{ color: 'var(--app-accent)' }}>
+              AI-Powered Finance
+            </p>
+            <h2 className="text-2xl font-bold text-white leading-snug">
+              Track, budget &<br />grow smarter.
+            </h2>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.8 }}
+            className="flex flex-wrap gap-2"
+          >
+            {['📊 Analytics', '💳 Budgeting', '🔒 Secure', '⚡ Real-time'].map((f, i) => (
+              <motion.span
+                key={f}
+                initial={{ opacity: 0, scale: 0.85 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.9 + i * 0.08 }}
+                className="text-[11px] text-white/70 bg-white/8 border border-white/12 backdrop-blur-sm rounded-full px-3 py-1"
+              >
+                {f}
+              </motion.span>
+            ))}
+          </motion.div>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.3 }}
+            className="text-white/30 text-[11px]"
+          >
+            Trusted by 50,000+ users worldwide
+          </motion.p>
+        </div>
+      </div>
+    </div>
+  )
 }

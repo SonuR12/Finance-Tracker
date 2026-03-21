@@ -3,28 +3,14 @@
 // Backward-compat re-exports — use AppButton directly in new code
 export { AppButton as AccentButton } from "@/components/ui/AppButton";
 
-import { useSettings } from "@/lib/settings-context";
-
-function lighten(hex: string, amt: number) {
-  const m = hex.replace("#", "").match(/.{2}/g);
-  if (!m) return hex;
-  return "#" + m.map((x) => Math.min(255, Math.round(parseInt(x, 16) + 255 * amt)).toString(16).padStart(2, "0")).join("");
-}
-function darken(hex: string, amt: number) {
-  const m = hex.replace("#", "").match(/.{2}/g);
-  if (!m) return hex;
-  return "#" + m.map((x) => Math.max(0, Math.round(parseInt(x, 16) * (1 - amt))).toString(16).padStart(2, "0")).join("");
-}
-
 export function AccentToggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
-  const { chartColor } = useSettings();
   return (
     <button
       type="button"
       onClick={() => onChange(!checked)}
       style={checked ? {
-        background: `linear-gradient(to bottom, ${lighten(chartColor, 0.15)}, ${darken(chartColor, 0.20)})`,
-        boxShadow: `0 0 8px ${chartColor}44`,
+        background: "linear-gradient(to bottom, color-mix(in srgb, var(--app-accent) 115%, white), color-mix(in srgb, var(--app-accent) 80%, black))",
+        boxShadow: "0 0 8px color-mix(in srgb, var(--app-accent) 27%, transparent)",
       } : {}}
       className={`relative h-6 w-11 rounded-full transition-colors flex-shrink-0 ${checked ? "" : "bg-neutral-300 dark:bg-neutral-600"}`}
     >

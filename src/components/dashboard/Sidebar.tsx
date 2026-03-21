@@ -10,7 +10,6 @@ import {
   ChevronLeft, ChevronRight, Sparkles, Receipt, Target,
   ArrowLeftRight, ShieldCheck, X,
 } from "lucide-react";
-import { SettingsDialog } from "@/components/ui/SettingsDialog";
 import { UserMenu } from "@/components/ui/UserMenu";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSettings } from "@/lib/settings-context";
@@ -26,6 +25,7 @@ interface Props {
   mobileOpen: boolean;
   onMobileOpenChange: (open: boolean) => void;
   unreadCount: number;
+  onSettingsOpen: () => void;
 }
 
 const NAV_GROUPS = [
@@ -65,9 +65,8 @@ const NAV_GROUPS = [
   },
 ];
 
-export default function Sidebar({ name, email, image, avatarColor, activeTab, onTabChange, mobileOpen, onMobileOpenChange, unreadCount }: Props) {
+export default function Sidebar({ name, email, image, avatarColor, activeTab, onTabChange, mobileOpen, onMobileOpenChange, unreadCount, onSettingsOpen }: Props) {
   const [collapsed, setCollapsed] = useState(false);
-  const [settingsOpen, setSettingsOpen] = useState(false);
   const { chartColor } = useSettings();
   const t = useT();
 
@@ -124,8 +123,6 @@ export default function Sidebar({ name, email, image, avatarColor, activeTab, on
 
   return (
     <>
-      <SettingsDialog open={settingsOpen} onClose={() => setSettingsOpen(false)} name={name} email={email} image={image} avatarColor={avatarColor} />
-
       {/* Desktop sidebar */}
       <aside className={`hidden lg:flex flex-col h-screen sticky top-0 border-r border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 transition-all duration-300 flex-shrink-0 ${collapsed ? "w-[68px]" : "w-60"}`}>
         <div className={`flex items-center h-14 px-4 border-b border-neutral-200 dark:border-neutral-800 flex-shrink-0 ${collapsed ? "justify-center" : "justify-between"}`}>
@@ -152,7 +149,7 @@ export default function Sidebar({ name, email, image, avatarColor, activeTab, on
 
         <div className="px-3 pb-4 space-y-1 border-t border-neutral-200 dark:border-neutral-800 pt-3 flex-shrink-0">
           <button
-            onClick={() => setSettingsOpen(true)}
+            onClick={onSettingsOpen}
             className={`relative flex w-full items-center gap-3 px-3 py-2 rounded-xl text-sm text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition group ${collapsed ? "justify-center" : ""}`}
           >
             <Settings className="h-4 w-4 flex-shrink-0" />
@@ -164,7 +161,7 @@ export default function Sidebar({ name, email, image, avatarColor, activeTab, on
             )}
           </button>
           <div className={`flex items-center gap-2.5 px-3 py-2 rounded-xl bg-neutral-100 dark:bg-neutral-800 ${collapsed ? "justify-center" : ""}`}>
-            <UserMenu image={image} name={name} email={email} onSettings={() => setSettingsOpen(true)} size={28} avatarColor={avatarColor} />
+            <UserMenu image={image} name={name} email={email} onSettings={onSettingsOpen} size={28} avatarColor={avatarColor} />
             {!collapsed && (
               <>
                 <div className="flex-1 min-w-0">
@@ -208,12 +205,12 @@ export default function Sidebar({ name, email, image, avatarColor, activeTab, on
                   <NavItems forMobile />
                 </nav>
                 <div className="px-3 pb-4 space-y-1 border-t border-neutral-200 dark:border-neutral-800 pt-3">
-                  <button onClick={() => { onMobileOpenChange(false); setSettingsOpen(true); }}
+                  <button onClick={() => { onMobileOpenChange(false); onSettingsOpen(); }}
                     className="flex w-full items-center gap-3 px-3 py-2 rounded-xl text-sm text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition">
                     <Settings className="h-4 w-4" /> {t("settings.title")}
                   </button>
                   <div className="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-neutral-100 dark:bg-neutral-800">
-                    <UserMenu image={image} name={name} email={email} onSettings={() => { onMobileOpenChange(false); setSettingsOpen(true); }} size={28} avatarColor={avatarColor} />
+                    <UserMenu image={image} name={name} email={email} onSettings={() => { onMobileOpenChange(false); onSettingsOpen(); }} size={28} avatarColor={avatarColor} />
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-semibold text-neutral-800 dark:text-neutral-100 truncate leading-none">{name}</p>
                       <p className="text-[10px] text-neutral-400 truncate mt-0.5">{email}</p>

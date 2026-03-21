@@ -127,7 +127,7 @@ export default function BlogPage() {
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
         {/* Category pills */}
-        <motion.div {...fadeUp} className="flex flex-wrap gap-2 mb-10">
+        <motion.div {...fadeUp} className="flex flex-wrap gap-2 mb-5">
           {categories.map((cat) => (
             <AppButton
               key={cat}
@@ -143,27 +143,27 @@ export default function BlogPage() {
 
         {/* Featured post */}
         {showFeatured && (
-        <motion.div {...fadeUp} className="group relative rounded-3xl overflow-hidden border border-neutral-200 dark:border-neutral-800 mb-8 cursor-pointer"
+        <motion.div {...fadeUp} className="group relative rounded-2xl overflow-hidden border border-neutral-200 dark:border-neutral-800 mb-8 cursor-pointer"
           onMouseEnter={(e) => (e.currentTarget.style.borderColor = chartColor)}
           onMouseLeave={(e) => (e.currentTarget.style.borderColor = "")}
         >
           <div className="grid md:grid-cols-2">
-            <div className="relative h-64 md:h-auto min-h-[280px] overflow-hidden">
+            <div className="relative h-48 sm:h-56 md:h-auto md:min-h-[280px] overflow-hidden">
               <Image src={featured.image} alt={featured.title} fill className="object-cover transition-transform duration-500 group-hover:scale-105" />
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/20 md:to-black/40" />
+              <div className="absolute inset-0 bg-gradient-to-b md:bg-gradient-to-r from-transparent to-black/20 md:to-black/40" />
             </div>
-            <div className="p-7 sm:p-10 flex flex-col justify-center bg-white dark:bg-neutral-900 space-y-4">
+            <div className="p-5 sm:p-7 md:p-10 flex flex-col justify-center bg-white dark:bg-neutral-900 space-y-3">
               <span className="text-xs font-bold uppercase tracking-widest" style={{ color: chartColor }}>{featured.category} · {t("blog.featured")}</span>
-              <h2 className="text-2xl sm:text-3xl font-bold text-neutral-900 dark:text-white leading-snug">{featured.title}</h2>
-              <p className="text-neutral-500 dark:text-neutral-400 leading-relaxed">{featured.excerpt}</p>
-              <div className="flex items-center gap-3 pt-2">
-                <Image src={featured.author.avatar} alt={featured.author.name} width={36} height={36} className="rounded-full object-cover w-9 h-9" />
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-neutral-900 dark:text-white leading-snug">{featured.title}</h2>
+              <p className="text-sm sm:text-base text-neutral-500 dark:text-neutral-400 leading-relaxed line-clamp-3">{featured.excerpt}</p>
+              <div className="flex items-center gap-3 pt-1">
+                <Image src={featured.author.avatar} alt={featured.author.name} width={32} height={32} className="rounded-full object-cover w-8 h-8" />
                 <div>
                   <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{featured.author.name}</p>
                   <p className="text-xs text-neutral-400 flex items-center gap-1"><Clock className="h-3 w-3" />{featured.date} · {featured.readTime}</p>
                 </div>
               </div>
-              <Link href={`/blog/${featured.slug}`} className="inline-flex items-center gap-2 text-sm font-semibold group/link mt-1" style={{ color: chartColor }}>
+              <Link href={`/blog/${featured.slug}`} className="inline-flex items-center gap-2 text-sm font-semibold group/link" style={{ color: chartColor }}>
                 {t("blog.readArticle")} <ArrowRight className="h-4 w-4 transition-transform group-hover/link:translate-x-1" />
               </Link>
             </div>
@@ -172,22 +172,22 @@ export default function BlogPage() {
         )}
 
         {/* Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {rest.map((post, i) => (
             <motion.article key={post.slug} {...fadeUp} transition={{ duration: 0.5, delay: i * 0.07 }}
-              className="group rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 overflow-hidden cursor-pointer transition-colors duration-300"
+              className="group rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 overflow-hidden cursor-pointer transition-colors duration-300 flex sm:flex-col"
               onMouseEnter={(e) => (e.currentTarget.style.borderColor = chartColor)}
               onMouseLeave={(e) => (e.currentTarget.style.borderColor = "")}
             >
-              <div className="relative h-44 overflow-hidden">
+              <div className="relative w-28 sm:w-auto h-auto sm:h-40 flex-shrink-0 overflow-hidden">
                 <Image src={post.image} alt={post.title} fill className="object-cover transition-transform duration-500 group-hover:scale-105" />
               </div>
-              <div className="p-5 space-y-3">
+              <div className="p-4 space-y-2 flex flex-col justify-center">
                 <span className="text-xs font-bold uppercase tracking-widest" style={{ color: chartColor }}>{post.category}</span>
-                <h3 className="font-semibold text-neutral-900 dark:text-neutral-100 leading-snug line-clamp-2">{post.title}</h3>
-                <p className="text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed line-clamp-2">{post.excerpt}</p>
-                <div className="flex items-center gap-2.5 pt-1 border-t border-neutral-100 dark:border-neutral-800">
-                  <Image src={post.author.avatar} alt={post.author.name} width={28} height={28} className="rounded-full object-cover w-7 h-7" />
+                <h3 className="font-semibold text-sm sm:text-base text-neutral-900 dark:text-neutral-100 leading-snug line-clamp-2">{post.title}</h3>
+                <p className="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed line-clamp-2 hidden sm:block">{post.excerpt}</p>
+                <div className="flex items-center gap-2 pt-1 border-t border-neutral-100 dark:border-neutral-800">
+                  <Image src={post.author.avatar} alt={post.author.name} width={24} height={24} className="rounded-full object-cover w-6 h-6" />
                   <div>
                     <p className="text-xs font-semibold text-neutral-800 dark:text-neutral-200">{post.author.name}</p>
                     <p className="text-xs text-neutral-400 flex items-center gap-1"><Clock className="h-2.5 w-2.5" />{post.readTime}</p>

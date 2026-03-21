@@ -11,8 +11,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp'
 import { toast } from 'sonner'
-import dynamic from 'next/dynamic'
 import { useT } from '@/lib/i18n-context'
+import dynamic from 'next/dynamic'
 
 const FinanceScene = dynamic(() => import('@/components/auth/FinanceScene').then(m => m.FinanceScene), { ssr: false, loading: () => null })
 
@@ -54,13 +54,13 @@ export default function SignInPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [isGoogleLoading, setIsGoogleLoading] = useState(false)
   const [resendTimer, setResendTimer] = useState(0)
+  const [showSkeleton, setShowSkeleton] = useState(true)
   const { status } = useSession()
   const router = useRouter()
-  const [showSkeleton, setShowSkeleton] = useState(true)
 
   useEffect(() => {
-    const timer = setTimeout(() => setShowSkeleton(false), 100)
-    return () => clearTimeout(timer)
+    const t = setTimeout(() => setShowSkeleton(false), 500)
+    return () => clearTimeout(t)
   }, [])
 
   useEffect(() => {
@@ -75,7 +75,40 @@ export default function SignInPage() {
   }, [resendTimer])
 
   if (status === 'authenticated') return null
-
+  if (status === 'loading' || showSkeleton) return (
+    <div className="min-h-screen flex">
+      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
+        <div className="absolute inset-0"><FinanceScene /></div>
+      </div>
+      <div className="w-full lg:w-1/2 flex items-center justify-center bg-background p-6 lg:p-12">
+        <div className="w-full max-w-sm space-y-4 animate-pulse">
+          <div className="text-center mb-6 space-y-2">
+            <div className="h-7 w-40 bg-neutral-200 dark:bg-neutral-700 rounded-md mx-auto" />
+            <div className="h-4 w-56 bg-neutral-200 dark:bg-neutral-700 rounded-md mx-auto" />
+          </div>
+          <div className="space-y-2">
+            <div className="h-4 w-24 bg-neutral-200 dark:bg-neutral-700 rounded-md" />
+            <div className="h-11 w-full bg-neutral-200 dark:bg-neutral-700 rounded-md" />
+          </div>
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <div className="h-4 w-16 bg-neutral-200 dark:bg-neutral-700 rounded-md" />
+              <div className="h-4 w-24 bg-neutral-200 dark:bg-neutral-700 rounded-md" />
+            </div>
+            <div className="h-11 w-full bg-neutral-200 dark:bg-neutral-700 rounded-md" />
+          </div>
+          <div className="h-11 w-full bg-neutral-200 dark:bg-neutral-700 rounded-md" />
+          <div className="flex items-center gap-3 my-5">
+            <div className="flex-1 h-px bg-neutral-200 dark:bg-neutral-700" />
+            <div className="h-4 w-28 bg-neutral-200 dark:bg-neutral-700 rounded-md" />
+            <div className="flex-1 h-px bg-neutral-200 dark:bg-neutral-700" />
+          </div>
+          <div className="h-11 w-full bg-neutral-200 dark:bg-neutral-700 rounded-md" />
+          <div className="h-4 w-48 bg-neutral-200 dark:bg-neutral-700 rounded-md mx-auto" />
+        </div>
+      </div>
+    </div>
+  )
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
@@ -178,72 +211,45 @@ export default function SignInPage() {
       : <button type="button" onClick={() => resendCode(endpoint)} className="text-xs text-blue-600 hover:underline whitespace-nowrap">{t('auth.resendCode')}</button>
   )
 
+  const SignInSkeleton = () => (
+    <div className="w-full max-w-sm space-y-4 animate-pulse">
+      <div className="text-center mb-6 space-y-2">
+        <div className="h-7 w-40 bg-neutral-200 dark:bg-neutral-700 rounded-md mx-auto" />
+        <div className="h-4 w-56 bg-neutral-200 dark:bg-neutral-700 rounded-md mx-auto" />
+      </div>
+      <div className="space-y-2">
+        <div className="h-4 w-24 bg-neutral-200 dark:bg-neutral-700 rounded-md" />
+        <div className="h-11 w-full bg-neutral-200 dark:bg-neutral-700 rounded-md" />
+      </div>
+      <div className="space-y-2">
+        <div className="flex justify-between">
+          <div className="h-4 w-16 bg-neutral-200 dark:bg-neutral-700 rounded-md" />
+          <div className="h-4 w-24 bg-neutral-200 dark:bg-neutral-700 rounded-md" />
+        </div>
+        <div className="h-11 w-full bg-neutral-200 dark:bg-neutral-700 rounded-md" />
+      </div>
+      <div className="h-11 w-full bg-neutral-200 dark:bg-neutral-700 rounded-md" />
+      <div className="flex items-center gap-3 my-5">
+        <div className="flex-1 h-px bg-neutral-200 dark:bg-neutral-700" />
+        <div className="h-4 w-28 bg-neutral-200 dark:bg-neutral-700 rounded-md" />
+        <div className="flex-1 h-px bg-neutral-200 dark:bg-neutral-700" />
+      </div>
+      <div className="h-11 w-full bg-neutral-200 dark:bg-neutral-700 rounded-md" />
+      <div className="h-4 w-48 bg-neutral-200 dark:bg-neutral-700 rounded-md mx-auto" />
+    </div>
+  )
+
   return (
     <div className="min-h-screen flex">
       {/* Left panel */}
-      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-gradient-to-br from-indigo-950 via-purple-950 to-slate-900">
-        <div className="absolute inset-0 bg-cover bg-center opacity-20 blur-sm scale-105" style={{ backgroundImage: "url('/Images/hero.jpeg')" }} />
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
         <div className="absolute inset-0"><FinanceScene /></div>
-        <div className="absolute inset-0 flex flex-col justify-between p-10 pointer-events-none z-10">
-          <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="flex items-center gap-3">
-            <img src="/svg/logo.svg" alt="Finance" className="w-10 h-10 object-contain" />
-            <span className="text-2xl font-bold text-white tracking-tight">Finance</span>
-          </motion.div>
-          <div className="space-y-4">
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.6 }} className="flex gap-3">
-              {[
-                ['auth.totalSavings', '+$12,450', 'text-green-400'],
-                ['auth.monthlyBudget', '$3,200', 'text-blue-400'],
-                ['auth.expenses', '-$1,840', 'text-rose-400'],
-              ].map(([labelKey, val, cls]) => (
-                <div key={labelKey} className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl px-4 py-2 shadow-xl">
-                  <p className="text-xs text-white/70">{t(labelKey)}</p>
-                  <p className={`text-lg font-bold ${cls}`}>{val}</p>
-                </div>
-              ))}
-            </motion.div>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 1 }} className="flex flex-wrap gap-2">
-              {[
-                `📊 ${t('auth.analytics')}`,
-                `💳 ${t('auth.budgeting')}`,
-                `🔒 ${t('auth.secure')}`,
-                `⚡ ${t('auth.realTime')}`,
-              ].map((f, i) => (
-                <motion.span key={f} initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 1.1 + i * 0.1 }} className="text-xs text-white/80 bg-white/10 border border-white/20 backdrop-blur-sm rounded-full px-3 py-1">{f}</motion.span>
-              ))}
-            </motion.div>
-            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5 }} className="text-white/50 text-xs">
-              {t('auth.joinThousands')}
-            </motion.p>
-          </div>
-        </div>
       </div>
 
       {/* Right panel */}
       <div className="w-full lg:w-1/2 flex items-center justify-center bg-background p-6 lg:p-12">
         <div className="w-full max-w-sm">
-          {(showSkeleton || status === 'loading') ? (
-            <div className="animate-pulse">
-              <div className="h-7 bg-gray-200 rounded-lg w-36 mx-auto mb-2" />
-              <div className="h-4 bg-gray-200 rounded w-52 mx-auto mb-6" />
-              <div className="h-3.5 bg-gray-200 rounded w-24 mb-2" />
-              <div className="h-11 bg-gray-200 rounded-md mb-4" />
-              <div className="flex justify-between items-center mb-2">
-                <div className="h-3.5 bg-gray-200 rounded w-16" />
-                <div className="h-3.5 bg-gray-200 rounded w-24" />
-              </div>
-              <div className="h-11 bg-gray-200 rounded-md mb-4" />
-              <div className="h-11 bg-gray-200 rounded-md mb-5" />
-              <div className="flex items-center gap-3 mb-5">
-                <div className="flex-1 h-px bg-gray-200" />
-                <div className="h-3 bg-gray-200 rounded w-28" />
-                <div className="flex-1 h-px bg-gray-200" />
-              </div>
-              <div className="h-11 bg-gray-200 rounded-md mb-4" />
-              <div className="h-4 bg-gray-200 rounded w-48 mx-auto" />
-            </div>
-          ) : (
+          {showSkeleton ? <SignInSkeleton /> : (
           <AnimatePresence mode="wait" initial={false}>
             <motion.div key={view} initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }} transition={{ duration: 0.35, ease: 'easeOut' }}>
 

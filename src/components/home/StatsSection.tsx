@@ -28,8 +28,8 @@ export default function StatsSection() {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
             >
-              <div className="text-4xl font-bold" style={{ color: chartColor }}>{item.value}</div>
-              <div className="text-sm text-neutral-500 dark:text-neutral-400">{t(item.labelKey)}</div>
+              <div className="text-2xl sm:text-3xl md:text-4xl font-bold" style={{ color: "var(--app-accent)" }}>{item.value}</div>
+              <div className="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400">{t(item.labelKey)}</div>
             </motion.div>
           ))}
         </div>

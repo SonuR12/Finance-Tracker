@@ -5,6 +5,7 @@ import Sidebar from "./Sidebar";
 import DashboardClient from "./DashboardClient";
 import { SettingsDialog } from "@/components/ui/SettingsDialog";
 import { NOTIFICATIONS } from "./notifications";
+import DashboardSkeleton from "@/components/ui/skeleton/DashboardSkeleton";
 
 import type { DashboardData } from "./DashboardClient";
 
@@ -17,27 +18,32 @@ interface Props {
 }
 
 export default function DashboardShell({ name, email, image, avatarColor, initialData }: Props) {
+  const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState("dashboard");
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [readIds, setReadIds] = useState<number[]>([]);
+  const [displayName, setDisplayName] = useState(name);
+  const unreadCount = NOTIFICATIONS.filter((n) => n.unread && !readIds.includes(n.id)).length;
 
   useEffect(() => {
     const stored = localStorage.getItem("dashboardTab");
     if (stored) setActiveTab(stored);
+    setMounted(true);
   }, []);
 
   function handleTabChange(tab: string) {
     setActiveTab(tab);
     try { localStorage.setItem("dashboardTab", tab); } catch {}
   }
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [settingsOpen, setSettingsOpen] = useState(false);
-  const [readIds, setReadIds] = useState<number[]>([]);
-  const unreadCount = NOTIFICATIONS.filter((n) => n.unread && !readIds.includes(n.id)).length;
+
+  if (!mounted) return <DashboardSkeleton />;
 
   return (
     <div className="flex h-screen overflow-hidden bg-neutral-50 dark:bg-neutral-950">
-      <SettingsDialog open={settingsOpen} onClose={() => setSettingsOpen(false)} name={name} email={email} image={image} avatarColor={avatarColor} />
+      <SettingsDialog open={settingsOpen} onClose={() => setSettingsOpen(false)} name={displayName} email={email} image={image} avatarColor={avatarColor} onNameSaved={setDisplayName} />
       <Sidebar
-        name={name}
+        name={displayName}
         email={email}
         image={image}
         avatarColor={avatarColor}
@@ -46,10 +52,11 @@ export default function DashboardShell({ name, email, image, avatarColor, initia
         mobileOpen={mobileOpen}
         onMobileOpenChange={setMobileOpen}
         unreadCount={unreadCount}
+        onSettingsOpen={() => setSettingsOpen(true)}
       />
       <div className="flex-1 min-w-0 flex flex-col overflow-hidden">
         <DashboardClient
-          name={name}
+          name={displayName}
           image={image}
           activeTab={activeTab}
           onMobileMenuOpen={() => setMobileOpen(true)}

@@ -31,7 +31,7 @@ export default function QuickAppearance() {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-10 w-52 rounded-2xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 shadow-xl p-4 space-y-4 z-[200]">
+        <div className="fixed sm:absolute right-[30%] sm:right-0 top-12 w-52 rounded-2xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 shadow-xl p-4 space-y-4 z-[200]">
           {/* Theme */}
           <div>
             <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-400 mb-2">Theme</p>

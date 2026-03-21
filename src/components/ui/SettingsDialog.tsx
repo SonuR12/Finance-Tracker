@@ -101,13 +101,14 @@ let settingsCache: Settings | null = null;
 
 export function clearSettingsCache() { settingsCache = null; }
 
-export function SettingsDialog({ open, onClose, name: nameProp, email: emailProp, image: imageProp, avatarColor: avatarColorProp }: { 
+export function SettingsDialog({ open, onClose, name: nameProp, email: emailProp, image: imageProp, avatarColor: avatarColorProp, onNameSaved }: { 
   open: boolean; 
   onClose: () => void;
   name?: string | null;
   email?: string | null;
   image?: string | null;
   avatarColor?: string | null;
+  onNameSaved?: (name: string) => void;
 }) {
   const user = { name: nameProp, email: emailProp, image: imageProp, avatarColor: avatarColorProp };
 
@@ -340,6 +341,7 @@ export function SettingsDialog({ open, onClose, name: nameProp, email: emailProp
                             });
                             if (res.ok) {
                               setOriginalName(fullName);
+                              onNameSaved?.(fullName);
                               setImageBase64(null);
                               setProfileSaved(true);
                               setTimeout(() => setProfileSaved(false), 2500);
@@ -355,7 +357,10 @@ export function SettingsDialog({ open, onClose, name: nameProp, email: emailProp
                       <SLabel>{t("settings.account")}</SLabel>
                       <AppButton
                         variant="danger"
-                        onClick={() => signOut({ callbackUrl: "/" })}
+                        onClick={() => {
+                          try { localStorage.removeItem("ai_chat_history"); } catch {}
+                          signOut({ callbackUrl: "/" });
+                        }}
                         className="flex items-center gap-2"
                       >
                         <LogOut className="h-4 w-4" />
