@@ -128,11 +128,9 @@ export function SettingsDialog({ open, onClose, name: nameProp, email: emailProp
   const [twoFA, setTwoFA] = useState(false);
   const [loginNotif, setLoginNotif] = useState(true);
   const [analytics, setAnalytics] = useState(true);
-  const [theme, setTheme] = useState<"light" | "dark" | "system">("system");
-  const [chartColor, setChartColor] = useState("");
   const fetchedRef = useRef(false);
 
-  const { language: ctxLang, currency: ctxCurrency, setLanguage: applyLanguage, setCurrency: applyCurrency, setChartColor: applyChartColor } = useSettings();
+  const { language: ctxLang, currency: ctxCurrency, setLanguage: applyLanguage, setCurrency: applyCurrency, setChartColor: applyChartColor, theme, applyTheme, chartColor } = useSettings();
   const t = useT();
   const overlayRef = useRef<HTMLDivElement>(null);
 
@@ -174,13 +172,6 @@ export function SettingsDialog({ open, onClose, name: nameProp, email: emailProp
     return () => { document.body.style.overflow = ""; };
   }, [open]);
 
-  useEffect(() => {
-    try {
-      setTheme((localStorage.getItem("theme") as any) || "system");
-      setChartColor(localStorage.getItem("chartColor") || "#6366f1");
-    } catch {}
-  }, []);
-
   function patch(p: Partial<Settings>) {
     setSettings((s) => ({ ...s, ...p }));
     setSaved(false);
@@ -214,17 +205,6 @@ export function SettingsDialog({ open, onClose, name: nameProp, email: emailProp
     } finally {
       setSaving(false);
     }
-  }
-
-  function applyTheme(th: "light" | "dark" | "system") {
-    setTheme(th);
-    try { localStorage.setItem("theme", th); } catch {}
-    const html = document.documentElement;
-    html.dataset.theme = th;
-    if (th === "dark") html.classList.add("dark");
-    else if (th === "light") html.classList.remove("dark");
-    else window.matchMedia("(prefers-color-scheme: dark)").matches
-      ? html.classList.add("dark") : html.classList.remove("dark");
   }
 
   const currencySymbol = CURRENCIES.find((c) => c.value === settings.currency)?.symbol ?? "$";
@@ -577,7 +557,7 @@ export function SettingsDialog({ open, onClose, name: nameProp, email: emailProp
                       <SLabel>{t("settings.chartColor")}</SLabel>
                       <div className="flex gap-2 mt-3 flex-wrap">
                         {["#6366f1","#3b82f6","#10b981","#8b5cf6","#f43f5e","#f59e0b","#06b6d4","#ec4899"].map((hex) => (
-                          <button key={hex} onClick={() => { setChartColor(hex); applyChartColor(hex); }}
+                          <button key={hex} onClick={() => applyChartColor(hex)}
                             className={`h-7 w-7 rounded-full transition-all ${
                               chartColor === hex ? "ring-2 ring-offset-2 ring-neutral-500 dark:ring-neutral-300 scale-110" : "hover:scale-105"
                             }`}

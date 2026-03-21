@@ -392,6 +392,7 @@ AI INSIGHTS:`,
 }
 
 function AIFloatingButton({ insights, data }: { insights: any[]; data: DashboardData }) {
+  const t = useT();
   const { currency, currencySymbol, language } = useSettings();
   const STORAGE_KEY = "ai_chat_history";
   const [open, setOpen] = useState(false);

@@ -7,9 +7,11 @@ interface SettingsCtx {
   currency: string;
   currencySymbol: string;
   chartColor: string;
+  theme: "light" | "dark" | "system";
   setLanguage: (v: string) => void;
   setCurrency: (v: string, symbol: string) => void;
   setChartColor: (v: string) => void;
+  applyTheme: (v: "light" | "dark" | "system") => void;
 }
 
 const Ctx = createContext<SettingsCtx>({
@@ -17,29 +19,31 @@ const Ctx = createContext<SettingsCtx>({
   currency: "USD",
   currencySymbol: "$",
   chartColor: "#6366f1",
+  theme: "system",
   setLanguage: () => {},
   setCurrency: () => {},
   setChartColor: () => {},
+  applyTheme: () => {},
 });
 
+function getLS(key: string, fallback: string) {
+  if (typeof window === "undefined") return fallback;
+  try { return localStorage.getItem(key) || fallback; } catch { return fallback; }
+}
+
 export function SettingsProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLang] = useState("en");
-  const [currency, setCurr] = useState("USD");
-  const [currencySymbol, setCurrSymbol] = useState("$");
-  const [chartColor, setChartColorState] = useState("#6366f1");
+  const [language, setLang] = useState(() => getLS("language", "en"));
+  const [currency, setCurr] = useState(() => getLS("currency", "USD"));
+  const [currencySymbol, setCurrSymbol] = useState(() => getLS("currencySymbol", "$"));
+  const [chartColor, setChartColorState] = useState(() => getLS("chartColor", "#6366f1"));
+  const [theme, setThemeState] = useState<"light" | "dark" | "system">(
+    () => getLS("theme", "system") as "light" | "dark" | "system"
+  );
 
   useEffect(() => {
     try {
-      const lang = localStorage.getItem("language") || "en";
-      const cur = localStorage.getItem("currency") || "USD";
-      const sym = localStorage.getItem("currencySymbol") || "$";
-      const color = localStorage.getItem("chartColor") || "#6366f1";
-      setLang(lang);
-      setCurr(cur);
-      setCurrSymbol(sym);
-      setChartColorState(color);
-      document.documentElement.style.setProperty("--app-accent", color);
-      document.documentElement.lang = lang;
+      document.documentElement.style.setProperty("--app-accent", chartColor);
+      document.documentElement.lang = language;
     } catch {}
   }, []);
 
@@ -64,8 +68,19 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     try { localStorage.setItem("chartColor", v); } catch {}
   }
 
+  function applyTheme(th: "light" | "dark" | "system") {
+    setThemeState(th);
+    try { localStorage.setItem("theme", th); } catch {}
+    const html = document.documentElement;
+    html.dataset.theme = th;
+    if (th === "dark") html.classList.add("dark");
+    else if (th === "light") html.classList.remove("dark");
+    else window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? html.classList.add("dark") : html.classList.remove("dark");
+  }
+
   return (
-    <Ctx.Provider value={{ language, currency, currencySymbol, chartColor, setLanguage, setCurrency, setChartColor }}>
+    <Ctx.Provider value={{ language, currency, currencySymbol, chartColor, theme, setLanguage, setCurrency, setChartColor, applyTheme }}>
       {children}
     </Ctx.Provider>
   );

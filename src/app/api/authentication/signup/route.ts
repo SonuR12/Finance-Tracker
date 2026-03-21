@@ -3,11 +3,6 @@ import { getDb } from '@/lib/mongodb'
 import bcrypt from 'bcryptjs'
 import { generateVerificationCode, generateCodeExpiry, sendEmail, getVerificationEmailTemplate } from '@/lib/email'
 
-// In-memory pending users (cleared on server restart — fine for dev/small scale)
-export const pendingUsers = new Map<string, {
-  email: string; password: string; name: string; code: string; expires: Date
-}>()
-
 export async function POST(req: Request) {
   try {
     const { email, password, name } = await req.json()
@@ -26,13 +21,11 @@ export async function POST(req: Request) {
     const code = generateVerificationCode()
     const expires = generateCodeExpiry()
 
-    pendingUsers.set(email, {
-      email,
-      password: hashedPassword,
-      name: name || email.split('@')[0],
-      code,
-      expires,
-    })
+    await db.collection('pendingVerifications').updateOne(
+      { email },
+      { $set: { email, password: hashedPassword, name: name || email.split('@')[0], code, expires } },
+      { upsert: true }
+    )
 
     await sendEmail(email, 'Verify your Finance App account', getVerificationEmailTemplate(code))
 

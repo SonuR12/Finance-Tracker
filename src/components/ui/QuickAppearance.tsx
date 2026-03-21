@@ -7,14 +7,9 @@ import { useSettings } from "@/lib/settings-context";
 const COLORS = ["#6366f1","#3b82f6","#10b981","#8b5cf6","#f43f5e","#f59e0b","#06b6d4","#ec4899"];
 
 export default function QuickAppearance() {
-  const { chartColor, setChartColor } = useSettings();
+  const { chartColor, setChartColor, theme, applyTheme } = useSettings();
   const [open, setOpen] = useState(false);
-  const [theme, setTheme] = useState<"light" | "dark" | "system">("system");
   const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    try { setTheme((localStorage.getItem("theme") as any) || "system"); } catch {}
-  }, []);
 
   useEffect(() => {
     function handler(e: MouseEvent) {
@@ -23,17 +18,6 @@ export default function QuickAppearance() {
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
-
-  function applyTheme(th: "light" | "dark" | "system") {
-    setTheme(th);
-    try { localStorage.setItem("theme", th); } catch {}
-    const html = document.documentElement;
-    html.dataset.theme = th;
-    if (th === "dark") html.classList.add("dark");
-    else if (th === "light") html.classList.remove("dark");
-    else window.matchMedia("(prefers-color-scheme: dark)").matches
-      ? html.classList.add("dark") : html.classList.remove("dark");
-  }
 
   return (
     <div ref={ref} className="relative">

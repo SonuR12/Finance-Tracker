@@ -36,16 +36,23 @@ export default function RootLayout({
               var html = document.documentElement;
               var t = localStorage.getItem('theme') || 'system';
               html.dataset.theme = t;
-              if (t === 'dark') html.classList.add('dark');
-              else if (t === 'light') html.classList.remove('dark');
-              else if (window.matchMedia('(prefers-color-scheme: dark)').matches) html.classList.add('dark');
+              if (t === 'dark') {
+                html.classList.add('dark');
+              } else if (t === 'light') {
+                html.classList.remove('dark');
+              } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                html.classList.add('dark');
+              }
               var lang = localStorage.getItem('language');
               if (lang) html.lang = lang;
+              var color = localStorage.getItem('chartColor');
+              if (color) html.style.setProperty('--app-accent', color);
             } catch(e) {}
           })();
         `}} />
       </head>
       <body
+        suppressHydrationWarning
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Providers>

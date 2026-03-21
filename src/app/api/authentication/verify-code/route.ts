@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
-import { pendingUsers } from '../signup/route'
 
 export async function POST(req: Request) {
   try {
     const { code, email } = await req.json()
 
-    const pending = pendingUsers.get(email)
+    const db = await getDb()
+    const pending = await db.collection('pendingVerifications').findOne({ email })
     if (!pending) {
       return NextResponse.json({ error: 'Verification session expired. Please sign up again.' }, { status: 404 })
     }
@@ -16,7 +16,7 @@ export async function POST(req: Request) {
     }
 
     if (pending.expires < new Date()) {
-      pendingUsers.delete(email)
+      await db.collection('pendingVerifications').deleteOne({ email })
       return NextResponse.json({ error: 'Code expired. Please sign up again.' }, { status: 400 })
     }
 
@@ -26,7 +26,6 @@ export async function POST(req: Request) {
     ]
     const avatarColor = AVATAR_COLORS[Math.floor(Math.random() * AVATAR_COLORS.length)]
 
-    const db = await getDb()
     const existing = await db.collection('users').findOne({ email: pending.email })
     if (existing) {
       // Google user adding credentials — merge
@@ -47,7 +46,7 @@ export async function POST(req: Request) {
       })
     }
 
-    pendingUsers.delete(email)
+    await db.collection('pendingVerifications').deleteOne({ email })
 
     return NextResponse.json({ success: true })
   } catch {
