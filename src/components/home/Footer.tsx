@@ -52,15 +52,15 @@ export default function Footer() {
             <p className="text-sm text-neutral-500 dark:text-neutral-400 max-w-xs">
               {t("footer.aiPowered")}
             </p>
-            <div className="flex gap-3">
+            <div className="flex gap-0">
               <Link href="mailto:sonurai272004@gmail.com" className="p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors">
-                <Image height={20} width={20} alt="mail" src="/svg/gmail.svg" />
-              </Link>
-              <Link href="https://github.com/SonuR12" target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors">
-                <Image height={20} width={20} alt="github" src="/svg/github_logo_dark.svg" className="invert dark:invert-0" />
+                <Image height={30} width={30} alt="mail" src="/svg/gmail.svg" />
               </Link>
               <Link href="https://www.linkedin.com/in/sonu-rai-55473a289/" target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors">
-                <Image height={20} width={20} alt="linkedin" src="/svg/linkdin.svg" />
+                <Image height={30} width={30} alt="linkedin" src="/svg/linkdin.svg" />
+              </Link>
+              <Link href="https://github.com/SonuR12" target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors">
+                <Image height={25} width={25} alt="github" src="/svg/github_logo_dark.svg" className="invert dark:invert-0" />
               </Link>
             </div>
           </div>

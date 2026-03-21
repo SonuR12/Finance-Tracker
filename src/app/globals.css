@@ -214,7 +214,19 @@
   position: relative;
   background: #000;
   overflow: hidden;
-  min-height: 100vh;
+  min-height: min(100vh, 820px);
+}
+
+@media (max-width: 768px) {
+  .hero-root {
+    min-height: 80vh;
+  }
+  .hero-headline {
+    max-width: 90%;
+  }
+  .heroimage {
+    transform: rotateX(13deg) scale(0.97);
+  }
 }
 
 /* Fine grid lines — exactly like nextjs.org */

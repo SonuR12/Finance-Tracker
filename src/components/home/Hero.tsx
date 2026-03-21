@@ -59,7 +59,7 @@ export default function Hero() {
         }}
       />
 
-      <div className="relative z-10 flex flex-col items-center text-center px-4 pt-20 sm:pt-28 pb-0">
+      <div className="relative z-10 flex flex-col items-center text-center px-4 pt-35 sm:pt-28 pb-0">
 
         {/* Pill */}
         <motion.a
@@ -121,7 +121,7 @@ export default function Hero() {
         <motion.div className="flex flex-wrap items-center justify-center gap-3 mt-8" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55, delay: 0.58 }}>
           <AppButton
             variant="primary"
-            className="hero-btn-primary group rounded-full !border-0 text-xs !py-2 !px-4 sm:!py-3.5 sm:!px-6"
+            className="hero-btn-primary group rounded-full !border-0 text-xs !py-3.5 !px-6"
             style={{ boxShadow: "0 0 24px color-mix(in srgb, var(--app-accent) 33%, transparent), inset 0 1px 0 rgba(255,255,255,0.2)" }}
             onClick={() => window.location.href = session?.user ? "/dashboard" : "/sign-in"}
           >
@@ -130,7 +130,7 @@ export default function Hero() {
               : <>{t("hero.cta")}<ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" /></>
             }
           </AppButton>
-          <Link href="#features"  className="hero-btn-ghost text-xs !py-2 !px-4 sm:!py-3.5 sm:!px-6">
+          <Link href="#features"  className="hero-btn-ghost text-xs !py-3.5 !px-6">
             {t("hero.demo")}
           </Link>
         </motion.div>
