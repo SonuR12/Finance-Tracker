@@ -5,6 +5,12 @@ import Image from "next/image";
 import { useT } from "@/lib/i18n-context";
 import { useSettings } from "@/lib/settings-context";
 
+function scrollTo(href: string) {
+  const el = document.querySelector(href);
+  if (el) { el.scrollIntoView({ behavior: "smooth", block: "start" }); return; }
+  window.location.href = href;
+}
+
 
 
 export default function Footer() {
@@ -15,8 +21,10 @@ export default function Footer() {
     {
       category: t("footer.product"),
       items: [
-        { label: t("footer.features"),  href: "/#features" },
         { label: t("footer.dashboard"), href: "/dashboard" },
+        { label: t("footer.features"),  href: "#features" },
+        { label: t("nav.testimonials"), href: "#testimonials" },
+        { label: t("nav.pricing"),      href: "#pricing" },
       ],
     },
     {
@@ -72,14 +80,25 @@ export default function Footer() {
               <ul className="space-y-2">
                 {items.map((item) => (
                   <li key={item.label}>
-                    <Link
-                      href={item.href}
-                      className="text-sm text-neutral-500 dark:text-neutral-400 transition-colors hover:text-neutral-900 dark:hover:text-neutral-100"
-                      onMouseEnter={(e) => (e.currentTarget.style.color = "var(--app-accent)")}
-                      onMouseLeave={(e) => (e.currentTarget.style.color = "")}
-                    >
-                      {item.label}
-                    </Link>
+                    {item.href.startsWith("#") ? (
+                      <button
+                        onClick={() => scrollTo(item.href)}
+                        className="text-sm text-neutral-500 dark:text-neutral-400 transition-colors hover:text-neutral-900 dark:hover:text-neutral-100 text-left"
+                        onMouseEnter={(e) => (e.currentTarget.style.color = chartColor)}
+                        onMouseLeave={(e) => (e.currentTarget.style.color = "")}
+                      >
+                        {item.label}
+                      </button>
+                    ) : (
+                      <Link
+                        href={item.href}
+                        className="text-sm text-neutral-500 dark:text-neutral-400 transition-colors hover:text-neutral-900 dark:hover:text-neutral-100"
+                        onMouseEnter={(e) => (e.currentTarget.style.color = chartColor)}
+                        onMouseLeave={(e) => (e.currentTarget.style.color = "")}
+                      >
+                        {item.label}
+                      </Link>
+                    )}
                   </li>
                 ))}
               </ul>

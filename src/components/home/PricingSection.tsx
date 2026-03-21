@@ -130,7 +130,7 @@ export default function PricingSection() {
 
               <AppButton
                 variant="primary" size="lg"
-                className="w-full rounded-xl mb-4 !border-0"
+                className="w-full rounded-xl mb-4 h-10 !border-0"
                 onClick={() => window.location.href = plans[active].href}
               >
                 {plans[active].cta}

@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 56" fill="none">
+  <!-- Background -->
+  <rect width="56" height="56" rx="16" fill="url(#grad)"/>
+
+  <!-- Antenna -->
+  <line x1="28" y1="8" x2="28" y2="14" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+  <circle cx="28" cy="7" r="2.5" fill="white"/>
+
+  <!-- Head -->
+  <rect x="12" y="14" width="32" height="24" rx="8" fill="white" fill-opacity="0.18"/>
+  <rect x="12" y="14" width="32" height="24" rx="8" stroke="white" stroke-opacity="0.5" stroke-width="1.5"/>
+
+  <!-- Eyes -->
+  <circle cx="22" cy="25" r="4" fill="white"/>
+  <circle cx="34" cy="25" r="4" fill="white"/>
+  <circle cx="23" cy="25" r="2" fill="url(#grad)"/>
+  <circle cx="35" cy="25" r="2" fill="url(#grad)"/>
+  <!-- Eye shine -->
+  <circle cx="24" cy="24" r="0.8" fill="white"/>
+  <circle cx="36" cy="24" r="0.8" fill="white"/>
+
+  <!-- Mouth -->
+  <path d="M22 31 Q28 35 34 31" stroke="white" stroke-width="2" stroke-linecap="round" fill="none"/>
+
+  <!-- Body / chest panel -->
+  <rect x="18" y="40" width="20" height="10" rx="5" fill="white" fill-opacity="0.18" stroke="white" stroke-opacity="0.4" stroke-width="1.2"/>
+  <!-- Chest dots -->
+  <circle cx="24" cy="45" r="1.5" fill="white" fill-opacity="0.8"/>
+  <circle cx="28" cy="45" r="1.5" fill="white" fill-opacity="0.8"/>
+  <circle cx="32" cy="45" r="1.5" fill="white" fill-opacity="0.8"/>
+
+  <defs>
+    <linearGradient id="grad" x1="0" y1="0" x2="56" y2="56" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+  </defs>
+</svg>

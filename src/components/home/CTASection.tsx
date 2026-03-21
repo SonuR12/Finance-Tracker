@@ -2,9 +2,14 @@
 
 import { motion } from "framer-motion";
 import { useT } from "@/lib/i18n-context";
-import Link from "next/link";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { AppButton } from "@/components/ui/AppButton";
+
+function scrollTo(href: string) {
+  const el = document.querySelector(href);
+  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  else window.location.href = href;
+}
 
 export default function CTASection() {
   const t = useT();
@@ -79,7 +84,7 @@ export default function CTASection() {
               <AppButton
                 variant="outline"
                 className="!rounded-full text-xs !py-2 !px-4 sm:!py-3.5 sm:!px-6"
-                onClick={() => window.location.href = "/#features"}
+                onClick={() => scrollTo("#features")}
               >
                 {t("cta.learnMore")}
               </AppButton>
