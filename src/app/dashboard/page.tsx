@@ -1,5 +1,11 @@
+import type { Metadata } from "next";
 import { Suspense } from "react";
 import { auth } from "@/lib/auth";
+
+export const metadata: Metadata = {
+  title: "Dashboard | Finance Tracker",
+  description: "View your financial overview — balance, income, expenses, budgets, and AI-powered insights.",
+};
 import { redirect } from "next/navigation";
 import DashboardShell from "@/components/dashboard/DashboardShell";
 import { computeDashboardData } from "@/app/api/dashboard/route";
