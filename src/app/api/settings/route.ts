@@ -10,12 +10,12 @@ export async function GET() {
   const s = await db.collection("user_settings").findOne({ email: session.user.email });
 
   return NextResponse.json({
-    language:        s?.language        ?? "English",
-    currency:        s?.currency        ?? "USD ($)",
-    showBalance:     s?.showBalance     ?? true,
-    autoCategorize:  s?.autoCategorize  ?? true,
-    budgets:         s?.budgets         ?? {},
-    budgetAlerts:    s?.budgetAlerts    ?? true,
+    language:       s?.language       ?? "en",
+    currency:       s?.currency       ?? "USD",
+    showBalance:    s?.showBalance    ?? true,
+    autoCategorize: s?.autoCategorize ?? true,
+    budgets:        s?.budgets        ?? {},
+    budgetAlerts:   s?.budgetAlerts   ?? true,
   });
 }
 
@@ -24,7 +24,6 @@ export async function POST(req: Request) {
   if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const body = await req.json();
-  // strip any fields we don't want persisted
   const { language, currency, showBalance, autoCategorize, budgets, budgetAlerts } = body;
 
   const db = await getDb();

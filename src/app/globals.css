@@ -129,6 +129,18 @@
     box-shadow: none !important;
     outline: none;
   }
+  .recharts-wrapper,
+  .recharts-wrapper *,
+  .recharts-surface {
+    outline: none !important;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .recharts-wrapper:focus,
+  .recharts-wrapper div:focus,
+  .recharts-wrapper svg:focus {
+    outline: none !important;
+    box-shadow: none !important;
+  }
 }
 
 

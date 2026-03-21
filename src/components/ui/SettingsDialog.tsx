@@ -11,7 +11,7 @@ import {
   Select, SelectContent, SelectItem,
   SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { useSettings } from "@/lib/settings-context";
+import { useSettings, clearSettingsCache } from "@/lib/settings-context";
 import { useT } from "@/lib/i18n-context";
 import { UserMenu } from "@/components/ui/UserMenu";
 import { AccentButton, AccentToggle } from "@/components/ui/AccentButton";
@@ -96,10 +96,7 @@ function Hr() {
   return <hr className="border-neutral-100 dark:border-neutral-800" />;
 }
 
-/* module-level cache — survives tab switches, cleared on sign out */
-let settingsCache: Settings | null = null;
-
-export function clearSettingsCache() { settingsCache = null; }
+/* module-level cache removed — settings-context handles sessionStorage caching */
 
 export function SettingsDialog({ open, onClose, name: nameProp, email: emailProp, image: imageProp, avatarColor: avatarColorProp, onNameSaved }: { 
   open: boolean; 
@@ -122,65 +119,49 @@ export function SettingsDialog({ open, onClose, name: nameProp, email: emailProp
   const [profileSaved, setProfileSaved] = useState(false);
   const [settings, setSettings] = useState<Settings>(DEFAULTS);
   const savedSettingsRef = useRef<Settings>(DEFAULTS);
-  const [loading, setLoading] = useState(false);
+  const savedAppearanceRef = useRef({ chartColor: "#6366f1", theme: "system" as "light" | "dark" | "system" });
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [appearanceSaving, setAppearanceSaving] = useState(false);
+  const [appearanceSaved, setAppearanceSaved] = useState(false);
   const [notifs, setNotifs] = useState([true, true, true, true, true]);
   const [twoFA, setTwoFA] = useState(false);
   const [loginNotif, setLoginNotif] = useState(true);
   const [analytics, setAnalytics] = useState(true);
-  const fetchedRef = useRef(false);
 
-  const { language: ctxLang, currency: ctxCurrency, setLanguage: applyLanguage, setCurrency: applyCurrency, setChartColor: applyChartColor, theme, applyTheme, chartColor } = useSettings();
+  const { setChartColor: applyChartColor, applyTheme, applySettings, chartColor, theme, settingsLoaded, language, currency, showBalance, autoCategorize, budgets, budgetAlerts } = useSettings();
   const t = useT();
   const overlayRef = useRef<HTMLDivElement>(null);
 
+  // Sync savedAppearanceRef from localStorage on mount
   useEffect(() => {
-    if (user?.name) { setFullName(user.name); setOriginalName(user.name); }
-  }, [user?.name]);
+    try {
+      savedAppearanceRef.current = {
+        chartColor: localStorage.getItem("chartColor") ?? "#6366f1",
+        theme: (localStorage.getItem("theme") ?? "system") as "light" | "dark" | "system",
+      };
+    } catch {}
+  }, []);
 
+  useEffect(() => { if (user?.name) { setFullName(user.name); setOriginalName(user.name); } }, [user?.name]);
+
+  // Sync dialog state once settings are loaded from context (sessionStorage or DB)
   useEffect(() => {
-    if (!open || !user || fetchedRef.current) return;
-    // use cache if available — no API call
-    if (settingsCache) {
-      setSettings(settingsCache);
-      return;
-    }
-    fetchedRef.current = true;
-    setLoading(true);
-    fetch("/api/settings")
-      .then((r) => r.json())
-      .then((data) => {
-        if (!data.error) {
-          const merged = { ...DEFAULTS, ...data };
-          settingsCache = merged;
-          savedSettingsRef.current = merged;
-          setSettings(merged);
-          try {
-            localStorage.setItem("language", merged.language);
-            localStorage.setItem("currency", merged.currency);
-            const sym = CURRENCIES.find((c) => c.value === merged.currency)?.symbol ?? "$";
-            localStorage.setItem("currencySymbol", sym);
-          } catch {}
-        }
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, [open, user]);
+    if (!settingsLoaded) return;
+    const merged = { ...DEFAULTS, language, currency, showBalance, autoCategorize, budgets, budgetAlerts };
+    setSettings(merged);
+    savedSettingsRef.current = merged;
+  }, [settingsLoaded]);
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [open]);
 
+  // Only update local draft — no DB/localStorage write until Save
   function patch(p: Partial<Settings>) {
     setSettings((s) => ({ ...s, ...p }));
     setSaved(false);
-    if (p.language) applyLanguage(p.language);
-    if (p.currency) {
-      const sym = CURRENCIES.find((c) => c.value === p.currency)?.symbol ?? "$";
-      applyCurrency(p.currency, sym);
-    }
   }
 
   async function save() {
@@ -192,19 +173,26 @@ export function SettingsDialog({ open, onClose, name: nameProp, email: emailProp
         body: JSON.stringify(settings),
       });
       const sym = CURRENCIES.find((c) => c.value === settings.currency)?.symbol ?? "$";
-      applyLanguage(settings.language);
-      applyCurrency(settings.currency, sym);
-      try {
-        localStorage.setItem("language", settings.language);
-        localStorage.setItem("currency", settings.currency);
-        localStorage.setItem("currencySymbol", sym);
-      } catch {}
-      settingsCache = { ...settings };
+      const full = { ...settings, currencySymbol: sym, chartColor, theme };
+      applySettings(full);
       savedSettingsRef.current = { ...settings };
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function saveAppearance() {
+    setAppearanceSaving(true);
+    try {
+      localStorage.setItem("chartColor", chartColor);
+      localStorage.setItem("theme", theme);
+      savedAppearanceRef.current = { chartColor, theme };
+      setAppearanceSaved(true);
+      setTimeout(() => setAppearanceSaved(false), 2500);
+    } finally {
+      setAppearanceSaving(false);
     }
   }
 
@@ -219,6 +207,10 @@ export function SettingsDialog({ open, onClose, name: nameProp, email: emailProp
   const budgetChanged = (
     JSON.stringify(settings.budgets) !== JSON.stringify(savedSettingsRef.current.budgets) ||
     settings.budgetAlerts !== savedSettingsRef.current.budgetAlerts
+  );
+  const appearanceChanged = (
+    chartColor !== savedAppearanceRef.current.chartColor ||
+    theme !== savedAppearanceRef.current.theme
   );
 
   if (!open) return null;
@@ -268,7 +260,7 @@ export function SettingsDialog({ open, onClose, name: nameProp, email: emailProp
           </div>
 
           <div className="flex-1 overflow-y-auto px-6 py-5">
-            {loading ? (
+            {!settingsLoaded ? (
               <div className="flex items-center justify-center h-full">
                 <Loader2 className="h-6 w-6 animate-spin" style={{ color: "var(--app-accent)" }} />
               </div>
@@ -360,6 +352,7 @@ export function SettingsDialog({ open, onClose, name: nameProp, email: emailProp
                         variant="danger"
                         onClick={() => {
                           try { localStorage.removeItem("ai_chat_history"); } catch {}
+                          clearSettingsCache();
                           signOut({ callbackUrl: "/" });
                         }}
                         className="flex items-center gap-2"
@@ -572,6 +565,7 @@ export function SettingsDialog({ open, onClose, name: nameProp, email: emailProp
                         ))}
                       </div>
                     </div>
+                    <AccentButton onClick={saveAppearance} saving={appearanceSaving} saved={appearanceSaved} disabled={!appearanceChanged} saveLabel={t("settings.saveChanges")} savingLabel={t("settings.saving")} savedLabel={t("settings.saved")} />
                   </div>
                 )}
               </>

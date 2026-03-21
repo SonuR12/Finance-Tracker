@@ -24,7 +24,7 @@ export default function WeeklyChart({ data }: { data: any[] }) {
           {currencySymbol}{data.reduce((s, d) => s + d.amount, 0).toLocaleString()} {t("dashboard.total")}
         </span>
       </div>
-      <ResponsiveContainer width="100%" height={140}>
+      <ResponsiveContainer width="100%" height={140} tabIndex={-1}>
         <BarChart data={data} margin={{ top: 4, right: 4, left: -24, bottom: 0 }} barSize={22}>
           <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" className="dark:[&>line]:stroke-neutral-800" vertical={false} />
           <XAxis dataKey="day" tick={{ fontSize: 11, fill: "#9ca3af" }} axisLine={false} tickLine={false} />

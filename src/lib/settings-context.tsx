@@ -2,92 +2,182 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 
-interface SettingsCtx {
+export interface FullSettings {
   language: string;
   currency: string;
   currencySymbol: string;
+  showBalance: boolean;
+  autoCategorize: boolean;
+  budgets: Record<string, string>;
+  budgetAlerts: boolean;
   chartColor: string;
   theme: "light" | "dark" | "system";
-  setLanguage: (v: string) => void;
-  setCurrency: (v: string, symbol: string) => void;
-  setChartColor: (v: string) => void;
-  applyTheme: (v: "light" | "dark" | "system") => void;
 }
 
-const Ctx = createContext<SettingsCtx>({
+interface SettingsCtx extends FullSettings {
+  settingsLoaded: boolean;
+  setChartColor: (v: string) => void;
+  applyTheme: (v: "light" | "dark" | "system") => void;
+  applySettings: (s: FullSettings) => void;
+}
+
+const DEFAULTS: FullSettings = {
   language: "en",
   currency: "USD",
   currencySymbol: "$",
+  showBalance: true,
+  autoCategorize: true,
+  budgets: {},
+  budgetAlerts: true,
   chartColor: "#6366f1",
   theme: "system",
-  setLanguage: () => {},
-  setCurrency: () => {},
+};
+
+const Ctx = createContext<SettingsCtx>({
+  ...DEFAULTS,
+  settingsLoaded: false,
   setChartColor: () => {},
   applyTheme: () => {},
+  applySettings: () => {},
 });
 
+export const CURRENCY_SYMBOLS: Record<string, string> = {
+  USD: "$", EUR: "€", GBP: "£", INR: "₹", JPY: "¥", AUD: "A$",
+  CAD: "C$", CHF: "Fr", CNY: "¥", BRL: "R$", MXN: "$", KRW: "₩",
+  SGD: "S$", AED: "د.إ", SAR: "﷼", RUB: "₽", TRY: "₺", ZAR: "R",
+};
+
+function applyThemeToDom(th: "light" | "dark" | "system") {
+  const html = document.documentElement;
+  html.dataset.theme = th;
+  if (th === "dark") html.classList.add("dark");
+  else if (th === "light") html.classList.remove("dark");
+  else window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? html.classList.add("dark") : html.classList.remove("dark");
+}
+
+function applyToDom(s: FullSettings) {
+  document.documentElement.lang = s.language;
+  document.documentElement.style.setProperty("--app-accent", s.chartColor);
+  document.documentElement.style.setProperty("--ring", s.chartColor);
+  applyThemeToDom(s.theme);
+}
+
+const SESSION_KEY = "app_settings";
+
+function saveToLocalStorage(s: FullSettings) {
+  try {
+    localStorage.setItem("language", s.language);
+    localStorage.setItem("currency", s.currency);
+    localStorage.setItem("currencySymbol", s.currencySymbol);
+    localStorage.setItem("chartColor", s.chartColor);
+    localStorage.setItem("theme", s.theme);
+  } catch {}
+}
+
+function saveToSession(s: FullSettings) {
+  try { sessionStorage.setItem(SESSION_KEY, JSON.stringify(s)); } catch {}
+}
+
+function loadFromSession(): FullSettings | null {
+  try {
+    const raw = sessionStorage.getItem(SESSION_KEY);
+    return raw ? (JSON.parse(raw) as FullSettings) : null;
+  } catch { return null; }
+}
+
+function loadFromLocalStorage(): FullSettings {
+  try {
+    return {
+      ...DEFAULTS,
+      language:       localStorage.getItem("language")        || DEFAULTS.language,
+      currency:       localStorage.getItem("currency")        || DEFAULTS.currency,
+      currencySymbol: localStorage.getItem("currencySymbol") || DEFAULTS.currencySymbol,
+      chartColor:     localStorage.getItem("chartColor")      || DEFAULTS.chartColor,
+      theme: (localStorage.getItem("theme") || DEFAULTS.theme) as FullSettings["theme"],
+    };
+  } catch { return DEFAULTS; }
+}
+
+export function clearSettingsCache() {
+  try { sessionStorage.removeItem(SESSION_KEY); } catch {}
+}
+
 export function SettingsProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLang] = useState("en");
-  const [currency, setCurr] = useState("USD");
-  const [currencySymbol, setCurrSymbol] = useState("$");
-  const [chartColor, setChartColorState] = useState(() => {
-    if (typeof window === "undefined") return "#6366f1";
-    try { return localStorage.getItem("chartColor") || "#6366f1"; } catch { return "#6366f1"; }
-  });
-  const [theme, setThemeState] = useState<"light" | "dark" | "system">(() => {
-    if (typeof window === "undefined") return "system";
-    try { return (localStorage.getItem("theme") || "system") as "light" | "dark" | "system"; } catch { return "system"; }
-  });
+  const [settings, setSettings] = useState<FullSettings>(DEFAULTS);
+  const [settingsLoaded, setSettingsLoaded] = useState(false);
 
   useEffect(() => {
-    try {
-      const lang = localStorage.getItem("language") || "en";
-      const curr = localStorage.getItem("currency") || "USD";
-      const sym  = localStorage.getItem("currencySymbol") || "$";
-      setLang(lang);
-      setCurr(curr);
-      setCurrSymbol(sym);
-      document.documentElement.lang = lang;
-      document.documentElement.style.setProperty("--app-accent", chartColor);
-      document.documentElement.style.setProperty("--ring", chartColor);
-    } catch {}
+    // 1. Apply localStorage instantly (no flash)
+    const local = loadFromLocalStorage();
+    setSettings(local);
+    applyToDom(local);
+
+    // 2. If sessionStorage has cached settings, skip DB fetch entirely
+    const cached = loadFromSession();
+    if (cached) {
+      setSettings(cached);
+      applyToDom(cached);
+      setSettingsLoaded(true);
+      return;
+    }
+
+    // 3. First load of this session — fetch from DB once, cache in sessionStorage
+    fetch("/api/settings")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.error) return;
+        const sym = CURRENCY_SYMBOLS[data.currency] ?? "$";
+        const merged: FullSettings = {
+          ...local,
+          language:       data.language       ?? local.language,
+          currency:       data.currency       ?? local.currency,
+          currencySymbol: sym,
+          showBalance:    data.showBalance    ?? local.showBalance,
+          autoCategorize: data.autoCategorize ?? local.autoCategorize,
+          budgets:        data.budgets        ?? local.budgets,
+          budgetAlerts:   data.budgetAlerts   ?? local.budgetAlerts,
+        };
+        saveToSession(merged);
+        setSettings(merged);
+        applyToDom(merged);
+        saveToLocalStorage(merged);
+      })
+      .catch(() => {})
+      .finally(() => setSettingsLoaded(true));
   }, []);
 
-  function setLanguage(v: string) {
-    setLang(v);
-    try { localStorage.setItem("language", v); } catch {}
-    document.documentElement.lang = v;
-  }
-
-  function setCurrency(v: string, symbol: string) {
-    setCurr(v);
-    setCurrSymbol(symbol);
-    try {
-      localStorage.setItem("currency", v);
-      localStorage.setItem("currencySymbol", symbol);
-    } catch {}
-  }
-
   function setChartColor(v: string) {
-    setChartColorState(v);
+    setSettings((s) => {
+      const next = { ...s, chartColor: v };
+      saveToSession(next);
+      return next;
+    });
     document.documentElement.style.setProperty("--app-accent", v);
     document.documentElement.style.setProperty("--ring", v);
     try { localStorage.setItem("chartColor", v); } catch {}
   }
 
   function applyTheme(th: "light" | "dark" | "system") {
-    setThemeState(th);
+    setSettings((s) => {
+      const next = { ...s, theme: th };
+      saveToSession(next);
+      return next;
+    });
+    applyThemeToDom(th);
     try { localStorage.setItem("theme", th); } catch {}
-    const html = document.documentElement;
-    html.dataset.theme = th;
-    if (th === "dark") html.classList.add("dark");
-    else if (th === "light") html.classList.remove("dark");
-    else window.matchMedia("(prefers-color-scheme: dark)").matches
-      ? html.classList.add("dark") : html.classList.remove("dark");
+  }
+
+  // Called by SettingsDialog after a successful save
+  function applySettings(s: FullSettings) {
+    saveToSession(s);
+    setSettings(s);
+    applyToDom(s);
+    saveToLocalStorage(s);
   }
 
   return (
-    <Ctx.Provider value={{ language, currency, currencySymbol, chartColor, theme, setLanguage, setCurrency, setChartColor, applyTheme }}>
+    <Ctx.Provider value={{ ...settings, settingsLoaded, setChartColor, applyTheme, applySettings }}>
       {children}
     </Ctx.Provider>
   );

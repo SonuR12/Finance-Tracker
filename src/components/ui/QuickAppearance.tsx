@@ -9,7 +9,10 @@ const COLORS = ["#6366f1","#3b82f6","#10b981","#8b5cf6","#f43f5e","#f59e0b","#06
 export default function QuickAppearance() {
   const { chartColor, setChartColor, theme, applyTheme } = useSettings();
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => { setMounted(true); }, []);
 
   useEffect(() => {
     function handler(e: MouseEvent) {
@@ -24,7 +27,7 @@ export default function QuickAppearance() {
       <button
         onClick={() => setOpen((v) => !v)}
         className="flex items-center justify-center w-8 h-8 rounded-full border border-black/10 dark:border-white/10 bg-white/80 dark:bg-black/50 backdrop-blur-sm transition hover:scale-105"
-        style={{ color: chartColor }}
+        style={mounted ? { color: chartColor } : {}}
         title="Appearance"
       >
         <Palette className="h-4 w-4" />
