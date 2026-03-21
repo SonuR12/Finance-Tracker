@@ -27,7 +27,8 @@ export default function IncomeExpenseChart({ data }: { data: any[] }) {
           </span>
         </div>
       </div>
-      <ResponsiveContainer width="100%" height={220} tabIndex={-1}>
+      <div tabIndex={-1} className="outline-none focus:outline-none [&_*]:outline-none [&_*:focus]:outline-none">
+      <ResponsiveContainer width="100%" height={220}>
         <AreaChart data={data} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
           <defs>
             <linearGradient id="incomeGrad" x1="0" y1="0" x2="0" y2="1">
@@ -53,6 +54,7 @@ export default function IncomeExpenseChart({ data }: { data: any[] }) {
             fill="url(#expenseGrad)" dot={false} activeDot={{ r: 5, fill: "#fb7185" }} />
         </AreaChart>
       </ResponsiveContainer>
+      </div>
     </motion.div>
   );
 }

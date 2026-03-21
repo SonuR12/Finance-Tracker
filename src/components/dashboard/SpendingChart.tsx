@@ -31,7 +31,7 @@ export default function SpendingChart({ data }: { data: any[] }) {
       </div>
       <div className="flex flex-col sm:flex-row items-center gap-4">
         <div className="relative flex-shrink-0">
-          <ResponsiveContainer width={140} height={140} tabIndex={-1}>
+          <ResponsiveContainer width={140} height={140}>
             <PieChart>
               <Pie data={data} cx="50%" cy="50%" innerRadius={40} outerRadius={65}
                 dataKey="value" labelLine={false} label={CustomLabel}>
