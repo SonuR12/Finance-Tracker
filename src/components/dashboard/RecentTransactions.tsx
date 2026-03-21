@@ -3,11 +3,13 @@
 import { useMemo, useState, useTransition } from "react";
 import { motion } from "framer-motion";
 import { useSettings } from "@/lib/settings-context";
+import { useT } from "@/lib/i18n-context";
 import { Search } from "lucide-react";
 import { AppButton } from "@/components/ui/AppButton";
 
 export default function RecentTransactions({ data }: { data: any[] }) {
   const { currencySymbol } = useSettings();
+  const t = useT();
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | "income" | "expense">("all");
   const [, startTransition] = useTransition();
@@ -30,8 +32,8 @@ export default function RecentTransactions({ data }: { data: any[] }) {
       className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="font-semibold text-neutral-900 dark:text-white">Recent Transactions</h3>
-          <p className="text-xs text-neutral-400 mt-0.5">{data.length} transactions</p>
+          <h3 className="font-semibold text-neutral-900 dark:text-white">{t("dashboard.recentTransactions")}</h3>
+          <p className="text-xs text-neutral-400 mt-0.5">{data.length} {t("dashboard.transactions")}</p>
         </div>
         <div className="flex gap-1.5">
           {(["all", "income", "expense"] as const).map((f) => (
@@ -42,7 +44,7 @@ export default function RecentTransactions({ data }: { data: any[] }) {
               className="rounded-full capitalize"
               onClick={() => setFilter(f)}
             >
-              {f}
+              {t(`dashboard.${f === "all" ? "all" : f === "income" ? "income" : "expenses"}`)}
             </AppButton>
           ))}
         </div>
@@ -50,7 +52,7 @@ export default function RecentTransactions({ data }: { data: any[] }) {
       <div className="relative mb-3">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-neutral-400" />
         <input value={search} onChange={(e) => { const v = e.target.value; startTransition(() => setSearch(v)); }}
-          placeholder="Search transactions..."
+          placeholder={t("dashboard.searchTransactions")}
           className="w-full pl-8 pr-3 py-2 text-sm rounded-lg bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-800 dark:text-neutral-100 outline-none focus:border-indigo-400 placeholder:text-neutral-400" />
       </div>
       <div className="space-y-1 max-h-72 overflow-y-auto pr-1">
@@ -73,10 +75,10 @@ export default function RecentTransactions({ data }: { data: any[] }) {
           <div className="flex flex-col items-center justify-center py-12 gap-3">
             <span className="text-4xl">{search ? "🔍" : filter === "income" ? "💰" : filter === "expense" ? "💸" : "📭"}</span>
             <p className="text-sm font-medium text-neutral-600 dark:text-neutral-400">
-              {search ? `No results for "${search}"` : filter === "income" ? "No income transactions" : filter === "expense" ? "No expense transactions" : "No transactions yet"}
+              {search ? `${t("dashboard.noResults")} "${search}"` : filter === "income" ? t("dashboard.noIncome") : filter === "expense" ? t("dashboard.noExpense") : t("dashboard.noTransactions")}
             </p>
             <p className="text-xs text-neutral-400">
-              {search ? "Try a different search term" : "Transactions will appear here once added"}
+              {search ? t("dashboard.tryDifferent") : t("dashboard.transactionsAppear")}
             </p>
           </div>
         )}

@@ -2,32 +2,26 @@
 
 import { motion } from "framer-motion";
 import { useSettings } from "@/lib/settings-context";
+import { useT } from "@/lib/i18n-context";
 import { CreditCard, BarChart3, PieChart } from "lucide-react";
 import Image from "next/image";
 
-const steps = [
-  {
-    Icon: CreditCard,
-    title: "Create Your Account",
-    description: "Get started in minutes with our simple and secure sign-up process.",
-    image: "https://images.unsplash.com/photo-1633265486064-086b219458ec?w=600&q=80&auto=format&fit=crop",
-  },
-  {
-    Icon: BarChart3,
-    title: "Track Your Spending",
-    description: "Automatically categorize and track your transactions in real-time.",
-    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80&auto=format&fit=crop",
-  },
-  {
-    Icon: PieChart,
-    title: "Get AI Insights",
-    description: "Receive AI-powered insights and recommendations to optimize your finances.",
-    image: "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=600&q=80&auto=format&fit=crop",
-  },
+const stepImages = [
+  "https://images.unsplash.com/photo-1633265486064-086b219458ec?w=600&q=80&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=600&q=80&auto=format&fit=crop",
 ];
+const stepIcons = [CreditCard, BarChart3, PieChart];
 
 export default function HowItWorks() {
   const { chartColor } = useSettings();
+  const t = useT();
+
+  const steps = [
+    { titleKey: "howItWorks.step1Title", descKey: "howItWorks.step1Desc", image: stepImages[0], Icon: stepIcons[0] },
+    { titleKey: "howItWorks.step2Title", descKey: "howItWorks.step2Desc", image: stepImages[1], Icon: stepIcons[1] },
+    { titleKey: "howItWorks.step3Title", descKey: "howItWorks.step3Desc", image: stepImages[2], Icon: stepIcons[2] },
+  ];
 
   return (
     <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 bg-neutral-50 dark:bg-neutral-900/50">
@@ -39,9 +33,9 @@ export default function HowItWorks() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <p className="text-lg font-medium uppercase tracking-widest" style={{ color: chartColor }}>How It Works</p>
+          <p className="text-lg font-medium uppercase tracking-widest" style={{ color: chartColor }}>{t("howItWorks.label")}</p>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-neutral-900 dark:text-neutral-100">
-            Up and running in 3 steps
+            {t("howItWorks.title")}
           </h2>
         </motion.div>
 
@@ -60,7 +54,7 @@ export default function HowItWorks() {
               )}
 
               <div className="relative h-48 rounded-2xl overflow-hidden border border-neutral-100 dark:border-neutral-800">
-                <Image src={step.image} alt={step.title} fill className="object-cover" />
+                <Image src={step.image} alt={t(step.titleKey)} fill className="object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                 <div
                   className="absolute bottom-3 left-3 flex items-center justify-center w-10 h-10 rounded-full bg-white dark:bg-neutral-900 shadow-md"
@@ -77,8 +71,8 @@ export default function HowItWorks() {
               </div>
 
               <div className="space-y-1.5">
-                <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">{step.title}</h3>
-                <p className="text-sm text-neutral-500 dark:text-neutral-400">{step.description}</p>
+                <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">{t(step.titleKey)}</h3>
+                <p className="text-sm text-neutral-500 dark:text-neutral-400">{t(step.descKey)}</p>
               </div>
             </motion.div>
           ))}

@@ -29,12 +29,12 @@ export default function TestimonialsSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <p className="text-lgfont-medium uppercase tracking-widest" style={{ color: chartColor }}>Testimonials</p>
+          <p className="text-lgfont-medium uppercase tracking-widest" style={{ color: chartColor }}>{t("testimonials.label")}</p>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-neutral-900 dark:text-neutral-100">
             {t("testimonials.title")}
           </h2>
           <p className="text-neutral-500 dark:text-neutral-400 max-w-xl mx-auto">
-            Join thousands of users who have transformed their financial lives.
+            {t("testimonials.subtitle")}
           </p>
         </motion.div>
 

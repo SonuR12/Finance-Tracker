@@ -7,6 +7,7 @@ import { signOut } from "next-auth/react";
 import { Bell, Settings, LogOut, Home, LayoutDashboard, Menu, X } from "lucide-react";
 import { SettingsDialog } from "@/components/ui/SettingsDialog";
 import { useSettings } from "@/lib/settings-context";
+import { useT } from "@/lib/i18n-context";
 
 interface Props {
   name?: string | null;
@@ -18,6 +19,7 @@ export default function DashboardNav({ name, email, image }: Props) {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const { currencySymbol } = useSettings();
+  const t = useT();
 
   const initials = name
     ? name.trim().split(" ").map((p) => p[0]).slice(0, 2).join("").toUpperCase()
@@ -37,10 +39,10 @@ export default function DashboardNav({ name, email, image }: Props) {
             </Link>
             <div className="hidden sm:flex items-center gap-1 ml-4">
               <Link href="/" className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition">
-                <Home className="h-3.5 w-3.5" /> Home
+                <Home className="h-3.5 w-3.5" /> {t("dashboard.home")}
               </Link>
               <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-medium">
-                <LayoutDashboard className="h-3.5 w-3.5" /> Dashboard
+                <LayoutDashboard className="h-3.5 w-3.5" /> {t("nav.features") === "Features" ? "Dashboard" : t("dashboard.overview")}
               </span>
             </div>
           </div>
@@ -70,7 +72,7 @@ export default function DashboardNav({ name, email, image }: Props) {
             </div>
             <button onClick={() => signOut({ callbackUrl: "/" })}
               className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition">
-              <LogOut className="h-3.5 w-3.5" /> Sign out
+              <LogOut className="h-3.5 w-3.5" /> {t("dashboard.signOut")}
             </button>
             <button onClick={() => setMobileOpen((v) => !v)} className="sm:hidden p-2 rounded-lg text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition">
               {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
@@ -93,11 +95,11 @@ export default function DashboardNav({ name, email, image }: Props) {
               </div>
             </div>
             <Link href="/" className="flex items-center gap-2 px-2 py-2 rounded-lg text-sm text-neutral-600 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800">
-              <Home className="h-4 w-4" /> Home
+              <Home className="h-4 w-4" /> {t("dashboard.home")}
             </Link>
             <button onClick={() => signOut({ callbackUrl: "/" })}
               className="flex w-full items-center gap-2 px-2 py-2 rounded-lg text-sm text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30">
-              <LogOut className="h-4 w-4" /> Sign out
+              <LogOut className="h-4 w-4" /> {t("dashboard.signOut")}
             </button>
           </div>
         )}

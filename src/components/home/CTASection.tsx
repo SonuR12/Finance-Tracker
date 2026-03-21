@@ -61,7 +61,7 @@ export default function CTASection() {
               }}
             >
               <Sparkles className="h-3.5 w-3.5" />
-              Start for free today
+              {t("cta.badge")}
             </div>
 
             {/* Title */}
@@ -90,12 +90,12 @@ export default function CTASection() {
                 className="!rounded-full"
                 onClick={() => window.location.href = "/#features"}
               >
-                Learn more
+                {t("cta.learnMore")}
               </AppButton>
             </div>
 
             <p className="text-sm text-neutral-400 dark:text-neutral-500">
-              No credit card required · Free forever plan available
+              {t("cta.noCard")}
             </p>
           </div>
         </motion.div>

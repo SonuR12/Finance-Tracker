@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import PageLayout from "@/components/home/PageLayout";
 import { useSettings } from "@/lib/settings-context";
+import { useT } from "@/lib/i18n-context";
 import { motion } from "framer-motion";
 
 function hexToRgb(hex: string) {
@@ -80,6 +81,7 @@ const fadeUp = { initial: { opacity: 0, y: 20 }, whileInView: { opacity: 1, y: 0
 
 export default function PrivacyPolicyPage() {
   const { chartColor } = useSettings();
+  const t = useT();
   const rgb = hexToRgb(chartColor);
   const [activeSection, setActiveSection] = useState(0);
   const sectionRefs = useRef<(HTMLElement | null)[]>([]);
@@ -106,15 +108,15 @@ export default function PrivacyPolicyPage() {
       <section className="relative overflow-hidden pt-24 sm:pt-32 pb-14 sm:pb-20 px-4 sm:px-6 lg:px-8">
         <div className="absolute inset-0 pointer-events-none" style={{ background: `radial-gradient(ellipse 80% 50% at 50% -10%, rgba(${rgb},0.1) 0%, transparent 60%)` }} />
         <div className="max-w-3xl mx-auto text-center relative z-10">
-          <motion.p {...fadeUp} className="text-lg font-semibold uppercase tracking-widest mb-4" style={{ color: chartColor }}>Legal</motion.p>
+          <motion.p {...fadeUp} className="text-lg font-semibold uppercase tracking-widest mb-4" style={{ color: chartColor }}>{t("privacy.label")}</motion.p>
           <motion.h1 {...fadeUp} transition={{ duration: 0.55, delay: 0.1 }} className="text-4xl sm:text-5xl font-extrabold tracking-tight text-neutral-900 dark:text-white mb-4">
-            Privacy Policy
+            {t("privacy.title")}
           </motion.h1>
           <motion.p {...fadeUp} transition={{ duration: 0.55, delay: 0.2 }} className="text-neutral-500 dark:text-neutral-400">
-            Last updated: <span className="font-medium text-neutral-700 dark:text-neutral-300">March 15, 2026</span>
+            {t("privacy.lastUpdated")} <span className="font-medium text-neutral-700 dark:text-neutral-300">March 15, 2026</span>
           </motion.p>
           <motion.p {...fadeUp} transition={{ duration: 0.55, delay: 0.25 }} className="mt-4 text-neutral-500 dark:text-neutral-400 leading-relaxed">
-            At Finance AI, your privacy is not an afterthought — it&apos;s a core principle. This policy explains exactly what data we collect, why we collect it, and how you can control it.
+            {t("privacy.intro")}
           </motion.p>
         </div>
       </section>
@@ -125,7 +127,7 @@ export default function PrivacyPolicyPage() {
 
           {/* Sticky TOC */}
           <aside className="hidden md:block sticky top-60 self-start max-h-[calc(100vh-7rem)] overflow-y-auto rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5">
-            <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: chartColor }}>Contents</p>
+            <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: chartColor }}>{t("privacy.contents")}</p>
             <nav className="space-y-1">
               {sections.map((s, i) => (
                 <button key={i}
@@ -175,10 +177,10 @@ export default function PrivacyPolicyPage() {
             <motion.div {...fadeUp} className="rounded-2xl p-6 sm:p-8 text-center space-y-3"
               style={{ background: `rgba(${rgb},0.06)`, border: `1.5px solid rgba(${rgb},0.2)` }}
             >
-              <p className="font-semibold text-neutral-900 dark:text-neutral-100">Questions about this policy?</p>
-              <p className="text-sm text-neutral-500 dark:text-neutral-400">We&apos;re happy to help. Reach out to our privacy team.</p>
+              <p className="font-semibold text-neutral-900 dark:text-neutral-100">{t("privacy.questionsTitle")}</p>
+              <p className="text-sm text-neutral-500 dark:text-neutral-400">{t("privacy.questionsDesc")}</p>
               <a href="mailto:sonurai272004@gmail.com" className="inline-flex items-center gap-2 text-sm font-semibold" style={{ color: chartColor }}>
-                E mail
+                {t("privacy.email")}
               </a>
             </motion.div>
           </div>

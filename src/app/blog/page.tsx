@@ -3,6 +3,7 @@
 import React from "react";
 import PageLayout from "@/components/home/PageLayout";
 import { useSettings } from "@/lib/settings-context";
+import { useT } from "@/lib/i18n-context";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
@@ -90,11 +91,23 @@ const fadeUp = { initial: { opacity: 0, y: 24 }, whileInView: { opacity: 1, y: 0
 
 export default function BlogPage() {
   const { chartColor } = useSettings();
+  const t = useT();
   const rgb = hexToRgb(chartColor);
   const [activeCategory, setActiveCategory] = React.useState("All");
+
+  const categories = [t("blog.all"), t("blog.aiFinance"), t("blog.personalFinance"), t("blog.tipsTricks"), t("blog.product")];
+  const categoryMap: Record<string, string> = {
+    [t("blog.all")]: "All",
+    [t("blog.aiFinance")]: "AI & Finance",
+    [t("blog.personalFinance")]: "Personal Finance",
+    [t("blog.tipsTricks")]: "Tips & Tricks",
+    [t("blog.product")]: "Product",
+  };
+
   const featured = posts.find((p) => p.featured)!;
-  const showFeatured = activeCategory === "All" || featured.category === activeCategory;
-  const rest = posts.filter((p) => !p.featured && (activeCategory === "All" || p.category === activeCategory));
+  const activeCategoryEn = categoryMap[activeCategory] ?? "All";
+  const showFeatured = activeCategoryEn === "All" || featured.category === activeCategoryEn;
+  const rest = posts.filter((p) => !p.featured && (activeCategoryEn === "All" || p.category === activeCategoryEn));
 
   return (
     <PageLayout>
@@ -102,12 +115,12 @@ export default function BlogPage() {
       <section className="relative overflow-hidden pt-24 sm:pt-32 pb-14 sm:pb-20 px-4 sm:px-6 lg:px-8">
         <div className="absolute inset-0 pointer-events-none" style={{ background: `radial-gradient(ellipse 80% 50% at 50% -10%, rgba(${rgb},0.12) 0%, transparent 60%)` }} />
         <div className="max-w-4xl mx-auto text-center relative z-10">
-          <motion.p {...fadeUp} className="text-lg font-semibold uppercase tracking-widest mb-4" style={{ color: chartColor }}>Blog</motion.p>
+          <motion.p {...fadeUp} className="text-lg font-semibold uppercase tracking-widest mb-4" style={{ color: chartColor }}>{t("blog.label")}</motion.p>
           <motion.h1 {...fadeUp} transition={{ duration: 0.55, delay: 0.1 }} className="text-4xl sm:text-5xl font-extrabold tracking-tight text-neutral-900 dark:text-white mb-4">
-            Insights, tips & product news
+            {t("blog.title")}
           </motion.h1>
           <motion.p {...fadeUp} transition={{ duration: 0.55, delay: 0.2 }} className="text-lg text-neutral-500 dark:text-neutral-400">
-            Stay up to date with the latest in personal finance, AI, and product updates.
+            {t("blog.subtitle")}
           </motion.p>
         </div>
       </section>
@@ -140,7 +153,7 @@ export default function BlogPage() {
               <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/20 md:to-black/40" />
             </div>
             <div className="p-7 sm:p-10 flex flex-col justify-center bg-white dark:bg-neutral-900 space-y-4">
-              <span className="text-xs font-bold uppercase tracking-widest" style={{ color: chartColor }}>{featured.category} · Featured</span>
+              <span className="text-xs font-bold uppercase tracking-widest" style={{ color: chartColor }}>{featured.category} · {t("blog.featured")}</span>
               <h2 className="text-2xl sm:text-3xl font-bold text-neutral-900 dark:text-white leading-snug">{featured.title}</h2>
               <p className="text-neutral-500 dark:text-neutral-400 leading-relaxed">{featured.excerpt}</p>
               <div className="flex items-center gap-3 pt-2">
@@ -151,7 +164,7 @@ export default function BlogPage() {
                 </div>
               </div>
               <Link href={`/blog/${featured.slug}`} className="inline-flex items-center gap-2 text-sm font-semibold group/link mt-1" style={{ color: chartColor }}>
-                Read article <ArrowRight className="h-4 w-4 transition-transform group-hover/link:translate-x-1" />
+                {t("blog.readArticle")} <ArrowRight className="h-4 w-4 transition-transform group-hover/link:translate-x-1" />
               </Link>
             </div>
           </div>

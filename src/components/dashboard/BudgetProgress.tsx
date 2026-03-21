@@ -2,9 +2,11 @@
 
 import { motion } from "framer-motion";
 import { useSettings } from "@/lib/settings-context";
+import { useT } from "@/lib/i18n-context";
 
 export default function BudgetProgress({ data }: { data: any[] }) {
   const { currencySymbol } = useSettings();
+  const t = useT();
 
   return (
     <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}
@@ -12,11 +14,11 @@ export default function BudgetProgress({ data }: { data: any[] }) {
       className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5">
       <div className="flex items-center justify-between mb-5">
         <div>
-          <h3 className="font-semibold text-neutral-900 dark:text-white">Budget Tracker</h3>
+          <h3 className="font-semibold text-neutral-900 dark:text-white">{t("dashboard.budgetTracker")}</h3>
           <p className="text-xs text-neutral-400 mt-0.5">March 2025</p>
         </div>
         <span className="text-xs text-neutral-400">
-          {data.filter((b) => b.spent <= b.limit).length}/{data.length} on track
+          {data.filter((b) => b.spent <= b.limit).length}/{data.length} {t("dashboard.onTrack")}
         </span>
       </div>
       <div className="space-y-4">

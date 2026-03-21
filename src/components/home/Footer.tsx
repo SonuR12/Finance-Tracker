@@ -5,26 +5,36 @@ import Image from "next/image";
 import { useT } from "@/lib/i18n-context";
 import { useSettings } from "@/lib/settings-context";
 
-const links = {
-  Product: [
-    { label: "Features",  href: "/#features" },
-    { label: "Pricing",   href: "/#pricing" },
-    { label: "Dashboard", href: "/dashboard" },
-  ],
-  Company: [
-    { label: "About",   href: "/about" },
-    { label: "Blog",    href: "/blog" },
-    { label: "Careers", href: "/careers" },
-  ],
-  Legal: [
-    { label: "Privacy Policy",   href: "/privacy-policy" },
-    { label: "Terms of Service", href: "/terms-of-service" },
-  ],
-};
+
 
 export default function Footer() {
   const t = useT();
   const { chartColor } = useSettings();
+
+  const links = [
+    {
+      category: t("footer.product"),
+      items: [
+        { label: t("footer.features"),  href: "/#features" },
+        { label: t("footer.dashboard"), href: "/dashboard" },
+      ],
+    },
+    {
+      category: t("footer.company"),
+      items: [
+        { label: t("footer.about"),   href: "/about" },
+        { label: t("footer.blog"),    href: "/blog" },
+        { label: t("footer.careers"), href: "/careers" },
+      ],
+    },
+    {
+      category: t("footer.legal"),
+      items: [
+        { label: t("footer.privacyPolicy"),   href: "/privacy-policy" },
+        { label: t("footer.termsOfService"), href: "/terms-of-service" },
+      ],
+    },
+  ];
 
   return (
     <footer className="border-t border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950">
@@ -40,7 +50,7 @@ export default function Footer() {
               </div>
             </Link>
             <p className="text-sm text-neutral-500 dark:text-neutral-400 max-w-xs">
-              AI-powered personal finance tracker. Take control of your money.
+              {t("footer.aiPowered")}
             </p>
             <div className="flex gap-3">
               <Link href="mailto:sonurai272004@gmail.com" className="p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors">
@@ -56,7 +66,7 @@ export default function Footer() {
           </div>
 
           {/* Links */}
-          {Object.entries(links).map(([category, items]) => (
+          {links.map(({ category, items }) => (
             <div key={category} className="space-y-3">
               <h4 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{category}</h4>
               <ul className="space-y-2">
@@ -78,7 +88,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-neutral-100 dark:border-neutral-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-neutral-500 dark:text-neutral-400">
-          <span>© {new Date().getFullYear()} Finance AI · Built by Sonu Rai</span>
+          <span>© {new Date().getFullYear()} Finance AI · {t("footer.builtBy")}</span>
           <span>{t("footer.tagline")}</span>
         </div>
       </div>

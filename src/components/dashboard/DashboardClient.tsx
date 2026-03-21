@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useSettings } from "@/lib/settings-context";
+import { useT } from "@/lib/i18n-context";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { Sparkles, Bell, BarChart3, ArrowLeftRight, TrendingUp, TrendingDown, PiggyBank, Target, Wallet, CreditCard, Receipt, ShieldCheck, X, Send } from "lucide-react";
@@ -30,33 +31,28 @@ export interface DashboardData {
 /* module-level cache — client-only, survives tab switches */
 let dashboardCache: DashboardData | null = null;
 
-function getGreeting() {
-  const h = new Date().getHours();
-  if (h < 12) return "Good morning";
-  if (h < 17) return "Good afternoon";
-  return "Good evening";
-}
-
-const TAB_TITLES: Record<string, { label: string; icon: any; desc: string }> = {
-  dashboard:     { label: "Dashboard",     icon: BarChart3,      desc: "Your financial overview" },
-  analytics:     { label: "Analytics",     icon: BarChart3,      desc: "Deep dive into your data" },
-  "ai-insights": { label: "AI Insights",   icon: Sparkles,       desc: "Smart recommendations" },
-  transactions:  { label: "Transactions",  icon: ArrowLeftRight, desc: "All your transactions" },
-  income:        { label: "Income",        icon: TrendingUp,     desc: "Income sources & trends" },
-  expenses:      { label: "Expenses",      icon: TrendingDown,   desc: "Spending breakdown" },
-  budget:        { label: "Budget",        icon: PiggyBank,      desc: "Budget limits & tracking" },
-  savings:       { label: "Savings",       icon: Target,         desc: "Savings goals & progress" },
-  accounts:      { label: "Accounts",      icon: Wallet,         desc: "Linked bank accounts" },
-  cards:         { label: "Cards",         icon: CreditCard,     desc: "Credit & debit cards" },
-  bills:         { label: "Bills",         icon: Receipt,        desc: "Upcoming bills & payments" },
-  investments:   { label: "Investments",   icon: TrendingUp,     desc: "Portfolio & returns" },
-  notifications: { label: "Notifications", icon: Bell,           desc: "Alerts & updates" },
-  security:      { label: "Security",      icon: ShieldCheck,    desc: "Account security settings" },
+const TAB_ICON_MAP: Record<string, any> = {
+  dashboard:     BarChart3,
+  analytics:     BarChart3,
+  "ai-insights": Sparkles,
+  transactions:  ArrowLeftRight,
+  income:        TrendingUp,
+  expenses:      TrendingDown,
+  budget:        PiggyBank,
+  savings:       Target,
+  accounts:      Wallet,
+  cards:         CreditCard,
+  bills:         Receipt,
+  investments:   TrendingUp,
+  notifications: Bell,
+  security:      ShieldCheck,
 };
 
 function ComingSoon({ tab }: { tab: string }) {
-  const info = TAB_TITLES[tab];
-  const Icon = info?.icon ?? BarChart3;
+  const t = useT();
+  const Icon = TAB_ICON_MAP[tab] ?? BarChart3;
+  const labelKey = `dashboard.${tab === "ai-insights" ? "aiInsightsTab" : tab}`;
+  const descKey = `dashboard.tabDesc.${tab === "ai-insights" ? "aiInsights" : tab}`;
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
        className="flex flex-col items-center justify-center min-h-[80vh] gap-4 text-center">
@@ -64,32 +60,39 @@ function ComingSoon({ tab }: { tab: string }) {
         <Icon className="h-8 w-8" style={{ color: "var(--app-accent)" }} />
       </div>
       <div>
-        <p className="text-lg font-semibold text-neutral-800 dark:text-neutral-100">{info?.label ?? tab} coming soon</p>
-        <p className="text-sm text-neutral-400 mt-1">{info?.desc ?? "This section is under construction."}</p>
+        <p className="text-lg font-semibold text-neutral-800 dark:text-neutral-100">{t(labelKey)} {t("dashboard.comingSoon")}</p>
+        <p className="text-sm text-neutral-400 mt-1">{t(descKey)}</p>
       </div>
-      <span className="px-3 py-1 rounded-full text-xs font-medium" style={{ background: "var(--app-accent)20", color: "var(--app-accent)" }}>In development</span>
+      <span className="px-3 py-1 rounded-full text-xs font-medium" style={{ background: "var(--app-accent)20", color: "var(--app-accent)" }}>{t("dashboard.inDevelopment")}</span>
     </motion.div>
   );
 }
 
 function DashboardHome({ name, d }: { name?: string | null; d: DashboardData }) {
+  const t = useT();
   const firstName = name?.split(" ")[0] ?? "there";
+  const greetingKey = (() => {
+    const h = new Date().getHours();
+    if (h < 12) return "dashboard.goodMorning";
+    if (h < 17) return "dashboard.goodAfternoon";
+    return "dashboard.goodEvening";
+  })();
   return (
     <div className="space-y-6">
       <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}
         className="flex items-center justify-between">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-neutral-900 dark:text-white">
-            {getGreeting()}, {firstName} 👋
+            {t(greetingKey)}, {firstName} 👋
           </h1>
-          <p className="text-sm text-neutral-400 mt-0.5">Here's what's happening with your finances today.</p>
+          <p className="text-sm text-neutral-400 mt-0.5">{t("dashboard.financesOverview")}</p>
         </div>
         <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.4, delay: 0.15 }}
           className="hidden sm:flex items-center gap-2 px-3 py-2 rounded-xl text-white text-xs font-medium shadow-lg"
           style={{ background: "linear-gradient(to right, var(--app-accent), var(--app-accent))" }}>
           <Sparkles className="h-3.5 w-3.5" />
-          AI-Powered Insights Active
+          {t("dashboard.aiPowered")}
         </motion.div>
       </motion.div>
       <StatCards stats={d.stats} />
@@ -110,20 +113,21 @@ function DashboardHome({ name, d }: { name?: string | null; d: DashboardData }) 
 }
 
 function NotificationsTab({ readIds, setReadIds }: { readIds: number[]; setReadIds: React.Dispatch<React.SetStateAction<number[]>> }) {
+  const t = useT();
   const unread = NOTIFICATIONS.filter((n) => n.unread && !readIds.includes(n.id)).length;
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-base font-semibold text-neutral-800 dark:text-neutral-100">Notifications</p>
-          {unread > 0 && <p className="text-xs text-neutral-400 mt-0.5">{unread} unread</p>}
+          <p className="text-base font-semibold text-neutral-800 dark:text-neutral-100">{t("dashboard.notifications")}</p>
+          {unread > 0 && <p className="text-xs text-neutral-400 mt-0.5">{unread} {t("dashboard.unread")}</p>}
         </div>
         {unread > 0 && (
           <button
             onClick={() => setReadIds(NOTIFICATIONS.filter((n) => n.unread).map((n) => n.id))}
             className="text-xs hover:underline" style={{ color: "var(--app-accent)" }}
           >
-            Mark all read
+            {t("dashboard.markAllRead")}
           </button>
         )}
       </div>
@@ -183,8 +187,10 @@ function TabContent({ tab, name, d, readIds, setReadIds }: { tab: string; name?:
 }
 
 export default function DashboardClient({ name, image, activeTab, onMobileMenuOpen, onSettingsOpen, readIds, setReadIds, initialData }: Props) {
-  const info = TAB_TITLES[activeTab] ?? TAB_TITLES["dashboard"];
-  const Icon = info.icon;
+  const t = useT();
+  const Icon = TAB_ICON_MAP[activeTab] ?? BarChart3;
+  const tabLabelKey = `dashboard.${activeTab === "ai-insights" ? "aiInsightsTab" : activeTab}`;
+  const tabDescKey = `dashboard.tabDesc.${activeTab === "ai-insights" ? "aiInsights" : activeTab}`;
 
   const [data] = useState<DashboardData>(initialData);
   const [notifOpen, setNotifOpen] = useState(false);
@@ -219,8 +225,8 @@ export default function DashboardClient({ name, image, activeTab, onMobileMenuOp
               <Icon className="h-5 w-5" style={{ color: "var(--app-accent)" }} />
             </div>
             <div>
-              <p className="text-sm font-semibold text-neutral-800 dark:text-neutral-100 leading-none">{info.label}</p>
-              <p className="text-[10px] text-neutral-400 mt-0.5">{info.desc}</p>
+              <p className="text-sm font-semibold text-neutral-800 dark:text-neutral-100 leading-none">{t(tabLabelKey)}</p>
+              <p className="text-[10px] text-neutral-400 mt-0.5">{t(tabDescKey)}</p>
             </div>
           </div>
         </div>
@@ -252,8 +258,8 @@ export default function DashboardClient({ name, image, activeTab, onMobileMenuOp
                 >
                   <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-100 dark:border-neutral-800">
                     <div>
-                      <p className="text-sm font-semibold text-neutral-800 dark:text-neutral-100">Notifications</p>
-                      {unreadCount > 0 && <p className="text-xs text-neutral-400">{unreadCount} unread</p>}
+                      <p className="text-sm font-semibold text-neutral-800 dark:text-neutral-100">{t("dashboard.notifications")}</p>
+                      {unreadCount > 0 && <p className="text-xs text-neutral-400">{unreadCount} {t("dashboard.unread")}</p>}
                     </div>
                     <div className="flex items-center gap-1">
                       {unreadCount > 0 && (
@@ -261,7 +267,7 @@ export default function DashboardClient({ name, image, activeTab, onMobileMenuOp
                           onClick={() => setReadIds(NOTIFICATIONS.filter((n) => n.unread).map((n) => n.id))}
                           className="text-xs hover:underline px-2 py-1" style={{ color: "var(--app-accent)" } as any}
                         >
-                          Mark all read
+                          {t("dashboard.markAllRead")}
                         </button>
                       )}
                       <button onClick={() => setNotifOpen(false)} className="p-1 rounded-lg text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition">
@@ -450,11 +456,11 @@ function AIFloatingButton({ insights, data }: { insights: any[]; data: Dashboard
             <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-100 dark:border-neutral-800" style={{ background: "color-mix(in srgb, var(--app-accent) 8%, transparent)" }}>
               <div className="flex items-center gap-2">
                 <Sparkles className="h-4 w-4" style={{ color: "var(--app-accent)" }} />
-                <p className="text-sm font-semibold text-neutral-800 dark:text-neutral-100">AI Finance Assistant</p>
+                <p className="text-sm font-semibold text-neutral-800 dark:text-neutral-100">{t("dashboard.aiAssistant")}</p>
               </div>
               <div className="flex items-center gap-1">
                 {messages.length > 0 && (
-                  <button onClick={() => setMessages([])} className="text-[10px] px-2 py-0.5 rounded-lg text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition">Clear</button>
+                  <button onClick={() => setMessages([])} className="text-[10px] px-2 py-0.5 rounded-lg text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition">{t("dashboard.clear")}</button>
                 )}
                 <button onClick={() => setOpen(false)} className="p-1 rounded-lg text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition">
                   <X className="h-3.5 w-3.5" />
@@ -467,15 +473,15 @@ function AIFloatingButton({ insights, data }: { insights: any[]; data: Dashboard
               {messages.length === 0 && (
                 <div className="py-2">
                   <Image src="/Images/chatbot-icon.jpg" alt="AI" width={32} height={32} className="mx-auto mb-2 rounded-full" />
-                  <p className="text-xs text-neutral-400 text-center mb-3">Ask me anything about your finances!</p>
+                  <p className="text-xs text-neutral-400 text-center mb-3">{t("dashboard.askFinances")}</p>
                   <div className="flex flex-col gap-1.5">
                     {[
-                      "How can I reduce my expenses?",
-                      "Show my recent transactions",
-                      "Which budget am I over?",
-                      "Where am I spending the most?",
-                      "Stock market today?",
-                      "How to improve my savings rate?",
+                      t("dashboard.suggestedQ1"),
+                      t("dashboard.suggestedQ2"),
+                      t("dashboard.suggestedQ3"),
+                      t("dashboard.suggestedQ4"),
+                      t("dashboard.suggestedQ5"),
+                      t("dashboard.suggestedQ6"),
                     ].map((q) => (
                       <button key={q} onClick={() => handleSend(q)}
                         className="text-xs px-3 py-2 hover:cursor-pointer rounded-xl border border-neutral-200 dark:border-neutral-700 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition text-left">
@@ -509,7 +515,7 @@ function AIFloatingButton({ insights, data }: { insights: any[]; data: Dashboard
               {loading && (
                 <div className="flex justify-start">
                   <div className="px-3 py-2 rounded-xl rounded-bl-sm bg-neutral-100 dark:bg-neutral-800 text-xs text-neutral-400 italic tracking-wide">
-                    Analysing...
+                    {t("dashboard.analysing")}
                   </div>
                 </div>
               )}
@@ -522,7 +528,7 @@ function AIFloatingButton({ insights, data }: { insights: any[]; data: Dashboard
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSend()}
-                placeholder="Ask about your finances…"
+                placeholder={t("dashboard.askPlaceholder")}
                 className="flex-1 text-xs px-3 py-2 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-100 placeholder-neutral-400 outline-none focus:border-current transition"
               />
               <button

@@ -14,6 +14,7 @@ import { SettingsDialog } from "@/components/ui/SettingsDialog";
 import { UserMenu } from "@/components/ui/UserMenu";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSettings } from "@/lib/settings-context";
+import { useT } from "@/lib/i18n-context";
 
 interface Props {
   name?: string | null;
@@ -29,37 +30,37 @@ interface Props {
 
 const NAV_GROUPS = [
   {
-    label: "Overview",
+    labelKey: "dashboard.overview",
     items: [
-      { id: "dashboard",     label: "Dashboard",     icon: LayoutDashboard },
-      { id: "analytics",     label: "Analytics",     icon: BarChart3       },
-      { id: "ai-insights",   label: "AI Insights",   icon: Sparkles        },
+      { id: "dashboard",     labelKey: "dashboard.overview",      icon: LayoutDashboard },
+      { id: "analytics",     labelKey: "dashboard.analytics",     icon: BarChart3       },
+      { id: "ai-insights",   labelKey: "dashboard.aiInsightsTab", icon: Sparkles        },
     ],
   },
   {
-    label: "Money",
+    labelKey: "dashboard.money",
     items: [
-      { id: "transactions",  label: "Transactions",  icon: ArrowLeftRight  },
-      { id: "income",        label: "Income",        icon: TrendingUp      },
-      { id: "expenses",      label: "Expenses",      icon: TrendingDown    },
-      { id: "budget",        label: "Budget",        icon: PiggyBank       },
-      { id: "savings",       label: "Savings",       icon: Target          },
+      { id: "transactions",  labelKey: "dashboard.transactionsTab", icon: ArrowLeftRight  },
+      { id: "income",        labelKey: "dashboard.income",          icon: TrendingUp      },
+      { id: "expenses",      labelKey: "dashboard.expenses",        icon: TrendingDown    },
+      { id: "budget",        labelKey: "dashboard.budget",          icon: PiggyBank       },
+      { id: "savings",       labelKey: "dashboard.savings",         icon: Target          },
     ],
   },
   {
-    label: "Accounts",
+    labelKey: "dashboard.accounts",
     items: [
-      { id: "accounts",      label: "Accounts",      icon: Wallet          },
-      { id: "cards",         label: "Cards",         icon: CreditCard      },
-      { id: "bills",         label: "Bills",         icon: Receipt         },
-      { id: "investments",   label: "Investments",   icon: TrendingUp      },
+      { id: "accounts",      labelKey: "dashboard.accounts",     icon: Wallet          },
+      { id: "cards",         labelKey: "dashboard.cards",        icon: CreditCard      },
+      { id: "bills",         labelKey: "dashboard.bills",        icon: Receipt         },
+      { id: "investments",   labelKey: "dashboard.investments",  icon: TrendingUp      },
     ],
   },
   {
-    label: "Other",
+    labelKey: "dashboard.other",
     items: [
-      { id: "notifications", label: "Notifications", icon: Bell },
-      { id: "security",      label: "Security",      icon: ShieldCheck     },
+      { id: "notifications", labelKey: "dashboard.notifications", icon: Bell },
+      { id: "security",      labelKey: "dashboard.security",      icon: ShieldCheck     },
     ],
   },
 ];
@@ -68,21 +69,23 @@ export default function Sidebar({ name, email, image, avatarColor, activeTab, on
   const [collapsed, setCollapsed] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const { chartColor } = useSettings();
+  const t = useT();
 
   function NavItems({ forMobile = false }: { forMobile?: boolean }) {
     return (
       <>
         {NAV_GROUPS.map((group) => (
-          <div key={group.label}>
+          <div key={group.labelKey}>
             {(!collapsed || forMobile) && (
               <p className="text-[10px] font-semibold text-neutral-400 uppercase tracking-wider px-3 mb-1">
-                {group.label}
+                {t(group.labelKey)}
               </p>
             )}
             <div className="space-y-0.5">
               {group.items.map((item) => {
                 const Icon = item.icon;
                 const isActive = activeTab === item.id;
+                const label = t(item.labelKey);
                 return (
                   <button
                     key={item.id}
@@ -94,11 +97,8 @@ export default function Sidebar({ name, email, image, avatarColor, activeTab, on
                         : "text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 hover:text-neutral-800 dark:hover:text-neutral-200"
                     } ${collapsed && !forMobile ? "justify-center" : ""}`}
                   >
-                    {/* {isActive && (
-                      <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 rounded-r-full" style={{ background: chartColor }} />
-                    )} */}
                     <Icon className="h-4 w-4 flex-shrink-0" />
-                    {(!collapsed || forMobile) && <span className="flex-1 text-left">{item.label}</span>}
+                    {(!collapsed || forMobile) && <span className="flex-1 text-left">{label}</span>}
                     {item.id === "notifications" && unreadCount > 0 && (!collapsed || forMobile) && (
                       <span className="h-4 min-w-4 px-1 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center">
                         {unreadCount}
@@ -109,7 +109,7 @@ export default function Sidebar({ name, email, image, avatarColor, activeTab, on
                     )}
                     {collapsed && !forMobile && (
                       <span className="pointer-events-none absolute left-full ml-2 px-2 py-1 rounded-lg bg-neutral-900 dark:bg-neutral-700 text-white text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition z-50">
-                        {item.label}
+                        {label}
                       </span>
                     )}
                   </button>
@@ -156,10 +156,10 @@ export default function Sidebar({ name, email, image, avatarColor, activeTab, on
             className={`relative flex w-full items-center gap-3 px-3 py-2 rounded-xl text-sm text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition group ${collapsed ? "justify-center" : ""}`}
           >
             <Settings className="h-4 w-4 flex-shrink-0" />
-            {!collapsed && <span>Settings</span>}
+            {!collapsed && <span>{t("settings.title")}</span>}
             {collapsed && (
               <span className="pointer-events-none absolute left-full ml-2 px-2 py-1 rounded-lg bg-neutral-900 dark:bg-neutral-700 text-white text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition z-50">
-                Settings
+                {t("settings.title")}
               </span>
             )}
           </button>
@@ -210,7 +210,7 @@ export default function Sidebar({ name, email, image, avatarColor, activeTab, on
                 <div className="px-3 pb-4 space-y-1 border-t border-neutral-200 dark:border-neutral-800 pt-3">
                   <button onClick={() => { onMobileOpenChange(false); setSettingsOpen(true); }}
                     className="flex w-full items-center gap-3 px-3 py-2 rounded-xl text-sm text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition">
-                    <Settings className="h-4 w-4" /> Settings
+                    <Settings className="h-4 w-4" /> {t("settings.title")}
                   </button>
                   <div className="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-neutral-100 dark:bg-neutral-800">
                     <UserMenu image={image} name={name} email={email} onSettings={() => { onMobileOpenChange(false); setSettingsOpen(true); }} size={28} avatarColor={avatarColor} />

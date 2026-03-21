@@ -30,12 +30,12 @@ export default function FeaturesSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <p className="text-lg font-medium uppercase tracking-widest" style={{ color: chartColor }}>Features</p>
+          <p className="text-lg font-medium uppercase tracking-widest" style={{ color: chartColor }}>{t("features.label")}</p>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-neutral-900 dark:text-neutral-100">
             {t("features.title")}
           </h2>
           <p className="text-neutral-500 dark:text-neutral-400 max-w-xl mx-auto">
-            Everything you need to take control of your finances, powered by cutting-edge AI.
+            {t("features.subtitle")}
           </p>
         </motion.div>
 

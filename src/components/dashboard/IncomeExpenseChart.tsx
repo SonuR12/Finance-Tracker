@@ -3,9 +3,11 @@
 import { motion } from "framer-motion";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { useSettings } from "@/lib/settings-context";
+import { useT } from "@/lib/i18n-context";
 
 export default function IncomeExpenseChart({ data }: { data: any[] }) {
   const { currencySymbol, chartColor } = useSettings();
+  const t = useT();
 
   return (
     <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}
@@ -13,15 +15,15 @@ export default function IncomeExpenseChart({ data }: { data: any[] }) {
       className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h3 className="font-semibold text-neutral-900 dark:text-white">Income vs Expenses</h3>
-          <p className="text-xs text-neutral-400 mt-0.5">Last 7 months overview</p>
+          <h3 className="font-semibold text-neutral-900 dark:text-white">{t("dashboard.incomeVsExpenses")}</h3>
+          <p className="text-xs text-neutral-400 mt-0.5">{t("dashboard.last7Months")}</p>
         </div>
         <div className="flex gap-3 text-xs">
           <span className="flex items-center gap-1.5 text-neutral-500 dark:text-neutral-400">
-            <span className="h-2.5 w-2.5 rounded-full" style={{ background: chartColor }} /> Income
+            <span className="h-2.5 w-2.5 rounded-full" style={{ background: chartColor }} /> {t("dashboard.income")}
           </span>
           <span className="flex items-center gap-1.5 text-neutral-500 dark:text-neutral-400">
-            <span className="h-2.5 w-2.5 rounded-full bg-rose-400" /> Expenses
+            <span className="h-2.5 w-2.5 rounded-full bg-rose-400" /> {t("dashboard.expenses")}
           </span>
         </div>
       </div>

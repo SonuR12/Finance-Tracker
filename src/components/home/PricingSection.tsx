@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useSettings } from "@/lib/settings-context";
+import { useT } from "@/lib/i18n-context";
 import { Check, X } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -40,7 +41,26 @@ const plans = [
 
 export default function PricingSection() {
   const { chartColor, currencySymbol } = useSettings();
+  const t = useT();
   const [active, setActive] = useState(1);
+
+  const allFeatures = [
+    { label: t("pricing.features.transactions"),     values: [t("pricing.features.50month"),   t("pricing.features.unlimited"),  t("pricing.features.unlimited")] },
+    { label: t("pricing.features.analytics"),        values: [true,          true,          true] },
+    { label: t("pricing.features.accounts"),         values: [t("pricing.features.2accounts"), t("pricing.features.unlimited"),  t("pricing.features.unlimited")] },
+    { label: t("pricing.features.aiInsights"),       values: [,     true,          true] },
+    { label: t("pricing.features.multiCurrency"),    values: [false,         true,          true] },
+    { label: t("pricing.features.exportReports"),    values: [false,         true,          true] },
+    { label: t("pricing.features.teamCollab"),       values: [false,         false,         true] },
+    { label: t("pricing.features.apiAccess"),        values: [false,         false,         true] },
+    { label: t("pricing.features.dedicatedSupport"), values: [false,         false,         true] },
+  ];
+
+  const plans = [
+    { name: t("pricing.freeName"),     priceNum: "0",  period: t("pricing.forever"),   cta: t("pricing.free"),      href: "/sign-in" },
+    { name: t("pricing.proName"),      priceNum: "9",  period: t("pricing.perMonth"), cta: t("pricing.pro"),  href: "/sign-in" },
+    { name: t("pricing.businessName"), priceNum: "29", period: t("pricing.perMonth"), cta: t("pricing.business"),     href: "/sign-in" },
+  ];
 
   return (
     <section id="pricing" className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 bg-neutral-50 dark:bg-neutral-900/50">
@@ -54,12 +74,12 @@ export default function PricingSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <p className="text-lg font-medium uppercase tracking-widest" style={{ color: chartColor }}>Pricing</p>
+          <p className="text-lg font-medium uppercase tracking-widest" style={{ color: chartColor }}>{t("pricing.label")}</p>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-neutral-900 dark:text-neutral-100">
-            Simple, transparent pricing
+            {t("pricing.title")}
           </h2>
           <p className="text-neutral-500 dark:text-neutral-400 max-w-xl mx-auto">
-            No hidden fees. Cancel anytime.
+            {t("pricing.subtitle")}
           </p>
         </motion.div>
 
@@ -118,7 +138,7 @@ export default function PricingSection() {
                     className="absolute -top-3.5 left-1/2 -translate-x-1/2 text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap text-white"
                     style={{ background: `linear-gradient(to bottom, ${lighten(chartColor, 0.20)}, ${darken(chartColor, 0.28)})` }}
                   >
-                    Most Popular
+                    {t("pricing.mostPopular")}
                   </div>
                 )}
 

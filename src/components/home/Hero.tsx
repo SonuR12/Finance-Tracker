@@ -76,7 +76,7 @@ export default function Hero() {
           style={{ borderColor: `${chartColor}40` }}
         >
           <span className="hero-pill-dot" style={{ background: chartColor, boxShadow: `0 0 6px 2px ${chartColor}99` }} />
-          <span className="text-sm text-white/70">Introducing AI Finance Insights</span>
+          <span className="text-sm text-white/70">{t("hero.aiInsights")}</span>
           <ArrowRight className="h-3.5 w-3.5 text-white/70 transition-transform group-hover:translate-x-0.5" />
         </motion.a>
 
@@ -95,7 +95,7 @@ export default function Hero() {
               backgroundImage: `linear-gradient(135deg, #ffffff 0%, #a0a0a0 50%, #ffffff 100%)`,
             }}
           >
-            Track Budget
+            {t("hero.trackBudget")}
           </motion.span>
           <motion.span
             className="block"
@@ -112,7 +112,7 @@ export default function Hero() {
               animation: "shimmerMove 3s linear infinite",
             }}
           >
-            Grow Smarter
+            {t("hero.growSmarter")}
           </motion.span>
         </h1>
 
@@ -130,7 +130,7 @@ export default function Hero() {
             onClick={() => window.location.href = session?.user ? "/dashboard" : "/sign-in"}
           >
             {session?.user
-              ? <><LayoutDashboard className="h-4 w-4" />Dashboard</>
+              ? <><LayoutDashboard className="h-4 w-4" />{t("hero.dashboard")}</>
               : <>{t("hero.cta")}<ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" /></>
             }
           </AppButton>
@@ -141,7 +141,7 @@ export default function Hero() {
 
         {/* Social proof */}
         <motion.p className="mt-6 text-sm text-black/35 dark:text-white/35" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.75 }}>
-          Trusted by <span className="text-black/60 dark:text-white/60 font-medium">50,000+</span> users · Free to start · No credit card required
+          {t("hero.trustedBy")} <span className="text-black/60 dark:text-white/60 font-medium">50,000+</span> {t("hero.users")} · {t("hero.free")} · {t("hero.noCard")}
         </motion.p>
 
         {/* Dashboard image */}
@@ -152,7 +152,7 @@ export default function Hero() {
             style={{ border: "1px solid rgba(255,255,255,0.08)", boxShadow: `0 0 0 1px ${chartColor}22, 0 40px 100px rgba(0,0,0,0.8), 0 0 80px ${chartColor}14` }}
           >
             <Image
-              src="/images/hero.jpeg"
+              src="/Images/hero.jpeg"
               alt="Finance Dashboard"
               fill
               className="object-cover object-top"

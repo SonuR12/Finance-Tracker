@@ -372,14 +372,14 @@ export function SettingsDialog({ open, onClose, name: nameProp, email: emailProp
                     </div>
                     <Hr />
                     <div>
-                      <SLabel>Account</SLabel>
+                      <SLabel>{t("settings.account")}</SLabel>
                       <AppButton
                         variant="danger"
                         onClick={() => signOut({ callbackUrl: "/" })}
                         className="flex items-center gap-2"
                       >
                         <LogOut className="h-4 w-4" />
-                        Sign Out
+                        {t("settings.signOut")}
                       </AppButton>
                     </div>
                   </div>

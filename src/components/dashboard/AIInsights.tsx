@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, X, RefreshCw } from "lucide-react";
+import { useT } from "@/lib/i18n-context";
 
 const typeStyles: Record<string, string> = {
   warning: "border-amber-200 bg-amber-50 dark:border-amber-800/50 dark:bg-amber-950/20",
@@ -14,6 +15,7 @@ export default function AIInsights({ data }: { data: any[] }) {
   const [dismissed, setDismissed] = useState<number[]>([]);
   const [loading, setLoading] = useState(false);
   const [atBottom, setAtBottom] = useState(false);
+  const t = useT();
 
   const visible = data.filter((_, i) => !dismissed.includes(i));
 
@@ -32,8 +34,8 @@ export default function AIInsights({ data }: { data: any[] }) {
             <Sparkles className="h-3.5 w-3.5 text-white" />
           </div>
           <div>
-            <h3 className="font-semibold text-neutral-900 dark:text-white">AI Insights</h3>
-            <p className="text-xs text-neutral-400">Powered by your spending data</p>
+            <h3 className="font-semibold text-neutral-900 dark:text-white">{t("dashboard.aiInsights")}</h3>
+            <p className="text-xs text-neutral-400">{t("dashboard.poweredBySpending")}</p>
           </div>
         </div>
         <button onClick={refresh} disabled={loading}
@@ -78,8 +80,8 @@ export default function AIInsights({ data }: { data: any[] }) {
           </AnimatePresence>
           {visible.length === 0 && (
             <div className="text-center py-6">
-              <p className="text-sm text-neutral-400">All caught up! No new insights.</p>
-              <button onClick={refresh} className="mt-2 text-xs hover:underline" style={{ color: "var(--app-accent)" }}>Refresh insights</button>
+              <p className="text-sm text-neutral-400">{t("dashboard.allCaughtUp")}</p>
+              <button onClick={refresh} className="mt-2 text-xs hover:underline" style={{ color: "var(--app-accent)" }}>{t("dashboard.refreshInsights")}</button>
             </div>
           )}
         </div>

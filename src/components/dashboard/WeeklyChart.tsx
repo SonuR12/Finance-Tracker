@@ -3,9 +3,11 @@
 import { motion } from "framer-motion";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import { useSettings } from "@/lib/settings-context";
+import { useT } from "@/lib/i18n-context";
 
 export default function WeeklyChart({ data }: { data: any[] }) {
   const { currencySymbol, chartColor } = useSettings();
+  const t = useT();
   const max = Math.max(...data.map((d) => d.amount));
   const dimColor = chartColor + "33"; // ~20% opacity hex
 
@@ -15,11 +17,11 @@ export default function WeeklyChart({ data }: { data: any[] }) {
       className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h3 className="font-semibold text-neutral-900 dark:text-white">Weekly Spending</h3>
-          <p className="text-xs text-neutral-400 mt-0.5">Current week</p>
+          <h3 className="font-semibold text-neutral-900 dark:text-white">{t("dashboard.weeklySpending")}</h3>
+          <p className="text-xs text-neutral-400 mt-0.5">{t("dashboard.currentWeek")}</p>
         </div>
         <span className="text-xs bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 px-2.5 py-1 rounded-full font-medium">
-          {currencySymbol}{data.reduce((s, d) => s + d.amount, 0).toLocaleString()} total
+          {currencySymbol}{data.reduce((s, d) => s + d.amount, 0).toLocaleString()} {t("dashboard.total")}
         </span>
       </div>
       <ResponsiveContainer width="100%" height={180}>

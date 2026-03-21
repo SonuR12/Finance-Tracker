@@ -2,6 +2,7 @@
 
 import PageLayout from "@/components/home/PageLayout";
 import { useSettings } from "@/lib/settings-context";
+import { useT } from "@/lib/i18n-context";
 import { motion } from "framer-motion";
 import { Briefcase, MapPin, Clock, Zap, Heart, Globe, Users } from "lucide-react";
 
@@ -35,7 +36,17 @@ const fadeUp = { initial: { opacity: 0, y: 24 }, whileInView: { opacity: 1, y: 0
 
 export default function CareersPage() {
   const { chartColor } = useSettings();
+  const t = useT();
   const rgb = hexToRgb(chartColor);
+
+  const perks = [
+    { Icon: Globe,     titleKey: "careers.perk1Title", descKey: "careers.perk1Desc" },
+    { Icon: Zap,       titleKey: "careers.perk2Title", descKey: "careers.perk2Desc" },
+    { Icon: Heart,     titleKey: "careers.perk3Title", descKey: "careers.perk3Desc" },
+    { Icon: Users,     titleKey: "careers.perk4Title", descKey: "careers.perk4Desc" },
+    { Icon: Briefcase, titleKey: "careers.perk5Title", descKey: "careers.perk5Desc" },
+    { Icon: Clock,     titleKey: "careers.perk6Title", descKey: "careers.perk6Desc" },
+  ];
 
   return (
     <PageLayout>
@@ -43,16 +54,16 @@ export default function CareersPage() {
       <section className="relative overflow-hidden pt-24 sm:pt-32 pb-14 sm:pb-20 px-4 sm:px-6 lg:px-8">
         <div className="absolute inset-0 pointer-events-none" style={{ background: `radial-gradient(ellipse 80% 50% at 50% -10%, rgba(${rgb},0.12) 0%, transparent 60%)` }} />
         <div className="max-w-4xl mx-auto text-center relative z-10">
-          <motion.p {...fadeUp} className="text-lg font-semibold uppercase tracking-widest mb-4" style={{ color: chartColor }}>Careers</motion.p>
+          <motion.p {...fadeUp} className="text-lg font-semibold uppercase tracking-widest mb-4" style={{ color: chartColor }}>{t("careers.label")}</motion.p>
           <motion.h1 {...fadeUp} transition={{ duration: 0.55, delay: 0.1 }} className="text-4xl sm:text-5xl font-extrabold tracking-tight text-neutral-900 dark:text-white mb-6">
-            Build the future of <span style={{ color: chartColor }}>personal finance</span>
+            {t("careers.title")}
           </motion.h1>
           <motion.p {...fadeUp} transition={{ duration: 0.55, delay: 0.2 }} className="text-lg text-neutral-500 dark:text-neutral-400 max-w-2xl mx-auto">
-            We&apos;re a small, fully remote team on a mission to make financial clarity accessible to everyone. If that excites you, we&apos;d love to meet you.
+            {t("careers.subtitle")}
           </motion.p>
           <motion.div {...fadeUp} transition={{ duration: 0.5, delay: 0.3 }} className="mt-8 flex flex-wrap justify-center gap-4 text-sm text-neutral-500 dark:text-neutral-400">
-            {["🌍 Fully Remote", "⚡ Fast-moving team", "📈 Equity for all", `🎯 ${openings.length} open roles`].map((t) => (
-              <span key={t} className="px-4 py-2 rounded-full border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900">{t}</span>
+            {[`🌍 ${t("careers.fullyRemote")}`, `⚡ ${t("careers.fastMoving")}`, `📈 ${t("careers.equityAll")}`, `🎯 ${openings.length} ${t("careers.openRoles")}`].map((txt) => (
+              <span key={txt} className="px-4 py-2 rounded-full border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900">{txt}</span>
             ))}
           </motion.div>
         </div>
@@ -62,11 +73,11 @@ export default function CareersPage() {
       <section className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-neutral-50 dark:bg-neutral-900/50">
         <div className="max-w-6xl mx-auto">
           <motion.div {...fadeUp} className="text-center mb-12 space-y-3">
-            <p className="text-lg font-semibold uppercase tracking-widest" style={{ color: chartColor }}>Why Finance AI</p>
-            <h2 className="text-3xl sm:text-4xl font-bold text-neutral-900 dark:text-white">Perks & benefits</h2>
+            <p className="text-lg font-semibold uppercase tracking-widest" style={{ color: chartColor }}>{t("careers.whyLabel")}</p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-neutral-900 dark:text-white">{t("careers.perksTitle")}</h2>
           </motion.div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {perks.map(({ Icon, title, desc }, i) => (
+            {perks.map(({ Icon, titleKey, descKey }, i) => (
               <motion.div key={i} {...fadeUp} transition={{ duration: 0.5, delay: i * 0.07 }}
                 className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-6 space-y-3"
                 onMouseEnter={(e) => (e.currentTarget.style.borderColor = chartColor)}
@@ -75,8 +86,8 @@ export default function CareersPage() {
                 <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: `rgba(${rgb},0.12)`, color: chartColor }}>
                   <Icon className="h-5 w-5" />
                 </div>
-                <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">{title}</h3>
-                <p className="text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed">{desc}</p>
+                <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">{t(titleKey)}</h3>
+                <p className="text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed">{t(descKey)}</p>
               </motion.div>
             ))}
           </div>
@@ -87,8 +98,8 @@ export default function CareersPage() {
       <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           <motion.div {...fadeUp} className="text-center mb-12 space-y-3">
-            <p className="text-lg font-semibold uppercase tracking-widest" style={{ color: chartColor }}>Open Roles</p>
-            <h2 className="text-3xl sm:text-4xl font-bold text-neutral-900 dark:text-white">Join our team</h2>
+            <p className="text-lg font-semibold uppercase tracking-widest" style={{ color: chartColor }}>{t("careers.openRolesLabel")}</p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-neutral-900 dark:text-white">{t("careers.joinTeam")}</h2>
           </motion.div>
           <div className="space-y-3">
             {openings.map((job, i) => (
@@ -115,7 +126,7 @@ export default function CareersPage() {
                   className="flex-shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold"
                   style={{ background: `rgba(${rgb},0.1)`, color: chartColor, border: `1.5px solid rgba(${rgb},0.2)` }}
                 >
-                  Coming Soon
+                  {t("careers.comingSoon")}
                 </span>
               </motion.div>
             ))}
@@ -126,8 +137,8 @@ export default function CareersPage() {
             className="mt-8 rounded-2xl border border-dashed border-neutral-300 dark:border-neutral-700 p-8 text-center space-y-3"
           >
             <div className="text-2xl">🚧</div>
-            <p className="font-semibold text-neutral-900 dark:text-neutral-100">Hiring not open yet</p>
-            <p className="text-sm text-neutral-500 dark:text-neutral-400 max-w-sm mx-auto">This is a personal project. Roles are listed for showcase purposes only — no positions are currently available.</p>
+            <p className="font-semibold text-neutral-900 dark:text-neutral-100">{t("careers.noRoleTitle")}</p>
+            <p className="text-sm text-neutral-500 dark:text-neutral-400 max-w-sm mx-auto">{t("careers.noRoleDesc")}</p>
           </motion.div>
         </div>
       </section>

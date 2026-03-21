@@ -3,8 +3,10 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { AppButton } from '@/components/ui/AppButton'
+import { useT } from '@/lib/i18n-context'
 
 export default function ForgotPasswordPage() {
+  const t = useT()
   const [loading, setLoading] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [email, setEmail] = useState('')
@@ -26,10 +28,10 @@ export default function ForgotPasswordPage() {
             🔑
           </div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">
-            Forgot Password
+            {t('auth.forgotPassword')}
           </h1>
           <p className="text-gray-600 dark:text-gray-400">
-            {submitted ? "Check your inbox for a reset link." : "Enter your email and we'll send you a reset link."}
+            {submitted ? t('auth.checkInbox') : t('auth.enterEmailReset')}
           </p>
         </div>
 
@@ -40,11 +42,11 @@ export default function ForgotPasswordPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               <p className="text-sm text-green-700 dark:text-green-300">
-                Reset link sent to <span className="font-semibold">{email}</span>
+                {t('auth.resetLinkSent')} <span className="font-semibold">{email}</span>
               </p>
             </div>
             <AppButton variant="primary" size="lg" className="w-full rounded-xl" onClick={() => router.push('/sign-in')}>
-              Back to Sign in
+              {t('auth.backToSignInBtn')}
             </AppButton>
           </div>
         ) : (
@@ -53,14 +55,14 @@ export default function ForgotPasswordPage() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Email address"
+              placeholder={t('auth.enterEmail')}
               required
               disabled={loading}
               className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-900 dark:text-white placeholder-gray-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all"
             />
-            <AppButton type="submit" variant="primary" size="lg" saving={loading} saveLabel="Send Reset Link" savingLabel="Sending..." className="w-full rounded-xl" />
+            <AppButton type="submit" variant="primary" size="lg" saving={loading} saveLabel={t('auth.sendResetLink')} savingLabel={t('auth.sendingLink')} className="w-full rounded-xl" />
             <AppButton type="button" variant="ghost" size="md" className="w-full" onClick={() => router.push('/sign-in')}>
-              ← Back to Sign in
+              ← {t('auth.backToSignIn')}
             </AppButton>
           </form>
         )}
