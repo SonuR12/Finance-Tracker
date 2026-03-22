@@ -90,14 +90,14 @@ export default function Footer() {
                         {item.label}
                       </button>
                     ) : (
-                      <Link
+                      <a
                         href={item.href}
                         className="text-sm text-neutral-500 dark:text-neutral-400 transition-colors hover:text-neutral-900 dark:hover:text-neutral-100"
                         onMouseEnter={(e) => (e.currentTarget.style.color = chartColor)}
                         onMouseLeave={(e) => (e.currentTarget.style.color = "")}
                       >
                         {item.label}
-                      </Link>
+                      </a>
                     )}
                   </li>
                 ))}
