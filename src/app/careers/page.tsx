@@ -76,14 +76,14 @@ export default function CareersPage() {
             <p className="text-lg font-semibold uppercase tracking-widest" style={{ color: chartColor }}>{t("careers.whyLabel")}</p>
             <h2 className="text-3xl sm:text-4xl font-bold text-neutral-900 dark:text-white">{t("careers.perksTitle")}</h2>
           </motion.div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {perks.map(({ Icon, titleKey, descKey }, i) => (
               <motion.div key={i} {...fadeUp} transition={{ duration: 0.5, delay: i * 0.07 }}
-                className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-6 space-y-3"
+                className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-3 sm:p-6 space-y-1 sm:space-y-3"
                 onMouseEnter={(e) => (e.currentTarget.style.borderColor = chartColor)}
                 onMouseLeave={(e) => (e.currentTarget.style.borderColor = "")}
               >
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: `rgba(${rgb},0.12)`, color: chartColor }}>
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-2 sm:mb-0" style={{ background: `rgba(${rgb},0.12)`, color: chartColor }}>
                   <Icon className="h-5 w-5" />
                 </div>
                 <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">{t(titleKey)}</h3>
@@ -123,7 +123,7 @@ export default function CareersPage() {
                   </div>
                 </div>
                 <span
-                  className="flex-shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold"
+                  className="flex-shrink-0 w-fit inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold"
                   style={{ background: `rgba(${rgb},0.1)`, color: chartColor, border: `1.5px solid rgba(${rgb},0.2)` }}
                 >
                   {t("careers.comingSoon")}
