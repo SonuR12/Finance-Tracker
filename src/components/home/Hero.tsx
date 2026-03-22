@@ -155,7 +155,7 @@ export default function Hero() {
             style={{ border: "1px solid rgba(255,255,255,0.08)", boxShadow: "0 0 0 1px color-mix(in srgb, var(--app-accent) 13%, transparent), 0 40px 100px rgba(0,0,0,0.8), 0 0 80px color-mix(in srgb, var(--app-accent) 8%, transparent)" }}
           >
             <Image
-              src="/Images/hero.jpeg"
+              src="/images/hero.jpeg"
               alt="Finance Dashboard"
               fill
               className="object-cover object-top"
