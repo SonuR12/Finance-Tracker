@@ -1,9 +1,8 @@
 'use client';
 
-import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, useMotionValue, useSpring } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 
@@ -19,8 +18,12 @@ const floatingParticles = [
 
 export default function NotFound() {
   const router = useRouter();
-  const [backHovered, setBackHovered] = useState(false);
-  const [homeHovered, setHomeHovered] = useState(false);
+
+  const backX = useMotionValue(0);
+  const homeX = useMotionValue(0);
+  const homeOpacity = useMotionValue(1);
+  const backSpring = useSpring(backX, { stiffness: 300, damping: 20 });
+  const homeSpring = useSpring(homeX, { stiffness: 300, damping: 20 });
 
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center bg-white dark:bg-slate-950 overflow-hidden px-4">
@@ -76,6 +79,8 @@ export default function NotFound() {
                 width: 140, height: 140,
                 background: 'radial-gradient(circle, var(--app-accent) 0%, transparent 70%)',
                 opacity: 0.15,
+                willChange: 'transform',
+                transform: 'translateZ(0)',
               }}
               animate={{ scale: [1, 1.3, 1] }}
               transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
@@ -86,6 +91,7 @@ export default function NotFound() {
               transition={{ duration: 2.2, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
               whileHover={{ scale: 1.12, rotate: [0, -6, 6, -6, 0], transition: { duration: 0.6 } }}
               className="cursor-pointer"
+              style={{ willChange: 'transform', transform: 'translateZ(0)' }}
             >
               <Image
                 src="/Group.png"
@@ -150,31 +156,28 @@ export default function NotFound() {
         >
           <button
             onClick={() => router.back()}
-            onMouseEnter={() => setBackHovered(true)}
-            onMouseLeave={() => setBackHovered(false)}
-            className="flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium border border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors select-none"
+            onMouseEnter={() => backX.set(-4)}
+            onMouseLeave={() => backX.set(0)}
+            className="flex items-center gap-2 px-6 py-4 rounded-full text-sm font-medium border border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors select-none"
           >
-            <motion.span
-              className="inline-flex"
-              animate={{ x: backHovered ? -4 : 0 }}
-              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-            >
+            <motion.span className="inline-flex" style={{ x: backSpring }}>
               <ArrowLeft className="w-4 h-4" />
             </motion.span>
             Go Back
           </button>
           <Link href="/">
-            <button
-              onMouseEnter={() => setHomeHovered(true)}
-              onMouseLeave={() => setHomeHovered(false)}
-              className="flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium text-white select-none cursor-pointer"
+            <motion.button
+              onMouseEnter={() => { homeX.set(-4); homeOpacity.set(0.82); }}
+              onMouseLeave={() => { homeX.set(0); homeOpacity.set(1); }}
+              className="flex items-center gap-2 px-6 py-4 rounded-full text-sm font-medium text-white select-none cursor-pointer"
               style={{
                 background: 'linear-gradient(to bottom, color-mix(in srgb, var(--app-accent) 80%, white), color-mix(in srgb, var(--app-accent) 72%, black))',
                 boxShadow: '0 0 24px color-mix(in srgb, var(--app-accent) 33%, transparent), inset 0 1px 0 rgba(255,255,255,0.2)',
+                opacity: homeOpacity,
               }}
             >
               Go Home
-            </button>
+            </motion.button>
           </Link>
         </motion.div>
       </motion.div>
