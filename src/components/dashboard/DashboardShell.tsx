@@ -29,7 +29,8 @@ export default function DashboardShell({ name, email, image, avatarColor, initia
   useEffect(() => {
     const stored = localStorage.getItem("dashboardTab");
     if (stored) setActiveTab(stored);
-    setMounted(true);
+    const t = setTimeout(() => setMounted(true), 1000);
+    return () => clearTimeout(t);
   }, []);
 
   function handleTabChange(tab: string) {

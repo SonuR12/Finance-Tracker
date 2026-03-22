@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
+import { rateLimit } from "@/lib/rate-limit";
 import { chat } from "@/lib/ai";
 
 export async function POST(req: NextRequest) {
+  const limited = rateLimit(req, 20, 60_000)
+  if (limited) return limited
+
   try {
     const { messages, context } = await req.json();
 

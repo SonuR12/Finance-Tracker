@@ -1,9 +1,13 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
+import { rateLimit } from '@/lib/rate-limit'
 import { getDb } from '@/lib/mongodb'
 import bcrypt from 'bcryptjs'
 import { generateVerificationCode, generateCodeExpiry, sendEmail, getVerificationEmailTemplate } from '@/lib/email'
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
+  const limited = rateLimit(req, 5, 60_000)
+  if (limited) return limited
+
   try {
     const { email, password, name } = await req.json()
 

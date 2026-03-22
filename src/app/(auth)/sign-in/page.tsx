@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import { useSession, signIn } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Eye, EyeOff } from 'lucide-react'
 import { AppButton } from '@/components/ui/AppButton'
@@ -13,6 +12,7 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp
 import { toast } from 'sonner'
 import { useT } from '@/lib/i18n-context'
 import dynamic from 'next/dynamic'
+import QuickAppearance from '@/components/ui/QuickAppearance'
 
 const FinanceScene = dynamic(() => import('@/components/auth/FinanceScene').then(m => m.FinanceScene), { ssr: false, loading: () => null })
 
@@ -56,7 +56,6 @@ export default function SignInPage() {
   const [resendTimer, setResendTimer] = useState(0)
   const [showSkeleton, setShowSkeleton] = useState(true)
   const { status } = useSession()
-  const router = useRouter()
 
   useEffect(() => {
     const t = setTimeout(() => setShowSkeleton(false), 500)
@@ -64,8 +63,8 @@ export default function SignInPage() {
   }, [])
 
   useEffect(() => {
-    if (status === 'authenticated') router.replace('/dashboard')
-  }, [status, router])
+    if (status === 'authenticated') window.location.href = '/dashboard'
+  }, [status])
 
   useEffect(() => {
     if (resendTimer > 0) {
@@ -122,7 +121,7 @@ export default function SignInPage() {
       if (!exists) { toast.error('No account found. Please sign up first.'); setView('signup'); setIsLoading(false); return }
       if (!emailVerified) { toast.error('Please verify your email before signing in.'); setIsLoading(false); return }
       const result = await signIn('credentials', { email, password, redirect: false })
-      if (result?.ok && !result?.error) { toast.success(`Welcome back, ${dbName || 'back'}! 👋`); router.push('/dashboard') }
+      if (result?.ok && !result?.error) { toast.success(`Welcome back, ${dbName || 'back'}! 👋`); window.location.href = '/dashboard' }
       else toast.error('Incorrect password. Please try again.')
     } catch { toast.error('Something went wrong. Please try again.') }
     finally { setIsLoading(false) }
@@ -150,7 +149,7 @@ export default function SignInPage() {
       if (data.success) {
         toast.success('Email verified! Signing you in...')
         const result = await signIn('credentials', { email, password, redirect: false })
-        if (result?.ok) router.push('/dashboard')
+        if (result?.ok) { window.location.href = '/dashboard' }
         else { toast.success('Account created! Please sign in.'); setView('signin') }
       } else toast.error(data.error || 'Invalid verification code')
     } catch { toast.error('Failed to verify code') }
@@ -183,7 +182,7 @@ export default function SignInPage() {
     finally { setIsLoading(false) }
   }
 
-  const handleGoogleSignIn = async () => { setIsGoogleLoading(true); await signIn('google', { callbackUrl: '/dashboard' }) }
+  const handleGoogleSignIn = async () => { setIsGoogleLoading(true); signIn('google', { callbackUrl: '/dashboard' }) }
 
   const goBack = () => { setView('signin'); setResetCode(''); setNewPassword(''); setConfirmNewPassword(''); setVerifyCode(''); setResendTimer(0) }
 
@@ -241,6 +240,10 @@ export default function SignInPage() {
 
   return (
     <div className="min-h-screen flex">
+      <div className="fixed top-5 right-5 z-50">
+        <QuickAppearance />
+      </div>
+
       {/* Left panel */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
         <div className="absolute inset-0"><FinanceScene /></div>

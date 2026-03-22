@@ -2,189 +2,168 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion, AnimatePresence, Variants } from 'framer-motion';
+import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
+import QuickAppearance from '@/components/ui/QuickAppearance';
 
-/* ================= VARIANTS ================= */
-
-const containerVariants: Variants = {
-  hidden: {
-    opacity: 0,
-    y: 30,
-  },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.7,
-      ease: [0.43, 0.13, 0.23, 0.96],
-      staggerChildren: 0.1,
-    },
-  },
-  exit: {
-    opacity: 0,
-    y: 30,
-    transition: { duration: 0.4 },
-  },
-};
-
-const itemVariants: Variants = {
-  hidden: {
-    opacity: 0,
-    y: 20,
-  },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.6,
-      ease: [0.43, 0.13, 0.23, 0.96],
-    },
-  },
-};
-
-const numberVariants: Variants = {
-  hidden: (direction: number) => ({
-    opacity: 0,
-    x: direction * 40,
-    y: 15,
-    rotate: direction * 5,
-  }),
-  visible: {
-    opacity: 0.7,
-    x: 0,
-    y: 0,
-    rotate: 0,
-    transition: {
-      duration: 0.8,
-      ease: [0.43, 0.13, 0.23, 0.96],
-    },
-  },
-};
-
-const ghostVariants: Variants = {
-  hidden: {
-    scale: 0.8,
-    opacity: 0,
-    y: 15,
-  },
-  visible: {
-    scale: 1,
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.6,
-      ease: [0.43, 0.13, 0.23, 0.96],
-    },
-  },
-  floating: {
-    y: [-6, 6],
-    transition: {
-      duration: 2,
-      repeat: Infinity,
-      repeatType: 'reverse',
-      ease: 'easeInOut',
-    },
-  },
-  hover: {
-    scale: 1.1,
-    y: -10,
-    rotate: [0, -5, 5, -5, 0],
-    transition: {
-      duration: 0.8,
-      ease: 'easeInOut',
-    },
-  },
-};
-
+const floatingParticles = [
+  { size: 6,  x: '10%', delay: 0,    duration: 3.2 },
+  { size: 4,  x: '20%', delay: 0.5,  duration: 2.8 },
+  { size: 8,  x: '35%', delay: 1.1,  duration: 3.6 },
+  { size: 5,  x: '55%', delay: 0.3,  duration: 2.5 },
+  { size: 7,  x: '70%', delay: 0.8,  duration: 3.0 },
+  { size: 4,  x: '82%', delay: 1.4,  duration: 2.7 },
+  { size: 6,  x: '92%', delay: 0.2,  duration: 3.4 },
+];
 
 export default function NotFound() {
+  const router = useRouter();
+
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-white dark:bg-slate-950 px-4">
-      <AnimatePresence mode="wait">
-        <motion.div 
-          className="text-center"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          exit="hidden"
-        >
-          <div className="flex items-center justify-center gap-4 md:gap-6 mb-8 md:mb-12">
-            <motion.span 
-              className="text-[80px] md:text-[120px] font-bold text-slate-700 dark:text-slate-200 opacity-70 font-signika select-none"
-              variants={numberVariants}
-              custom={-1}
-            >
-              4
-            </motion.span>
+    <div className="relative min-h-screen flex flex-col items-center justify-center bg-white dark:bg-slate-950 overflow-hidden px-4">
+
+      <div className="fixed top-5 right-5 z-50">
+        <QuickAppearance />
+      </div>
+
+      {/* Background glow blobs */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-72 h-72 rounded-full opacity-10 blur-3xl"
+          style={{ background: 'var(--app-accent)' }} />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full opacity-[0.07] blur-3xl"
+          style={{ background: 'var(--app-accent)' }} />
+      </div>
+
+      {/* Floating particles */}
+      {floatingParticles.map((p, i) => (
+        <motion.div
+          key={i}
+          className="absolute bottom-0 rounded-full opacity-20 dark:opacity-10"
+          style={{ width: p.size, height: p.size, left: p.x, background: 'var(--app-accent)' }}
+          animate={{ y: [0, -120, -240], opacity: [0, 0.3, 0] }}
+          transition={{ duration: p.duration, delay: p.delay, repeat: Infinity, ease: 'easeOut' }}
+        />
+      ))}
+
+      <motion.div
+        className="relative z-10 flex flex-col items-center text-center"
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, ease: [0.43, 0.13, 0.23, 0.96] }}
+      >
+        {/* 404 row with ghost */}
+        <div className="flex items-center justify-center gap-2 md:gap-4 mb-6">
+          <motion.span
+            className="text-[90px] md:text-[140px] font-black leading-none select-none"
+            style={{ color: 'var(--app-accent)', opacity: 0.15 }}
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 0.15, x: 0 }}
+            transition={{ duration: 0.8, ease: [0.43, 0.13, 0.23, 0.96] }}
+          >
+            4
+          </motion.span>
+
+          {/* Ghost with glow ring */}
+          <motion.div
+            className="relative flex items-center justify-center"
+            initial={{ scale: 0.6, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.7, delay: 0.2, ease: [0.43, 0.13, 0.23, 0.96] }}
+          >
+            {/* Glow ring */}
             <motion.div
-              variants={ghostVariants}
-              whileHover="hover"
-              animate={["visible", "floating"]}
+              className="absolute rounded-full"
+              style={{
+                width: 140, height: 140,
+                background: 'radial-gradient(circle, var(--app-accent) 0%, transparent 70%)',
+                opacity: 0.15,
+              }}
+              animate={{ scale: [1, 1.3, 1] }}
+              transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+            />
+            {/* Ghost image */}
+            <motion.div
+              animate={{ y: [-8, 8] }}
+              transition={{ duration: 2.2, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
+              whileHover={{ scale: 1.12, rotate: [0, -6, 6, -6, 0], transition: { duration: 0.6 } }}
+              className="cursor-pointer"
             >
               <Image
                 src="/Group.png"
                 alt="Ghost"
-                width={120}
-                height={120}
-                className="w-[80px] h-[80px] md:w-[140px] md:h-[140px] object-contain select-none"
+                width={160}
+                height={160}
+                className="w-[100px] h-[100px] md:w-[160px] md:h-[160px] object-contain select-none drop-shadow-2xl"
                 draggable="false"
                 priority
               />
             </motion.div>
-            <motion.span 
-              className="text-[80px] md:text-[120px] font-bold text-slate-700 dark:text-slate-200 opacity-70 font-signika select-none"
-              variants={numberVariants}
-              custom={1}
-            >
-              4
-            </motion.span>
-          </div>
-          
-          <motion.h1 
-            className="text-3xl md:text-5xl font-bold text-slate-700 dark:text-slate-200 mb-4 md:mb-6 opacity-70 font-dm-sans select-none"
-            variants={itemVariants}
-          >
-            Boo! Page missing!
-          </motion.h1>
-          
-          <motion.p 
-            className="text-lg md:text-xl text-[#222222] dark:text-slate-400 mb-8 md:mb-12 opacity-50 font-dm-sans select-none"
-            variants={itemVariants}
-          >
-            Whoops! This page must be a ghost - it&apos;s not here!
-          </motion.p>
-
-          <motion.div 
-            variants={itemVariants}
-            whileHover={{ 
-              scale: 1.05,
-              transition: {
-                duration: 0.3,
-                ease: [0.43, 0.13, 0.23, 0.96]
-              }
-            }}
-          >
-            <Link 
-              href="/"
-              className="inline-block bg-gradient-to-r from-slate-700 to-slate-800 dark:from-slate-200 dark:to-slate-300 text-white dark:text-slate-900 px-6 py-2 rounded-full text-lg font-medium transition-colors font-dm-sans select-none"
-            >
-              Home
-            </Link>
           </motion.div>
 
-          {/* <motion.div 
-            className="mt-12"
-            variants={itemVariants}
+          <motion.span
+            className="text-[90px] md:text-[140px] font-black leading-none select-none"
+            style={{ color: 'var(--app-accent)', opacity: 0.15 }}
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 0.15, x: 0 }}
+            transition={{ duration: 0.8, ease: [0.43, 0.13, 0.23, 0.96] }}
           >
-            <Link
-              href="#"
-              className="text-[#222222] opacity-50 hover:opacity-70 transition-opacity underline font-dm-sans select-none"
-            >
-              What means 404?
-            </Link>
-          </motion.div> */}
+            4
+          </motion.span>
+        </div>
+
+        {/* Badge */}
+        <motion.div
+          className="mb-5 px-4 py-1.5 rounded-full text-xs font-semibold tracking-widest uppercase border"
+          style={{ color: 'var(--app-accent)', borderColor: 'var(--app-accent)', background: 'color-mix(in srgb, var(--app-accent) 8%, transparent)' }}
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, delay: 0.35 }}
+        >
+          Page Not Found
         </motion.div>
-      </AnimatePresence>
+
+        {/* Heading */}
+        <motion.h1
+          className="text-3xl md:text-5xl font-bold text-slate-800 dark:text-slate-100 mb-3 select-none"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.45 }}
+        >
+          Boo! You&apos;re lost.
+        </motion.h1>
+
+        {/* Subtitle */}
+        <motion.p
+          className="text-base md:text-lg text-slate-500 dark:text-slate-400 mb-10 max-w-sm select-none"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.55 }}
+        >
+          This page vanished into thin air — just like a ghost. Let&apos;s get you back on track.
+        </motion.p>
+
+        {/* Buttons */}
+        <motion.div
+          className="flex items-center gap-3"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.65 }}
+        >
+          <button
+            onClick={() => router.back()}
+            className="px-5 py-2.5 rounded-full text-sm font-medium border border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors select-none"
+          >
+            ← Go Back
+          </button>
+          <Link
+            href="/"
+            className="px-5 py-2.5 rounded-full text-sm font-medium text-white transition-opacity hover:opacity-90 select-none"
+            style={{ background: 'var(--app-accent)' }}
+          >
+            Go Home
+          </Link>
+        </motion.div>
+      </motion.div>
     </div>
   );
 }
