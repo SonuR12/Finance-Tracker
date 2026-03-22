@@ -6,7 +6,6 @@ import { useT } from "@/lib/i18n-context";
 import { motion, type Variants } from "framer-motion";
 import Image from "next/image";
 import { BarChart3, Shield, Zap, Heart, Globe, Users } from "lucide-react";
-import TechStackAnimation from "@/components/about/TechStackAnimation";
 
 function hexToRgb(hex: string) {
   const m = hex.replace("#", "").match(/.{2}/g);
