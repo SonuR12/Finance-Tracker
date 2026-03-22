@@ -211,7 +211,7 @@ export default function AboutPage() {
                   />
                 </div>
                 <div className="min-w-0 space-y-0.5 text-center sm:text-left">
-                  <div className="flex items-center justify-center sm:justify-start gap-2 flex-wrap">
+                  <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-2 flex-wrap">
                     <span className="font-semibold text-sm text-neutral-900 dark:text-neutral-100">
                       {item.name}
                     </span>
