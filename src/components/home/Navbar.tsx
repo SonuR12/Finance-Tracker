@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { useT } from "@/lib/i18n-context";
 import { useSession } from "next-auth/react";
 import { useSettings } from "@/lib/settings-context";
@@ -30,6 +30,8 @@ export default function Navbar({ showLinks = true }: { showLinks?: boolean }) {
   const { data: session, status } = useSession();
   const { chartColor } = useSettings();
 
+  const NAV_HREFS = ["#home", "#features", "#testimonials", "#pricing"];
+
   const NAV_LINKS = [
     { label: t("nav.home"),         href: "#home" },
     { label: t("nav.features"),     href: "#features" },
@@ -37,13 +39,20 @@ export default function Navbar({ showLinks = true }: { showLinks?: boolean }) {
     { label: t("nav.pricing"),      href: "#pricing" },
   ];
 
+  const clickedRef = useRef<string | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   useEffect(() => {
     const onScroll = () => {
       setScrolled(window.scrollY > 20);
-      for (const item of NAV_LINKS) {
-        const section = document.querySelector(item.href);
+      if (clickedRef.current) {
+        setActiveSection(clickedRef.current);
+        return;
+      }
+      for (const href of NAV_HREFS) {
+        const section = document.querySelector(href);
         if (section && section.getBoundingClientRect().top <= 150 && section.getBoundingClientRect().bottom > 150) {
-          setActiveSection(item.href);
+          setActiveSection(href);
           break;
         }
       }
@@ -53,11 +62,12 @@ export default function Navbar({ showLinks = true }: { showLinks?: boolean }) {
   }, []);
 
   const scrollToSection = useCallback((href: string) => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    clickedRef.current = href;
     setActiveSection(href);
-    requestAnimationFrame(() => setTimeout(() => {
-      const section = document.querySelector(href);
-      if (section) section.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 100));
+    const section = document.querySelector(href);
+    if (section) section.scrollIntoView({ behavior: "smooth", block: "start" });
+    timerRef.current = setTimeout(() => { clickedRef.current = null; }, 1200);
   }, []);
 
   return (
