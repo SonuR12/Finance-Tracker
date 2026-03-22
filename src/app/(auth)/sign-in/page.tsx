@@ -12,7 +12,6 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp
 import { toast } from 'sonner'
 import { useT } from '@/lib/i18n-context'
 import dynamic from 'next/dynamic'
-import QuickAppearance from '@/components/ui/QuickAppearance'
 
 const FinanceScene = dynamic(() => import('@/components/auth/FinanceScene').then(m => m.FinanceScene), { ssr: false, loading: () => null })
 
@@ -240,9 +239,7 @@ export default function SignInPage() {
 
   return (
     <div className="min-h-screen flex">
-      <div className="fixed top-5 right-5 z-50">
-        <QuickAppearance />
-      </div>
+     
 
       {/* Left panel */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">

@@ -4,7 +4,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import QuickAppearance from '@/components/ui/QuickAppearance';
 
 const floatingParticles = [
   { size: 6,  x: '10%', delay: 0,    duration: 3.2 },
@@ -21,10 +20,6 @@ export default function NotFound() {
 
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center bg-white dark:bg-slate-950 overflow-hidden px-4">
-
-      <div className="fixed top-5 right-5 z-50">
-        <QuickAppearance />
-      </div>
 
       {/* Background glow blobs */}
       <div className="absolute inset-0 pointer-events-none">
