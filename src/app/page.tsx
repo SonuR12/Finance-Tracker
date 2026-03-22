@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import Hero from "@/components/home/Hero";
 import Navbar from "@/components/home/Navbar";
 import Footer from "@/components/home/Footer";
@@ -11,6 +12,15 @@ import PricingSection from "@/components/home/PricingSection";
 import CTASection from "@/components/home/CTASection";
 
 export default function Home() {
+  useEffect(() => {
+    const id = sessionStorage.getItem("scrollTo");
+    if (!id) return;
+    sessionStorage.removeItem("scrollTo");
+    setTimeout(() => {
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 100);
+  }, []);
+
   return (
     <div className="flex flex-col">
       <Navbar />

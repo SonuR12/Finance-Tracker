@@ -4,11 +4,21 @@ import Link from "next/link";
 import Image from "next/image";
 import { useT } from "@/lib/i18n-context";
 import { useSettings } from "@/lib/settings-context";
+import { useRouter, usePathname } from "next/navigation";
 
-function scrollTo(href: string) {
-  const el = document.querySelector(href);
-  if (el) { el.scrollIntoView({ behavior: "smooth", block: "start" }); return; }
-  window.location.href = href;
+function useScrollTo() {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  return (hash: string) => {
+    const id = hash.replace("#", "");
+    if (pathname === "/") {
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    } else {
+      sessionStorage.setItem("scrollTo", id);
+      router.push("/");
+    }
+  };
 }
 
 
@@ -16,6 +26,7 @@ function scrollTo(href: string) {
 export default function Footer() {
   const t = useT();
   const { chartColor } = useSettings();
+  const scrollTo = useScrollTo();
 
   const links = [
     {
