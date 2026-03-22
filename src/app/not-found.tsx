@@ -1,9 +1,11 @@
 'use client';
 
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
+import { ArrowLeft } from 'lucide-react';
 
 const floatingParticles = [
   { size: 6,  x: '10%', delay: 0,    duration: 3.2 },
@@ -17,6 +19,8 @@ const floatingParticles = [
 
 export default function NotFound() {
   const router = useRouter();
+  const [backHovered, setBackHovered] = useState(false);
+  const [homeHovered, setHomeHovered] = useState(false);
 
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center bg-white dark:bg-slate-950 overflow-hidden px-4">
@@ -146,16 +150,31 @@ export default function NotFound() {
         >
           <button
             onClick={() => router.back()}
-            className="px-5 py-2.5 rounded-full text-sm font-medium border border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors select-none"
+            onMouseEnter={() => setBackHovered(true)}
+            onMouseLeave={() => setBackHovered(false)}
+            className="flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium border border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors select-none"
           >
-            ← Go Back
+            <motion.span
+              className="inline-flex"
+              animate={{ x: backHovered ? -4 : 0 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+            >
+              <ArrowLeft className="w-4 h-4" />
+            </motion.span>
+            Go Back
           </button>
-          <Link
-            href="/"
-            className="px-5 py-2.5 rounded-full text-sm font-medium text-white transition-opacity hover:opacity-90 select-none"
-            style={{ background: 'var(--app-accent)' }}
-          >
-            Go Home
+          <Link href="/">
+            <button
+              onMouseEnter={() => setHomeHovered(true)}
+              onMouseLeave={() => setHomeHovered(false)}
+              className="flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium text-white select-none cursor-pointer"
+              style={{
+                background: 'linear-gradient(to bottom, color-mix(in srgb, var(--app-accent) 80%, white), color-mix(in srgb, var(--app-accent) 72%, black))',
+                boxShadow: '0 0 24px color-mix(in srgb, var(--app-accent) 33%, transparent), inset 0 1px 0 rgba(255,255,255,0.2)',
+              }}
+            >
+              Go Home
+            </button>
           </Link>
         </motion.div>
       </motion.div>
