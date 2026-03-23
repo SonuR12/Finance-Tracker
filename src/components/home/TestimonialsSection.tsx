@@ -29,7 +29,7 @@ export default function TestimonialsSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <p className="text-xs sm:text-sm font-medium uppercase tracking-widest" style={{ color: "var(--app-accent)" }}>{t("testimonials.label")}</p>
+          <p className="text-lg font-medium uppercase tracking-widest" style={{ color: "var(--app-accent)" }}>{t("testimonials.label")}</p>
           <h2 className="text-xl sm:text-3xl md:text-4xl font-bold text-neutral-900 dark:text-neutral-100">
             {t("testimonials.title")}
           </h2>

@@ -59,7 +59,7 @@ export default function PricingSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <p className="text-xs sm:text-lg font-medium uppercase tracking-widest" style={{ color: "var(--app-accent)" }}>{t("pricing.label")}</p>
+          <p className="text-lg font-medium uppercase tracking-widest" style={{ color: "var(--app-accent)" }}>{t("pricing.label")}</p>
           <h2 className="text-xl sm:text-3xl md:text-4xl font-bold text-neutral-900 dark:text-neutral-100">
             {t("pricing.title")}
           </h2>

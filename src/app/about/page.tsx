@@ -140,7 +140,7 @@ export default function AboutPage() {
       <section className="pt-10 sm:pt-16 md:pt-24 pb-10 sm:pb-0 px-4 sm:px-6 lg:px-8 bg-neutral-50 dark:bg-neutral-900/50">
         <div className="max-w-6xl mx-auto">
           <motion.div {...fadeUp} className="text-center mb-8 sm:mb-12 space-y-2 sm:space-y-3">
-            <p className="text-sm sm:text-base md:text-xl font-semibold uppercase tracking-widest" style={{ color: chartColor }}>
+            <p className="text-lg font-medium uppercase tracking-widest" style={{ color: "var(--app-accent)"}}>
               {t("about.valuesLabel")}
             </p>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-neutral-900 dark:text-white">{t("about.valuesTitle")}</h2>
@@ -239,7 +239,7 @@ export default function AboutPage() {
       <section className="pb-10 sm:pb-16 md:pb-24 px-4 sm:px-6 lg:px-8 bg-neutral-50 dark:bg-neutral-900/50">
         <div className="max-w-6xl mx-auto">
           <motion.div {...fadeUp} className="text-center mb-8 sm:mb-12 space-y-2 sm:space-y-3">
-            <p className="text-sm sm:text-base md:text-lg font-semibold uppercase tracking-widest" style={{ color: chartColor }}>
+            <p className="text-lg font-medium uppercase tracking-widest" style={{ color: "var(--app-accent)"}}>
               {t("about.cultureLabel")}
             </p>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-neutral-900 dark:text-white">{t("about.cultureTitle")}</h2>

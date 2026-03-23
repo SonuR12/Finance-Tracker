@@ -33,7 +33,7 @@ export default function HowItWorks() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <p className="text-xs sm:text-lg font-medium uppercase tracking-widest" style={{ color: "var(--app-accent)" }}>{t("howItWorks.label")}</p>
+          <p className="text-lg font-medium uppercase tracking-widest" style={{ color: "var(--app-accent)" }}>{t("howItWorks.label")}</p>
           <h2 className="text-xl sm:text-3xl md:text-4xl font-bold text-neutral-900 dark:text-neutral-100">
             {t("howItWorks.title")}
           </h2>
