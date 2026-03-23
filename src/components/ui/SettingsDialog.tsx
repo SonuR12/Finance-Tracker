@@ -120,9 +120,9 @@ export function SettingsDialog({ open, onClose, name: nameProp, email: emailProp
   const [settings, setSettings] = useState<Settings>(DEFAULTS);
   const savedSettingsRef = useRef<Settings>(DEFAULTS);
   const savedAppearanceRef = useRef({ chartColor: "#6366f1", theme: "system" as "light" | "dark" | "system" });
-  const [saving, setSaving] = useState(false);
+  const [saving] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [appearanceSaving, setAppearanceSaving] = useState(false);
+  const [appearanceSaving] = useState(false);
   const [appearanceSaved, setAppearanceSaved] = useState(false);
   const [notifs, setNotifs] = useState([true, true, true, true, true]);
   const [twoFA, setTwoFA] = useState(false);
@@ -133,24 +133,14 @@ export function SettingsDialog({ open, onClose, name: nameProp, email: emailProp
   const t = useT();
   const overlayRef = useRef<HTMLDivElement>(null);
 
-  // Sync savedAppearanceRef from localStorage on mount
-  useEffect(() => {
-    try {
-      savedAppearanceRef.current = {
-        chartColor: localStorage.getItem("chartColor") ?? "#6366f1",
-        theme: (localStorage.getItem("theme") ?? "system") as "light" | "dark" | "system",
-      };
-    } catch {}
-  }, []);
-
   useEffect(() => { if (user?.name) { setFullName(user.name); setOriginalName(user.name); } }, [user?.name]);
 
-  // Sync dialog state once settings are loaded from context (sessionStorage or DB)
   useEffect(() => {
     if (!settingsLoaded) return;
     const merged = { ...DEFAULTS, language, currency, showBalance, autoCategorize, budgets, budgetAlerts };
     setSettings(merged);
     savedSettingsRef.current = merged;
+    savedAppearanceRef.current = { chartColor, theme };
   }, [settingsLoaded]);
 
   useEffect(() => {
@@ -164,36 +154,19 @@ export function SettingsDialog({ open, onClose, name: nameProp, email: emailProp
     setSaved(false);
   }
 
-  async function save() {
-    setSaving(true);
-    try {
-      await fetch("/api/settings", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(settings),
-      });
-      const sym = CURRENCIES.find((c) => c.value === settings.currency)?.symbol ?? "$";
-      const full = { ...settings, currencySymbol: sym, chartColor, theme };
-      applySettings(full);
-      savedSettingsRef.current = { ...settings };
-      setSaved(true);
-      setTimeout(() => setSaved(false), 2500);
-    } finally {
-      setSaving(false);
-    }
+  function save() {
+    const sym = CURRENCIES.find((c) => c.value === settings.currency)?.symbol ?? "$";
+    const full = { ...settings, currencySymbol: sym, chartColor, theme };
+    applySettings(full);
+    savedSettingsRef.current = { ...settings };
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2500);
   }
 
-  async function saveAppearance() {
-    setAppearanceSaving(true);
-    try {
-      localStorage.setItem("chartColor", chartColor);
-      localStorage.setItem("theme", theme);
-      savedAppearanceRef.current = { chartColor, theme };
-      setAppearanceSaved(true);
-      setTimeout(() => setAppearanceSaved(false), 2500);
-    } finally {
-      setAppearanceSaving(false);
-    }
+  function saveAppearance() {
+    savedAppearanceRef.current = { chartColor, theme };
+    setAppearanceSaved(true);
+    setTimeout(() => setAppearanceSaved(false), 2500);
   }
 
   const currencySymbol = CURRENCIES.find((c) => c.value === settings.currency)?.symbol ?? "$";
@@ -565,7 +538,7 @@ export function SettingsDialog({ open, onClose, name: nameProp, email: emailProp
                         ))}
                       </div>
                     </div>
-                    <AccentButton onClick={saveAppearance} saving={appearanceSaving} saved={appearanceSaved} disabled={!appearanceChanged} saveLabel={t("settings.saveChanges")} savingLabel={t("settings.saving")} savedLabel={t("settings.saved")} />
+                    {/* <AccentButton onClick={saveAppearance} saving={appearanceSaving} saved={appearanceSaved} disabled={!appearanceChanged} saveLabel={t("settings.saveChanges")} savingLabel={t("settings.saving")} savedLabel={t("settings.saved")} /> */}
                   </div>
                 )}
               </>

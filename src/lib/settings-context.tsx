@@ -63,31 +63,17 @@ function applyToDom(s: FullSettings) {
   applyThemeToDom(s.theme);
 }
 
-const SESSION_KEY = "app_settings";
+const LS_KEY = "app_settings_v2";
 
 function saveToLocalStorage(s: FullSettings) {
-  try {
-    localStorage.setItem("language", s.language);
-    localStorage.setItem("currency", s.currency);
-    localStorage.setItem("currencySymbol", s.currencySymbol);
-    localStorage.setItem("chartColor", s.chartColor);
-    localStorage.setItem("theme", s.theme);
-  } catch {}
-}
-
-function saveToSession(s: FullSettings) {
-  try { sessionStorage.setItem(SESSION_KEY, JSON.stringify(s)); } catch {}
-}
-
-function loadFromSession(): FullSettings | null {
-  try {
-    const raw = sessionStorage.getItem(SESSION_KEY);
-    return raw ? (JSON.parse(raw) as FullSettings) : null;
-  } catch { return null; }
+  try { localStorage.setItem(LS_KEY, JSON.stringify(s)); } catch {}
 }
 
 function loadFromLocalStorage(): FullSettings {
   try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (raw) return { ...DEFAULTS, ...JSON.parse(raw) };
+    // migrate legacy keys
     return {
       ...DEFAULTS,
       language:       localStorage.getItem("language")        || DEFAULTS.language,
@@ -100,7 +86,7 @@ function loadFromLocalStorage(): FullSettings {
 }
 
 export function clearSettingsCache() {
-  try { sessionStorage.removeItem(SESSION_KEY); } catch {}
+  try { localStorage.removeItem(LS_KEY); } catch {}
 }
 
 export function SettingsProvider({ children }: { children: React.ReactNode }) {
@@ -108,69 +94,32 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const [settingsLoaded, setSettingsLoaded] = useState(false);
 
   useEffect(() => {
-    // 1. Apply localStorage instantly (no flash)
     const local = loadFromLocalStorage();
     setSettings(local);
     applyToDom(local);
-
-    // 2. If sessionStorage has cached settings, skip DB fetch entirely
-    const cached = loadFromSession();
-    if (cached) {
-      setSettings(cached);
-      applyToDom(cached);
-      setSettingsLoaded(true);
-      return;
-    }
-
-    // 3. First load of this session — fetch from DB once, cache in sessionStorage
-    fetch("/api/settings")
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.error) return;
-        const sym = CURRENCY_SYMBOLS[data.currency] ?? "$";
-        const merged: FullSettings = {
-          ...local,
-          language:       data.language       ?? local.language,
-          currency:       data.currency       ?? local.currency,
-          currencySymbol: sym,
-          showBalance:    data.showBalance    ?? local.showBalance,
-          autoCategorize: data.autoCategorize ?? local.autoCategorize,
-          budgets:        data.budgets        ?? local.budgets,
-          budgetAlerts:   data.budgetAlerts   ?? local.budgetAlerts,
-        };
-        saveToSession(merged);
-        setSettings(merged);
-        applyToDom(merged);
-        saveToLocalStorage(merged);
-      })
-      .catch(() => {})
-      .finally(() => setSettingsLoaded(true));
+    setSettingsLoaded(true);
   }, []);
 
   function setChartColor(v: string) {
     setSettings((s) => {
       const next = { ...s, chartColor: v };
-      saveToSession(next);
+      saveToLocalStorage(next);
       return next;
     });
     document.documentElement.style.setProperty("--app-accent", v);
     document.documentElement.style.setProperty("--ring", v);
-    try { localStorage.setItem("chartColor", v); } catch {}
   }
 
   function applyTheme(th: "light" | "dark" | "system") {
     setSettings((s) => {
       const next = { ...s, theme: th };
-      saveToSession(next);
+      saveToLocalStorage(next);
       return next;
     });
     applyThemeToDom(th);
-    try { localStorage.setItem("theme", th); } catch {}
   }
 
-  // Called by SettingsDialog after a successful save
   function applySettings(s: FullSettings) {
-    saveToSession(s);
     setSettings(s);
     applyToDom(s);
     saveToLocalStorage(s);

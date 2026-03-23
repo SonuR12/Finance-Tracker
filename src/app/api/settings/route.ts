@@ -10,12 +10,12 @@ export async function GET() {
   const s = await db.collection("user_settings").findOne({ email: session.user.email });
 
   return NextResponse.json({
-    language:       s?.language       ?? "en",
-    currency:       s?.currency       ?? "USD",
-    showBalance:    s?.showBalance    ?? true,
-    autoCategorize: s?.autoCategorize ?? true,
-    budgets:        s?.budgets        ?? {},
-    budgetAlerts:   s?.budgetAlerts   ?? true,
+    budgets:       s?.budgets       ?? {},
+    budgetAlerts:  s?.budgetAlerts  ?? true,
+    notifications: s?.notifications ?? [true, true, true, true, true],
+    twoFA:         s?.twoFA         ?? false,
+    loginNotif:    s?.loginNotif    ?? true,
+    analytics:     s?.analytics     ?? true,
   });
 }
 
@@ -24,12 +24,12 @@ export async function POST(req: Request) {
   if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const body = await req.json();
-  const { language, currency, showBalance, autoCategorize, budgets, budgetAlerts } = body;
+  const { budgets, budgetAlerts, notifications, twoFA, loginNotif, analytics } = body;
 
   const db = await getDb();
   await db.collection("user_settings").updateOne(
     { email: session.user.email },
-    { $set: { language, currency, showBalance, autoCategorize, budgets, budgetAlerts, email: session.user.email, updatedAt: new Date() } },
+    { $set: { budgets, budgetAlerts, notifications, twoFA, loginNotif, analytics, email: session.user.email, updatedAt: new Date() } },
     { upsert: true }
   );
 
