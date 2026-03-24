@@ -66,6 +66,8 @@ export default function AboutPage() {
             {...fadeUp}
             className="text-xl font-semibold uppercase tracking-widest mb-4"
             style={{ color: "var(--app-accent)" }}
+          >
+            {t("about.label")}
           </motion.p>
           <motion.h1
             {...fadeUp}
