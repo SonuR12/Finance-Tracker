@@ -5,6 +5,7 @@ import { useSettings } from "@/lib/settings-context";
 import { useT } from "@/lib/i18n-context";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, Bell, BarChart3, ArrowLeftRight, TrendingUp, TrendingDown, PiggyBank, Target, Wallet, CreditCard, Receipt, ShieldCheck, X, Send, Trash2 } from "lucide-react";
+import { AppButton } from "@/components/ui/AppButton";
 
 function BotIcon({ size = 32, color }: { size?: number; color: string }) {
   const id = `bg-${color.replace("#", "")}`;
@@ -438,10 +439,16 @@ function TypingDots() {
 
 function AIFloatingButton({ insights, data }: { insights: any[]; data: DashboardData }) {
   const t = useT();
-  const { currency, currencySymbol, language, chartColor } = useSettings();
+  const { currency, currencySymbol, language } = useSettings();
   const STORAGE_KEY = "ai_chat_history";
   const [open, setOpen] = useState(false);
   const [closing, setClosing] = useState(false);
+  const [showHint, setShowHint] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShowHint(false), 2000);
+    return () => clearTimeout(timer);
+  }, []);
 
   function openChat()  { setOpen(true); }
   function closeChat() {
@@ -514,12 +521,12 @@ function AIFloatingButton({ insights, data }: { insights: any[]; data: Dashboard
             {/* ── Header ── */}
             <div
               className="flex items-center justify-between px-4 py-3 flex-shrink-0"
-              style={{ background: `linear-gradient(135deg, ${chartColor}ee, ${chartColor}99)` }}
+              style={{ background: "linear-gradient(135deg, color-mix(in srgb, var(--app-accent) 93%, transparent), color-mix(in srgb, var(--app-accent) 60%, black))" }}
             >
               <div className="flex items-center gap-2.5">
                 <div className="relative">
                   <div className="h-9 w-9 rounded-xl bg-white/20 flex items-center justify-center overflow-hidden">
-                    <BotIcon size={32} color={chartColor} />
+                    <BotIcon size={32} color="var(--app-accent)" />
                   </div>
                   <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-400 border-2 border-white" />
                 </div>
@@ -552,7 +559,7 @@ function AIFloatingButton({ insights, data }: { insights: any[]; data: Dashboard
               {messages.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full gap-4 px-2">
                   <div className="h-14 w-14 rounded-2xl flex items-center justify-center shadow-lg overflow-hidden">
-                    <BotIcon size={56} color={chartColor} />
+                    <BotIcon size={56} color="var(--app-accent)" />
                   </div>
                   <div className="text-center">
                     <p className="text-sm font-semibold text-neutral-700 dark:text-neutral-200">{t("dashboard.aiAssistant")}</p>
@@ -565,7 +572,7 @@ function AIFloatingButton({ insights, data }: { insights: any[]; data: Dashboard
                         onClick={() => handleSend(q)}
                         className="text-xs px-3 py-2.5 rounded-xl border border-neutral-200 dark:border-neutral-700 text-neutral-600 dark:text-neutral-400 hover:text-white transition text-left flex items-center gap-2 group"
                         style={{ background: "transparent" }}
-                        onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = chartColor; (e.currentTarget as HTMLButtonElement).style.borderColor = chartColor; (e.currentTarget as HTMLButtonElement).style.color = "white"; }}
+                        onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "var(--app-accent)"; (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--app-accent)"; (e.currentTarget as HTMLButtonElement).style.color = "white"; }}
                         onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "transparent"; (e.currentTarget as HTMLButtonElement).style.borderColor = ""; (e.currentTarget as HTMLButtonElement).style.color = ""; }}
                       >
                         <Sparkles className="h-3 w-3 flex-shrink-0 opacity-50 group-hover:opacity-100" />
@@ -589,7 +596,7 @@ function AIFloatingButton({ insights, data }: { insights: any[]; data: Dashboard
                       {/* AI avatar */}
                       {!isUser && (
                         <div className="flex-shrink-0 h-6 w-6 rounded-full flex items-center justify-center mb-0.5 overflow-hidden">
-                          {showAvatar && <BotIcon size={24} color={chartColor} />}
+                          {showAvatar && <BotIcon size={24} color="var(--app-accent)" />}
                         </div>
                       )}
                       <div className={`flex flex-col gap-1 max-w-[78%] ${isUser ? "items-end" : "items-start"}`}>
@@ -599,7 +606,7 @@ function AIFloatingButton({ insights, data }: { insights: any[]; data: Dashboard
                               ? "text-white rounded-2xl rounded-br-sm shadow-sm"
                               : "bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-200 rounded-2xl rounded-bl-sm border border-neutral-100 dark:border-neutral-700 shadow-sm"
                           }`}
-                          style={isUser ? { background: `${chartColor}cc` } : {}}
+                          style={isUser ? { background: "color-mix(in srgb, var(--app-accent) 80%, transparent)" } : {}}
                         >
                           {isUser ? m.text : (
                             <div className="space-y-1.5">
@@ -624,7 +631,7 @@ function AIFloatingButton({ insights, data }: { insights: any[]; data: Dashboard
                   className="flex items-end gap-2"
                 >
                   <div className="flex-shrink-0 h-6 w-6 rounded-full flex items-center justify-center overflow-hidden">
-                    <BotIcon size={24} color={chartColor} />
+                    <BotIcon size={24} color="var(--app-accent)" />
                   </div>
                   <div className="px-3 py-2.5 rounded-2xl rounded-bl-sm bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 shadow-sm">
                     <TypingDots />
@@ -638,7 +645,7 @@ function AIFloatingButton({ insights, data }: { insights: any[]; data: Dashboard
             <div className="px-3 py-3 border-t border-neutral-100 dark:border-neutral-800 bg-white dark:bg-neutral-900 flex-shrink-0">
               <div
                 className="flex items-center gap-2 px-3 py-2 rounded-xl border bg-neutral-50 dark:bg-neutral-800 transition-colors cursor-text"
-                style={{ borderColor: focused ? chartColor : undefined }}
+                style={{ borderColor: focused ? "var(--app-accent)" : undefined }}
                 onClick={() => inputRef.current?.focus()}
               >
                 <input
@@ -655,7 +662,7 @@ function AIFloatingButton({ insights, data }: { insights: any[]; data: Dashboard
                   onClick={() => handleSend()}
                   disabled={!input.trim() || loading}
                   className="h-7 w-7 rounded-lg flex items-center justify-center text-white transition-all disabled:opacity-35 flex-shrink-0"
-                  style={{ background: chartColor }}
+                  style={{ background: "var(--app-accent)" }}
                 >
                   <Send className="h-3 w-3" />
                 </button>
@@ -665,11 +672,34 @@ function AIFloatingButton({ insights, data }: { insights: any[]; data: Dashboard
         </div>
       )}
 
+      {/* Hint tooltip */}
+      <AnimatePresence>
+        {showHint && !open && (
+          <motion.div
+            initial={{ opacity: 0, y: 6, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 6, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+            className="fixed bottom-24 right-4 sm:right-5 z-50 flex items-center gap-2 px-3 py-2 rounded-xl text-white text-xs font-medium shadow-lg pointer-events-none"
+            style={{ background: "linear-gradient(135deg, color-mix(in srgb, var(--app-accent) 93%, transparent), color-mix(in srgb, var(--app-accent) 60%, black))" }}
+          >
+            {/* <Sparkles className="h-3.5 w-3.5 flex-shrink-0" /> */}
+            {t("dashboard.aiAssistant")}
+            {/* Arrow pointing down */}
+            <span
+              className="absolute -bottom-1.5 right-5 h-3 w-3 rotate-45"
+              style={{ background: "color-mix(in srgb, var(--app-accent) 60%, black)" }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* FAB */}
-      <button
+      <AppButton
+        variant="primary"
         onClick={toggleChat}
-        className="fixed bottom-6 right-4 sm:right-5 z-50 h-14 w-14 rounded-2xl flex items-center justify-center active:scale-95"
-        style={{ background: chartColor, boxShadow: `0 4px 14px ${chartColor}55` }}
+        className="fixed bottom-6 right-4 sm:right-5 z-50 !h-14 !w-14 !rounded-2xl !p-0 flex items-center justify-center active:scale-95"
+        style={{ boxShadow: "0 4px 14px color-mix(in srgb, var(--app-accent) 33%, transparent)" }}
       >
         <span
           className="absolute flex items-center justify-center transition-all duration-150"
@@ -681,9 +711,9 @@ function AIFloatingButton({ insights, data }: { insights: any[]; data: Dashboard
           className="absolute flex items-center justify-center transition-all duration-150"
           style={{ opacity: open ? 0 : 1, transform: open ? "rotate(90deg) scale(0.5)" : "rotate(0deg) scale(1)" }}
         >
-          <BotIcon size={40} color={chartColor} />
+          <BotIcon size={40} color="var(--app-accent)" />
         </span>
-      </button>
+      </AppButton>
     </>
   );
 }

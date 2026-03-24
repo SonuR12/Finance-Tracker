@@ -175,7 +175,7 @@
     "light": "Hell",
     "dark": "Dunkel",
     "followSystem": "System",
-    "chartColor": "Design-Farbe",
+    "accentColor": "Designfarbe",
     "selected": "Ausgewählt",
     "account": "Konto",
     "signOut": "Abmelden"

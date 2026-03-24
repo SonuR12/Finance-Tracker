@@ -6,10 +6,11 @@ import { useSettings } from "@/lib/settings-context";
 import { useT } from "@/lib/i18n-context";
 
 export default function WeeklyChart({ data }: { data: any[] }) {
-  const { currencySymbol, chartColor } = useSettings();
+  const { currencySymbol } = useSettings();
   const t = useT();
   const max = Math.max(...data.map((d) => d.amount));
-  const dimColor = chartColor + "33"; // ~20% opacity hex
+  const accentColor = "var(--app-accent)";
+  const dimColor = "color-mix(in srgb, var(--app-accent) 20%, transparent)";
 
   return (
     <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}
@@ -20,7 +21,7 @@ export default function WeeklyChart({ data }: { data: any[] }) {
           <h3 className="font-semibold text-neutral-900 dark:text-white">{t("dashboard.weeklySpending")}</h3>
           <p className="text-xs text-neutral-400 mt-0.5">{t("dashboard.currentWeek")}</p>
         </div>
-        <span className="text-xs bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 px-2.5 py-1 rounded-full font-medium">
+        <span className="text-xs px-2.5 py-1 rounded-full font-medium" style={{ background: "color-mix(in srgb, var(--app-accent) 12%, transparent)", color: "var(--app-accent)" }}>
           {currencySymbol}{data.reduce((s, d) => s + d.amount, 0).toLocaleString()} {t("dashboard.total")}
         </span>
       </div>
@@ -37,7 +38,7 @@ export default function WeeklyChart({ data }: { data: any[] }) {
           />
           <Bar dataKey="amount" radius={[6, 6, 0, 0]}>
             {data.map((entry, i) => (
-              <Cell key={i} fill={entry.amount === max ? chartColor : dimColor} />
+              <Cell key={i} fill={entry.amount === max ? accentColor : dimColor} />
             ))}
           </Bar>
         </BarChart>

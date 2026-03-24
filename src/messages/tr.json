@@ -157,7 +157,7 @@
     "light": "Açık",
     "dark": "Koyu",
     "followSystem": "Sistem",
-    "chartColor": "Tema Rengi",
+    "accentColor": "Tema Rengi",
     "selected": "Seçili",
     "account": "Hesap",
     "signOut": "Oturumu Kapat"

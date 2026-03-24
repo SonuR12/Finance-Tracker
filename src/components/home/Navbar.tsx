@@ -5,22 +5,10 @@ import Link from "next/link";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useT } from "@/lib/i18n-context";
 import { useSession } from "next-auth/react";
-import { useSettings } from "@/lib/settings-context";
 import { UserMenu } from "@/components/ui/UserMenu";
 import { SettingsDialog } from "@/components/ui/SettingsDialog";
 import QuickAppearance from "@/components/ui/QuickAppearance";
 import { AppButton } from "@/components/ui/AppButton";
-
-function lighten(hex: string, amt: number) {
-  const m = hex.replace("#", "").match(/.{2}/g);
-  if (!m) return hex;
-  return "#" + m.map((x) => Math.min(255, Math.round(parseInt(x, 16) + 255 * amt)).toString(16).padStart(2, "0")).join("");
-}
-function darken(hex: string, amt: number) {
-  const m = hex.replace("#", "").match(/.{2}/g);
-  if (!m) return hex;
-  return "#" + m.map((x) => Math.max(0, Math.round(parseInt(x, 16) * (1 - amt))).toString(16).padStart(2, "0")).join("");
-}
 
 export default function Navbar({ showLinks = true }: { showLinks?: boolean }) {
   const [scrolled, setScrolled] = useState(false);
@@ -28,7 +16,6 @@ export default function Navbar({ showLinks = true }: { showLinks?: boolean }) {
   const [activeSection, setActiveSection] = useState("#home");
   const t = useT();
   const { data: session, status } = useSession();
-  const { chartColor } = useSettings();
 
   const NAV_HREFS = ["#home", "#features", "#testimonials", "#pricing"];
 

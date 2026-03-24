@@ -157,7 +157,7 @@
     "light": "Jasny",
     "dark": "Ciemny",
     "followSystem": "Systemem",
-    "chartColor": "Kolor motywu",
+    "accentColor": "Kolor motywu",
     "selected": "Wybrano",
     "account": "Konto",
     "signOut": "Wyloguj się"

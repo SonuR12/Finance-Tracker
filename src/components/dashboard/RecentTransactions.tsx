@@ -87,7 +87,10 @@ export default function RecentTransactions({ data }: { data: any[] }) {
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-neutral-400" />
         <input value={search} onChange={(e) => { const v = e.target.value; startTransition(() => setSearch(v)); }}
           placeholder={t("dashboard.searchTransactions")}
-          className="w-full pl-8 pr-3 py-2 text-sm rounded-lg bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-800 dark:text-neutral-100 outline-none focus:border-indigo-400 placeholder:text-neutral-400" />
+          className="w-full pl-8 pr-3 py-2 text-sm rounded-lg bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-800 dark:text-neutral-100 outline-none placeholder:text-neutral-400" style={{ '--tw-ring-color': 'var(--app-accent)' } as React.CSSProperties}
+          onFocus={(e) => e.currentTarget.style.borderColor = 'var(--app-accent)'}
+          onBlur={(e) => e.currentTarget.style.borderColor = ''}
+        />
       </div>
       {filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center flex-1 gap-3">

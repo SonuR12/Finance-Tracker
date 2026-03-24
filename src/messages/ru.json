@@ -157,7 +157,7 @@
     "light": "Светлая",
     "dark": "Темная",
     "followSystem": "Система",
-    "chartColor": "Цвет темы",
+    "accentColor": "Цвет темы",
     "selected": "Выбрано",
     "account": "Аккаунт",
     "signOut": "Выйти"

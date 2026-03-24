@@ -6,7 +6,7 @@ import { useSettings } from "@/lib/settings-context";
 
 export default function StatsSection() {
   const t = useT();
-  const { chartColor, currencySymbol } = useSettings();
+  const { currencySymbol } = useSettings();
 
   const stats = [
     { value: "50K+",              labelKey: "stats.users" },

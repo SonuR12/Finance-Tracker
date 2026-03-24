@@ -6,7 +6,7 @@ import { useSettings } from "@/lib/settings-context";
 import { useT } from "@/lib/i18n-context";
 
 export default function IncomeExpenseChart({ data }: { data: any[] }) {
-  const { currencySymbol, chartColor } = useSettings();
+  const { currencySymbol, accentColor } = useSettings();
   const t = useT();
 
   return (
@@ -20,7 +20,7 @@ export default function IncomeExpenseChart({ data }: { data: any[] }) {
         </div>
         <div className="flex gap-3 text-xs">
           <span className="flex items-center gap-1.5 text-neutral-500 dark:text-neutral-400">
-            <span className="h-2.5 w-2.5 rounded-full" style={{ background: chartColor }} /> {t("dashboard.income")}
+            <span className="h-2.5 w-2.5 rounded-full" style={{ background: accentColor }} /> {t("dashboard.income")}
           </span>
           <span className="flex items-center gap-1.5 text-neutral-500 dark:text-neutral-400">
             <span className="h-2.5 w-2.5 rounded-full bg-rose-400" /> {t("dashboard.expenses")}
@@ -32,8 +32,8 @@ export default function IncomeExpenseChart({ data }: { data: any[] }) {
         <AreaChart data={data} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
           <defs>
             <linearGradient id="incomeGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor={chartColor} stopOpacity={0.25} />
-              <stop offset="95%" stopColor={chartColor} stopOpacity={0} />
+              <stop offset="5%" stopColor={accentColor} stopOpacity={0.25} />
+              <stop offset="95%" stopColor={accentColor} stopOpacity={0} />
             </linearGradient>
             <linearGradient id="expenseGrad" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="#fb7185" stopOpacity={0.25} />
@@ -48,8 +48,8 @@ export default function IncomeExpenseChart({ data }: { data: any[] }) {
             contentStyle={{ borderRadius: 12, border: "none", boxShadow: "0 4px 24px rgba(0,0,0,0.1)", fontSize: 12 }}
             formatter={(v: any) => [`${currencySymbol}${Number(v).toLocaleString()}`, ""]}
           />
-          <Area type="monotone" dataKey="income" stroke={chartColor} strokeWidth={2.5}
-            fill="url(#incomeGrad)" dot={false} activeDot={{ r: 5, fill: chartColor }} />
+          <Area type="monotone" dataKey="income" stroke={accentColor} strokeWidth={2.5}
+            fill="url(#incomeGrad)" dot={false} activeDot={{ r: 5, fill: accentColor }} />
           <Area type="monotone" dataKey="expenses" stroke="#fb7185" strokeWidth={2.5}
             fill="url(#expenseGrad)" dot={false} activeDot={{ r: 5, fill: "#fb7185" }} />
         </AreaChart>

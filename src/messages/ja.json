@@ -157,7 +157,7 @@
     "light": "ライト",
     "dark": "ダーク",
    "followSystem": "システム",
-    "chartColor": "テーマカラー",
+    "accentColor": "テーマカラー",
     "selected": "選択済み",
     "account": "アカウント",
     "signOut": "サインアウト"

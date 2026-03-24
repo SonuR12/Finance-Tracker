@@ -157,7 +157,7 @@
     "light": "Light",
     "dark": "Dark",
     "followSystem": "Follow",
-    "chartColor": "Theme Color",
+    "accentColor": "Theme Color",
     "selected": "Selected",
     "account": "Account",
     "signOut": "Sign Out"

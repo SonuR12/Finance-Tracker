@@ -157,7 +157,7 @@
     "light": "Licht",
     "dark": "Donker",
     "followSystem": "Systeem",
-    "chartColor": "Themakleur",
+    "accentColor": "Themakleur",
     "selected": "Geselecteerd",
     "account": "Account",
     "signOut": "Uitloggen"

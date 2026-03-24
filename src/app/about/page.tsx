@@ -1,17 +1,10 @@
 "use client";
 
 import PageLayout from "@/components/home/PageLayout";
-import { useSettings } from "@/lib/settings-context";
 import { useT } from "@/lib/i18n-context";
 import { motion, type Variants } from "framer-motion";
 import Image from "next/image";
 import { BarChart3, Shield, Zap, Heart, Globe, Users } from "lucide-react";
-
-function hexToRgb(hex: string) {
-  const m = hex.replace("#", "").match(/.{2}/g);
-  if (!m || m.length < 3) return "99,102,241";
-  return m.slice(0, 3).map((x) => parseInt(x, 16)).join(",");
-}
 
 const stack = [
   { name: "Next.js 16", category: "Framework", desc: "App Router, Server Components, and API routes power the entire platform.", icon: "/icons/Nextjs.png" },
@@ -47,9 +40,7 @@ const stackItem: Variants = {
 };
 
 export default function AboutPage() {
-  const { chartColor } = useSettings();
   const t = useT();
-  const rgb = hexToRgb(chartColor);
 
   const values = [
     { Icon: VALUE_ICONS[0], titleKey: "about.value1Title", descKey: "about.value1Desc" },
@@ -67,16 +58,14 @@ export default function AboutPage() {
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
-            background: `radial-gradient(ellipse 80% 50% at 50% -10%, rgba(${rgb},0.12) 0%, transparent 60%)`,
+            background: "radial-gradient(ellipse 80% 50% at 50% -10%, color-mix(in srgb, var(--app-accent) 12%, transparent) 0%, transparent 60%)",
           }}
         />
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <motion.p
             {...fadeUp}
             className="text-xl font-semibold uppercase tracking-widest mb-4"
-            style={{ color: chartColor }}
-          >
-            {t("about.label")}
+            style={{ color: "var(--app-accent)" }}
           </motion.p>
           <motion.h1
             {...fadeUp}
@@ -101,7 +90,7 @@ export default function AboutPage() {
           <motion.div {...fadeUp} className="space-y-5">
             <p
               className="text-4xl sm:text-5xl font-semibold uppercase tracking-widest"
-              style={{ color: chartColor }}
+              style={{ color: "var(--app-accent)" }}
             >
               {t("about.storyLabel")}
             </p>
@@ -129,7 +118,7 @@ export default function AboutPage() {
             <div
               className="absolute inset-0"
               style={{
-                background: `linear-gradient(135deg, rgba(${rgb},0.3) 0%, transparent 60%)`,
+                background: "linear-gradient(135deg, color-mix(in srgb, var(--app-accent) 30%, transparent) 0%, transparent 60%)",
               }}
             />
           </motion.div>
@@ -152,10 +141,10 @@ export default function AboutPage() {
                 {...fadeUp}
                 transition={{ duration: 0.5, delay: i * 0.07 }}
                 className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-4 sm:p-6 space-y-2 sm:space-y-3 transition-colors duration-300 flex flex-col items-center text-center sm:items-start sm:text-left"
-                onMouseEnter={(e) => (e.currentTarget.style.borderColor = chartColor)}
+                onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--app-accent)")}
                 onMouseLeave={(e) => (e.currentTarget.style.borderColor = "")}
               >
-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center" style={{ background: `rgba(${rgb},0.12)`, color: chartColor }}>
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center" style={{ background: "color-mix(in srgb, var(--app-accent) 12%, transparent)", color: "var(--app-accent)" }}>
                   <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
                 </div>
                 <h3 className="font-semibold text-sm sm:text-base text-neutral-900 dark:text-neutral-100">{t(titleKey)}</h3>
@@ -172,7 +161,7 @@ export default function AboutPage() {
           <motion.div {...fadeUp} className="text-center mb-12 space-y-3">
             <p
               className="text-lg font-semibold uppercase tracking-widest"
-              style={{ color: chartColor }}
+              style={{ color: "var(--app-accent)" }}
             >
               {t("about.techLabel")}
             </p>
@@ -197,7 +186,7 @@ export default function AboutPage() {
                 style={{ willChange: "opacity, transform" }}
                 className="group rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-4 sm:p-5 flex flex-col sm:flex-row gap-3 sm:gap-4 items-center sm:items-start transition-colors duration-300 hover:-translate-y-0.5"
                 onMouseEnter={(e) =>
-                  (e.currentTarget.style.borderColor = chartColor)
+                  (e.currentTarget.style.borderColor = "var(--app-accent)")
                 }
                 onMouseLeave={(e) => (e.currentTarget.style.borderColor = "")}
               >
@@ -218,8 +207,8 @@ export default function AboutPage() {
                     <span
                       className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-md"
                       style={{
-                        background: `rgba(${rgb},0.12)`,
-                        color: chartColor,
+                        background: "color-mix(in srgb, var(--app-accent) 12%, transparent)",
+                        color: "var(--app-accent)",
                       }}
                     >
                       {item.category}
@@ -260,7 +249,7 @@ export default function AboutPage() {
             <motion.div {...fadeUp} transition={{ duration: 0.5, delay: 0.08 }}
               className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5 sm:p-6 flex flex-col justify-between min-h-[150px] sm:min-h-0"
             >
-              <p className="text-2xl leading-none" style={{ color: chartColor }}>&ldquo;</p>
+              <p className="text-2xl leading-none" style={{ color: "var(--app-accent)" }}>&ldquo;</p>
               <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300 leading-relaxed italic">{t("about.quote1")}</p>
               <p className="text-xs text-neutral-400 mt-2">{t("about.quote1Author")}</p>
             </motion.div>
@@ -269,16 +258,16 @@ export default function AboutPage() {
             <div className="grid grid-cols-2 gap-3 sm:contents">
               <motion.div {...fadeUp} transition={{ duration: 0.5, delay: 0.12 }}
                 className="rounded-2xl p-5 sm:p-6 flex flex-col justify-center items-center text-center"
-                style={{ background: `rgba(${rgb},0.08)`, border: `1.5px solid rgba(${rgb},0.18)` }}
+                style={{ background: "color-mix(in srgb, var(--app-accent) 8%, transparent)", border: "1.5px solid color-mix(in srgb, var(--app-accent) 18%, transparent)" }}
               >
-                <div className="text-3xl sm:text-4xl font-extrabold" style={{ color: chartColor }}>40+</div>
+                <div className="text-3xl sm:text-4xl font-extrabold" style={{ color: "var(--app-accent)" }}>40+</div>
                 <div className="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 mt-1">{t("about.countriesLabel")}</div>
               </motion.div>
 
               <motion.div {...fadeUp} transition={{ duration: 0.5, delay: 0.2 }}
                 className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5 sm:p-6 flex flex-col justify-center items-center text-center"
               >
-                <div className="text-3xl sm:text-4xl font-extrabold" style={{ color: chartColor }}>100%</div>
+                <div className="text-3xl sm:text-4xl font-extrabold" style={{ color: "var(--app-accent)" }}>100%</div>
                 <div className="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 mt-1">{t("about.remoteAsync")}</div>
               </motion.div>
             </div>
@@ -295,9 +284,9 @@ export default function AboutPage() {
             {/* Quote 2 */}
             <motion.div {...fadeUp} transition={{ duration: 0.5, delay: 0.24 }}
               className="rounded-2xl p-5 sm:p-6 flex flex-col justify-center lg:col-span-2"
-              style={{ background: `rgba(${rgb},0.06)`, border: `1.5px solid rgba(${rgb},0.18)` }}
+              style={{ background: "color-mix(in srgb, var(--app-accent) 6%, transparent)", border: "1.5px solid color-mix(in srgb, var(--app-accent) 18%, transparent)" }}
             >
-              <p className="text-2xl leading-none mb-2" style={{ color: chartColor }}>&ldquo;</p>
+              <p className="text-2xl leading-none mb-2" style={{ color: "var(--app-accent)" }}>&ldquo;</p>
               <p className="text-sm sm:text-base md:text-lg font-semibold text-neutral-800 dark:text-neutral-200 leading-relaxed italic">{t("about.quote2")}</p>
               <p className="text-xs text-neutral-400 mt-3">{t("about.quote2Author")}</p>
             </motion.div>

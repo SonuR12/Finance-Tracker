@@ -8,20 +8,8 @@ import { Check, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AppButton } from "@/components/ui/AppButton";
 
-function lighten(hex: string, amt: number) {
-  const m = hex.replace("#", "").match(/.{2}/g);
-  if (!m) return hex;
-  return "#" + m.map((x) => Math.min(255, Math.round(parseInt(x, 16) + 255 * amt)).toString(16).padStart(2, "0")).join("");
-}
-
-function darken(hex: string, amt: number) {
-  const m = hex.replace("#", "").match(/.{2}/g);
-  if (!m) return hex;
-  return "#" + m.map((x) => Math.max(0, Math.round(parseInt(x, 16) * (1 - amt))).toString(16).padStart(2, "0")).join("");
-}
-
 export default function PricingSection() {
-  const { chartColor, currencySymbol } = useSettings();
+  const { currencySymbol } = useSettings();
   const t = useT();
   const [active, setActive] = useState(1);
 

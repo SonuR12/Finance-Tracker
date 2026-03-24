@@ -157,7 +157,7 @@
     "light": "Chiaro",
     "dark": "Scuro",
     "followSystem": "Sistema",
-    "chartColor": "Colore del Tema",
+    "accentColor": "Colore del tema",
     "selected": "Selezionato",
     "account": "Account",
     "signOut": "Disconnettiti"

@@ -36,19 +36,24 @@ export default async function RootLayout({
           (function() {
             try {
               var html = document.documentElement;
-              var t = localStorage.getItem('theme') || 'system';
-              html.dataset.theme = t;
-              if (t === 'dark') {
-                html.classList.add('dark');
-              } else if (t === 'light') {
-                html.classList.remove('dark');
-              } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                html.classList.add('dark');
+              var stored = localStorage.getItem('app_settings_v2');
+              var t = 'system', color = '#6366f1', lang = 'en';
+              if (stored) {
+                var s = JSON.parse(stored);
+                t = s.theme || t;
+                color = s.accentColor || color;
+                lang = s.language || lang;
+              } else {
+                t = localStorage.getItem('theme') || t;
+                color = localStorage.getItem('accentColor') || color;
+                lang = localStorage.getItem('language') || lang;
               }
-              var lang = localStorage.getItem('language');
-              if (lang) html.lang = lang;
-              var color = localStorage.getItem('chartColor');
-              if (color) html.style.setProperty('--app-accent', color);
+              html.dataset.theme = t;
+              if (t === 'dark') html.classList.add('dark');
+              else if (t === 'light') html.classList.remove('dark');
+              else if (window.matchMedia('(prefers-color-scheme: dark)').matches) html.classList.add('dark');
+              html.lang = lang;
+              html.style.setProperty('--app-accent', color);
             } catch(e) {}
           })();
         `}} />

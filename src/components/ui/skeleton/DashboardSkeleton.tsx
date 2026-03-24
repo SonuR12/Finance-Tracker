@@ -44,8 +44,8 @@ function IncomeExpenseChartSkeleton() {
 
 function AIInsightsSkeleton() {
   return (
-    <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5 h-[320px]">
-      <div className="flex items-center justify-between mb-4">
+    <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5 h-[320px] flex flex-col">
+      <div className="flex items-center justify-between mb-4 flex-shrink-0">
         <div className="flex items-center gap-2">
           <S className="h-7 w-7 rounded-lg" />
           <div className="space-y-1.5">
@@ -55,11 +55,11 @@ function AIInsightsSkeleton() {
         </div>
         <S className="h-7 w-7 rounded-lg" />
       </div>
-      <div className="space-y-3">
-        {[...Array(3)].map((_, i) => (
+      <div className="flex-1 overflow-hidden space-y-2.5">
+        {[...Array(4)].map((_, i) => (
           <div key={i} className="rounded-xl border border-neutral-100 dark:border-neutral-800 p-3.5">
             <div className="flex gap-2.5">
-              <S className="h-6 w-6 rounded-md flex-shrink-0" />
+              <S className="h-5 w-5 rounded-md flex-shrink-0 mt-0.5" />
               <div className="flex-1 space-y-1.5">
                 <S className="h-3.5 w-3/4" />
                 <S className="h-3 w-full" />
@@ -120,8 +120,8 @@ function WeeklyChartSkeleton() {
 
 function RecentTransactionsSkeleton() {
   return (
-    <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5 h-[420px] sm:h-[380px]">
-      <div className="flex items-center justify-between mb-4">
+    <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5 h-[420px] sm:h-[380px] flex flex-col overflow-hidden">
+      <div className="flex items-center justify-between mb-4 flex-shrink-0">
         <div className="space-y-1.5">
           <S className="h-4 w-40" />
           <S className="h-3 w-24" />
@@ -132,9 +132,9 @@ function RecentTransactionsSkeleton() {
           <S className="h-7 w-20 rounded-full" />
         </div>
       </div>
-      <S className="h-9 w-full rounded-lg mb-3" />
-      <div className="space-y-1">
-        {[...Array(5)].map((_, i) => (
+      <S className="h-9 w-full rounded-lg mb-3 flex-shrink-0" />
+      <div className="flex-1 overflow-hidden space-y-1">
+        {[...Array(6)].map((_, i) => (
           <div key={i} className="flex items-center gap-3 p-2.5">
             <S className="h-9 w-9 rounded-xl flex-shrink-0" />
             <div className="flex-1 space-y-1.5">

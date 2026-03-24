@@ -119,7 +119,7 @@ export function SettingsDialog({ open, onClose, name: nameProp, email: emailProp
   const [profileSaved, setProfileSaved] = useState(false);
   const [settings, setSettings] = useState<Settings>(DEFAULTS);
   const savedSettingsRef = useRef<Settings>(DEFAULTS);
-  const savedAppearanceRef = useRef({ chartColor: "#6366f1", theme: "system" as "light" | "dark" | "system" });
+  const savedAppearanceRef = useRef({ accentColor: "#6366f1", theme: "system" as "light" | "dark" | "system" });
   const [saving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [appearanceSaving] = useState(false);
@@ -129,7 +129,7 @@ export function SettingsDialog({ open, onClose, name: nameProp, email: emailProp
   const [loginNotif, setLoginNotif] = useState(true);
   const [analytics, setAnalytics] = useState(true);
 
-  const { setChartColor: applyChartColor, applyTheme, applySettings, chartColor, theme, settingsLoaded, language, currency, showBalance, autoCategorize, budgets, budgetAlerts } = useSettings();
+  const { setAccentColor, applyTheme, applySettings, accentColor, theme, settingsLoaded, language, currency, showBalance, autoCategorize, budgets, budgetAlerts } = useSettings();
   const t = useT();
   const overlayRef = useRef<HTMLDivElement>(null);
 
@@ -140,7 +140,7 @@ export function SettingsDialog({ open, onClose, name: nameProp, email: emailProp
     const merged = { ...DEFAULTS, language, currency, showBalance, autoCategorize, budgets, budgetAlerts };
     setSettings(merged);
     savedSettingsRef.current = merged;
-    savedAppearanceRef.current = { chartColor, theme };
+    savedAppearanceRef.current = { accentColor, theme };
   }, [settingsLoaded]);
 
   useEffect(() => {
@@ -156,7 +156,7 @@ export function SettingsDialog({ open, onClose, name: nameProp, email: emailProp
 
   function save() {
     const sym = CURRENCIES.find((c) => c.value === settings.currency)?.symbol ?? "$";
-    const full = { ...settings, currencySymbol: sym, chartColor, theme };
+    const full = { ...settings, currencySymbol: sym, accentColor, theme };
     applySettings(full);
     savedSettingsRef.current = { ...settings };
     setSaved(true);
@@ -164,7 +164,7 @@ export function SettingsDialog({ open, onClose, name: nameProp, email: emailProp
   }
 
   function saveAppearance() {
-    savedAppearanceRef.current = { chartColor, theme };
+    savedAppearanceRef.current = { accentColor, theme };
     setAppearanceSaved(true);
     setTimeout(() => setAppearanceSaved(false), 2500);
   }
@@ -182,7 +182,7 @@ export function SettingsDialog({ open, onClose, name: nameProp, email: emailProp
     settings.budgetAlerts !== savedSettingsRef.current.budgetAlerts
   );
   const appearanceChanged = (
-    chartColor !== savedAppearanceRef.current.chartColor ||
+    accentColor !== savedAppearanceRef.current.accentColor ||
     theme !== savedAppearanceRef.current.theme
   );
 
@@ -208,7 +208,7 @@ export function SettingsDialog({ open, onClose, name: nameProp, email: emailProp
           <nav className="flex flex-col gap-0.5">
             {TABS.map(({ id, labelKey, icon: Icon }) => (
               <button key={id} onClick={() => setActiveTab(id)} title={t(labelKey)}
-                style={activeTab === id ? { background: chartColor + "15", color: chartColor } : {}}
+                style={activeTab === id ? { background: "color-mix(in srgb, var(--app-accent) 8%, transparent)", color: "var(--app-accent)" } : {}}
                 className={`flex items-center gap-2.5 rounded-lg px-2 sm:px-3 py-2 text-sm transition w-full ${
                   activeTab === id
                     ? "font-medium"
@@ -282,7 +282,10 @@ export function SettingsDialog({ open, onClose, name: nameProp, email: emailProp
                       <div className="space-y-3">
                         <div>
                           <label className="text-xs text-neutral-500 mb-1 block">{t("settings.fullName")}</label>
-                          <input value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full rounded-lg border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 px-3 py-2 text-sm text-neutral-800 dark:text-neutral-100 outline-none focus:border-indigo-400" />
+                          <input value={fullName} onChange={(e) => setFullName(e.target.value)}
+                            className="w-full rounded-lg border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 px-3 py-2 text-sm text-neutral-800 dark:text-neutral-100 outline-none"
+                            onFocus={(e) => e.currentTarget.style.borderColor = 'var(--app-accent)'}
+                            onBlur={(e) => e.currentTarget.style.borderColor = ''} />
                         </div>
                         <div>
                           <label className="text-xs text-neutral-500 mb-1 block">{t("settings.email")}</label>
@@ -424,7 +427,9 @@ export function SettingsDialog({ open, onClose, name: nameProp, email: emailProp
                                 type="number" min="0" placeholder="0"
                                 value={settings.budgets[cat] ?? ""}
                                 onChange={(e) => patch({ budgets: { ...settings.budgets, [cat]: e.target.value } })}
-                                className="w-full rounded-lg border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 pl-7 pr-3 py-2 text-sm text-neutral-800 dark:text-neutral-100 outline-none focus:border-indigo-400"
+                                className="w-full rounded-lg border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 pl-7 pr-3 py-2 text-sm text-neutral-800 dark:text-neutral-100 outline-none"
+                                onFocus={(e) => e.currentTarget.style.borderColor = 'var(--app-accent)'}
+                                onBlur={(e) => e.currentTarget.style.borderColor = ''}
                               />
                             </div>
                           </div>
@@ -518,7 +523,7 @@ export function SettingsDialog({ open, onClose, name: nameProp, email: emailProp
                         ]).map((th) => (
                           <button key={th.id} onClick={() => applyTheme(th.id)}
                             className={`flex flex-col items-center gap-2 rounded-xl border-2 p-3 transition ${theme === th.id ? "" : "border-neutral-200 dark:border-neutral-700"}`}
-                            style={theme === th.id ? { borderColor: chartColor } : {}}>
+                            style={theme === th.id ? { borderColor: "var(--app-accent)" } : {}}>
                             <div className={`h-10 w-14 sm:h-14 sm:w-20 rounded-lg ${th.preview}`} />
                             <span className="text-xs text-neutral-600 dark:text-neutral-400 whitespace-nowrap">{t(th.labelKey)}</span>
                           </button>
@@ -527,12 +532,12 @@ export function SettingsDialog({ open, onClose, name: nameProp, email: emailProp
                     </div>
                     <Hr />
                     <div>
-                      <SLabel>{t("settings.chartColor")}</SLabel>
+                      <SLabel>{t("settings.accentColor")}</SLabel>
                       <div className="flex gap-2 mt-3 flex-wrap">
                         {["#6366f1","#3b82f6","#10b981","#8b5cf6","#f43f5e","#f59e0b","#06b6d4","#ec4899"].map((hex) => (
-                          <button key={hex} onClick={() => applyChartColor(hex)}
+                          <button key={hex} onClick={() => setAccentColor(hex)}
                             className={`h-7 w-7 rounded-full transition-all ${
-                              chartColor === hex ? "ring-2 ring-offset-2 ring-neutral-500 dark:ring-neutral-300 scale-110" : "hover:scale-105"
+                              accentColor === hex ? "ring-2 ring-offset-2 ring-neutral-500 dark:ring-neutral-300 scale-110" : "hover:scale-105"
                             }`}
                             style={{ background: hex }} />
                         ))}

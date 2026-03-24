@@ -3,7 +3,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useT } from "@/lib/i18n-context";
-import { useSettings } from "@/lib/settings-context";
 import { useRouter, usePathname } from "next/navigation";
 
 function useScrollTo() {
@@ -25,7 +24,6 @@ function useScrollTo() {
 
 export default function Footer() {
   const t = useT();
-  const { chartColor } = useSettings();
   const scrollTo = useScrollTo();
 
   const links = [
@@ -95,7 +93,7 @@ export default function Footer() {
                       <button
                         onClick={() => scrollTo(item.href)}
                         className="text-sm text-neutral-500 dark:text-neutral-400 transition-colors hover:text-neutral-900 dark:hover:text-neutral-100 text-left"
-                        onMouseEnter={(e) => (e.currentTarget.style.color = chartColor)}
+                        onMouseEnter={(e) => (e.currentTarget.style.color = "var(--app-accent)")}
                         onMouseLeave={(e) => (e.currentTarget.style.color = "")}
                       >
                         {item.label}
@@ -104,7 +102,7 @@ export default function Footer() {
                       <a
                         href={item.href}
                         className="text-sm text-neutral-500 dark:text-neutral-400 transition-colors hover:text-neutral-900 dark:hover:text-neutral-100"
-                        onMouseEnter={(e) => (e.currentTarget.style.color = chartColor)}
+                        onMouseEnter={(e) => (e.currentTarget.style.color = "var(--app-accent)")}
                         onMouseLeave={(e) => (e.currentTarget.style.color = "")}
                       >
                         {item.label}

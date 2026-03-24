@@ -2,15 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import PageLayout from "@/components/home/PageLayout";
-import { useSettings } from "@/lib/settings-context";
 import { useT } from "@/lib/i18n-context";
 import { motion } from "framer-motion";
-
-function hexToRgb(hex: string) {
-  const m = hex.replace("#", "").match(/.{2}/g);
-  if (!m || m.length < 3) return "99,102,241";
-  return m.slice(0, 3).map((x) => parseInt(x, 16)).join(",");
-}
 
 const sections = [
   {
@@ -80,9 +73,7 @@ const sections = [
 const fadeUp = { initial: { opacity: 0, y: 20 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true }, transition: { duration: 0.5 } };
 
 export default function PrivacyPolicyPage() {
-  const { chartColor } = useSettings();
   const t = useT();
-  const rgb = hexToRgb(chartColor);
   const [activeSection, setActiveSection] = useState(0);
   const sectionRefs = useRef<(HTMLElement | null)[]>([]);
 
@@ -106,9 +97,9 @@ export default function PrivacyPolicyPage() {
     <PageLayout>
       {/* Hero */}
       <section className="relative overflow-hidden pt-24 sm:pt-32 pb-14 sm:pb-20 px-4 sm:px-6 lg:px-8">
-        <div className="absolute inset-0 pointer-events-none" style={{ background: `radial-gradient(ellipse 80% 50% at 50% -10%, rgba(${rgb},0.1) 0%, transparent 60%)` }} />
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 80% 50% at 50% -10%, color-mix(in srgb, var(--app-accent) 10%, transparent) 0%, transparent 60%)" }} />
         <div className="max-w-3xl mx-auto text-center relative z-10">
-          <motion.p {...fadeUp} className="text-lg font-semibold uppercase tracking-widest mb-4" style={{ color: chartColor }}>{t("privacy.label")}</motion.p>
+          <motion.p {...fadeUp} className="text-lg font-semibold uppercase tracking-widest mb-4" style={{ color: "var(--app-accent)" }}>{t("privacy.label")}</motion.p>
           <motion.h1 {...fadeUp} transition={{ duration: 0.55, delay: 0.1 }} className="text-4xl sm:text-5xl font-extrabold tracking-tight text-neutral-900 dark:text-white mb-4">
             {t("privacy.title")}
           </motion.h1>
@@ -127,7 +118,7 @@ export default function PrivacyPolicyPage() {
 
           {/* Sticky TOC */}
           <aside className="hidden md:block sticky top-60 self-start max-h-[calc(100vh-7rem)] overflow-y-auto rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5">
-            <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: chartColor }}>{t("privacy.contents")}</p>
+            <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: "var(--app-accent)" }}>{t("privacy.contents")}</p>
             <nav className="space-y-1">
               {sections.map((s, i) => (
                 <button key={i}
@@ -139,10 +130,10 @@ export default function PrivacyPolicyPage() {
                   }}
                   className="w-full text-left block text-sm py-1 px-2 rounded-lg transition-all duration-200"
                   style={activeSection === i
-                    ? { color: chartColor, background: `rgba(${rgb},0.08)`, fontWeight: 600 }
+                    ? { color: "var(--app-accent)", background: "color-mix(in srgb, var(--app-accent) 8%, transparent)", fontWeight: 600 }
                     : { color: "", fontWeight: 400 }
                   }
-                  onMouseEnter={(e) => { if (activeSection !== i) e.currentTarget.style.color = chartColor; }}
+                  onMouseEnter={(e) => { if (activeSection !== i) e.currentTarget.style.color = "var(--app-accent)"; }}
                   onMouseLeave={(e) => { if (activeSection !== i) e.currentTarget.style.color = ""; }}
                 >
                   {i + 1}. {s.title}
@@ -156,16 +147,16 @@ export default function PrivacyPolicyPage() {
             {sections.map((section, i) => (
               <motion.section key={i} id={`section-${i}`} ref={(el) => { sectionRefs.current[i] = el; }} {...fadeUp} transition={{ duration: 0.5, delay: i * 0.04 }}
                 className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-6 sm:p-8 space-y-5 transition-colors duration-300"
-                style={{ borderColor: activeSection === i ? `rgba(${rgb},0.5)` : "" }}
+                style={{ borderColor: activeSection === i ? "color-mix(in srgb, var(--app-accent) 50%, transparent)" : "" }}
               >
                 <div className="flex items-center gap-3">
-                  <span className="flex-shrink-0 w-7 h-7 rounded-full text-white text-xs font-bold flex items-center justify-center" style={{ background: chartColor }}>{i + 1}</span>
+                  <span className="flex-shrink-0 w-7 h-7 rounded-full text-white text-xs font-bold flex items-center justify-center" style={{ background: "var(--app-accent)" }}>{i + 1}</span>
                   <h2 className="text-xl font-bold text-neutral-900 dark:text-neutral-100">{section.title}</h2>
                 </div>
                 <div className="space-y-4 pl-10">
                   {section.content.map((item, j) => (
-                    <div key={j} className="space-y-1 pl-3 border-l-2" style={{ borderColor: `rgba(${rgb},0.4)` }}>
-                      <h3 className="text-sm font-semibold" style={{ color: chartColor }}>{item.subtitle}</h3>
+                    <div key={j} className="space-y-1 pl-3 border-l-2" style={{ borderColor: "color-mix(in srgb, var(--app-accent) 40%, transparent)" }}>
+                      <h3 className="text-sm font-semibold" style={{ color: "var(--app-accent)" }}>{item.subtitle}</h3>
                       <p className="text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed">{item.text}</p>
                     </div>
                   ))}
@@ -175,11 +166,11 @@ export default function PrivacyPolicyPage() {
 
             {/* Contact */}
             <motion.div {...fadeUp} className="rounded-2xl p-6 sm:p-8 text-center space-y-3"
-              style={{ background: `rgba(${rgb},0.06)`, border: `1.5px solid rgba(${rgb},0.2)` }}
+              style={{ background: "color-mix(in srgb, var(--app-accent) 6%, transparent)", border: "1.5px solid color-mix(in srgb, var(--app-accent) 20%, transparent)" }}
             >
               <p className="font-semibold text-neutral-900 dark:text-neutral-100">{t("privacy.questionsTitle")}</p>
               <p className="text-sm text-neutral-500 dark:text-neutral-400">{t("privacy.questionsDesc")}</p>
-              <a href="mailto:sonurai272004@gmail.com" className="inline-flex items-center gap-2 text-sm font-semibold" style={{ color: chartColor }}>
+              <a href="mailto:sonurai272004@gmail.com" className="inline-flex items-center gap-2 text-sm font-semibold" style={{ color: "var(--app-accent)" }}>
                 {t("privacy.email")}
               </a>
             </motion.div>

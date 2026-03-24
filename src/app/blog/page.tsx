@@ -2,19 +2,12 @@
 
 import React from "react";
 import PageLayout from "@/components/home/PageLayout";
-import { useSettings } from "@/lib/settings-context";
 import { useT } from "@/lib/i18n-context";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { Clock, ArrowRight } from "lucide-react";
 import { AppButton } from "@/components/ui/AppButton";
-
-function hexToRgb(hex: string) {
-  const m = hex.replace("#", "").match(/.{2}/g);
-  if (!m || m.length < 3) return "99,102,241";
-  return m.slice(0, 3).map((x) => parseInt(x, 16)).join(",");
-}
 
 const posts = [
   {
@@ -90,9 +83,7 @@ const categories = ["All", "AI & Finance", "Personal Finance", "Tips & Tricks", 
 const fadeUp = { initial: { opacity: 0, y: 24 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true }, transition: { duration: 0.5 } };
 
 export default function BlogPage() {
-  const { chartColor } = useSettings();
   const t = useT();
-  const rgb = hexToRgb(chartColor);
   const [activeCategory, setActiveCategory] = React.useState("All");
 
   const categories = [t("blog.all"), t("blog.aiFinance"), t("blog.personalFinance"), t("blog.tipsTricks"), t("blog.product")];
@@ -113,9 +104,9 @@ export default function BlogPage() {
     <PageLayout>
       {/* Header */}
       <section className="relative overflow-hidden pt-24 sm:pt-32 pb-14 sm:pb-20 px-4 sm:px-6 lg:px-8">
-        <div className="absolute inset-0 pointer-events-none" style={{ background: `radial-gradient(ellipse 80% 50% at 50% -10%, rgba(${rgb},0.12) 0%, transparent 60%)` }} />
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 80% 50% at 50% -10%, color-mix(in srgb, var(--app-accent) 12%, transparent) 0%, transparent 60%)" }} />
         <div className="max-w-4xl mx-auto text-center relative z-10">
-          <motion.p {...fadeUp} className="text-lg font-semibold uppercase tracking-widest mb-4" style={{ color: chartColor }}>{t("blog.label")}</motion.p>
+          <motion.p {...fadeUp} className="text-lg font-semibold uppercase tracking-widest mb-4" style={{ color: "var(--app-accent)" }}>{t("blog.label")}</motion.p>
           <motion.h1 {...fadeUp} transition={{ duration: 0.55, delay: 0.1 }} className="text-4xl sm:text-5xl font-extrabold tracking-tight text-neutral-900 dark:text-white mb-4">
             {t("blog.title")}
           </motion.h1>
@@ -144,7 +135,7 @@ export default function BlogPage() {
         {/* Featured post */}
         {showFeatured && (
         <motion.div {...fadeUp} className="group relative rounded-2xl overflow-hidden border border-neutral-200 dark:border-neutral-800 mb-8 cursor-pointer"
-          onMouseEnter={(e) => (e.currentTarget.style.borderColor = chartColor)}
+          onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--app-accent)")}
           onMouseLeave={(e) => (e.currentTarget.style.borderColor = "")}
         >
           <div className="grid md:grid-cols-2">
@@ -153,7 +144,7 @@ export default function BlogPage() {
               <div className="absolute inset-0 bg-gradient-to-b md:bg-gradient-to-r from-transparent to-black/20 md:to-black/40" />
             </div>
             <div className="p-5 sm:p-7 md:p-10 flex flex-col justify-center bg-white dark:bg-neutral-900 space-y-3">
-              <span className="text-xs font-bold uppercase tracking-widest" style={{ color: chartColor }}>{featured.category} · {t("blog.featured")}</span>
+              <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "var(--app-accent)" }}>{featured.category} · {t("blog.featured")}</span>
               <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-neutral-900 dark:text-white leading-snug">{featured.title}</h2>
               <p className="text-sm sm:text-base text-neutral-500 dark:text-neutral-400 leading-relaxed line-clamp-3">{featured.excerpt}</p>
               <div className="flex items-center gap-3 pt-1">
@@ -163,7 +154,7 @@ export default function BlogPage() {
                   <p className="text-xs text-neutral-400 flex items-center gap-1"><Clock className="h-3 w-3" />{featured.date} · {featured.readTime}</p>
                 </div>
               </div>
-              <Link href={`/blog/${featured.slug}`} className="inline-flex items-center gap-2 text-sm font-semibold group/link" style={{ color: chartColor }}>
+              <Link href={`/blog/${featured.slug}`} className="inline-flex items-center gap-2 text-sm font-semibold group/link" style={{ color: "var(--app-accent)" }}>
                 {t("blog.readArticle")} <ArrowRight className="h-4 w-4 transition-transform group-hover/link:translate-x-1" />
               </Link>
             </div>
@@ -176,14 +167,14 @@ export default function BlogPage() {
           {rest.map((post, i) => (
             <motion.article key={post.slug} {...fadeUp} transition={{ duration: 0.5, delay: i * 0.07 }}
               className="group rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 overflow-hidden cursor-pointer transition-colors duration-300 flex sm:flex-col"
-              onMouseEnter={(e) => (e.currentTarget.style.borderColor = chartColor)}
+              onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--app-accent)")}
               onMouseLeave={(e) => (e.currentTarget.style.borderColor = "")}
             >
               <div className="relative w-28 sm:w-auto h-auto sm:h-40 flex-shrink-0 overflow-hidden">
                 <Image src={post.image} alt={post.title} fill className="object-cover transition-transform duration-500 group-hover:scale-105" />
               </div>
               <div className="p-4 space-y-2 flex flex-col justify-center">
-                <span className="text-xs font-bold uppercase tracking-widest" style={{ color: chartColor }}>{post.category}</span>
+                <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "var(--app-accent)" }}>{post.category}</span>
                 <h3 className="font-semibold text-sm sm:text-base text-neutral-900 dark:text-neutral-100 leading-snug line-clamp-2">{post.title}</h3>
                 <p className="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed line-clamp-2 hidden sm:block">{post.excerpt}</p>
                 <div className="flex items-center gap-2 pt-1 border-t border-neutral-100 dark:border-neutral-800">

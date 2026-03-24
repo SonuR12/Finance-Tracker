@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import { useT } from "@/lib/i18n-context";
-import { useSettings } from "@/lib/settings-context";
 import Image from "next/image";
 import { Star } from "lucide-react";
 
@@ -17,7 +16,6 @@ const testimonials = [
 
 export default function TestimonialsSection() {
   const t = useT();
-  const { chartColor } = useSettings();
 
   return (
     <section id="testimonials" className="py-12 sm:py-24 px-4 sm:px-6 lg:px-8">

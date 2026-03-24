@@ -157,7 +157,7 @@
     "light": "فاتح",
     "dark": "داكن",
     "followSystem": "النظام",
-    "chartColor": "لون السمة",
+    "accentColor": "لون السمة",
     "selected": "محدد",
     "account": "الحساب",
     "signOut": "تسجيل الخروج"

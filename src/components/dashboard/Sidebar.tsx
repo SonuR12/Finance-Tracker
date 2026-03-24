@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 import { UserMenu } from "@/components/ui/UserMenu";
 import { motion, AnimatePresence } from "framer-motion";
-import { useSettings } from "@/lib/settings-context";
 import { useT } from "@/lib/i18n-context";
 
 interface Props {
@@ -67,7 +66,6 @@ const NAV_GROUPS = [
 
 export default function Sidebar({ name, email, image, avatarColor, activeTab, onTabChange, mobileOpen, onMobileOpenChange, unreadCount, onSettingsOpen }: Props) {
   const [collapsed, setCollapsed] = useState(false);
-  const { chartColor } = useSettings();
   const t = useT();
 
   function NavItems({ forMobile = false }: { forMobile?: boolean }) {
@@ -89,7 +87,7 @@ export default function Sidebar({ name, email, image, avatarColor, activeTab, on
                   <button
                     key={item.id}
                     onClick={() => { onTabChange(item.id); onMobileOpenChange(false); }}
-                    style={isActive ? { color: chartColor, backgroundColor: chartColor + "15" } : {}}
+                    style={isActive ? { color: "var(--app-accent)", backgroundColor: "color-mix(in srgb, var(--app-accent) 8%, transparent)" } : {}}
                     className={`relative flex w-full items-center gap-3 px-3 py-2 rounded-xl text-sm transition group ${
                       isActive
                         ? "font-medium"

@@ -1,38 +1,17 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { useT } from "@/lib/i18n-context";
-import { useSettings } from "@/lib/settings-context";
 import { useSession } from "next-auth/react";
 import { ArrowRight, LayoutDashboard } from "lucide-react";
 import { AppButton } from "@/components/ui/AppButton";
 
-const GRADIENTS: Record<string, string> = {
-  "#6366f1": "linear-gradient(90deg, #6366f1 0%, #a78bfa 25%, #38bdf8 50%, #a78bfa 75%, #6366f1 100%)",
-  "#3b82f6": "linear-gradient(90deg, #3b82f6 0%, #93c5fd 25%, #06b6d4 50%, #93c5fd 75%, #3b82f6 100%)",
-  "#10b981": "linear-gradient(90deg, #10b981 0%, #6ee7b7 25%, #06b6d4 50%, #6ee7b7 75%, #10b981 100%)",
-  "#8b5cf6": "linear-gradient(90deg, #8b5cf6 0%, #c084fc 25%, #f472b6 50%, #c084fc 75%, #8b5cf6 100%)",
-  "#f43f5e": "linear-gradient(90deg, #f43f5e 0%, #fb7185 25%, #fb923c 50%, #fb7185 75%, #f43f5e 100%)",
-  "#f59e0b": "linear-gradient(90deg, #f59e0b 0%, #fcd34d 25%, #f87171 50%, #fcd34d 75%, #f59e0b 100%)",
-  "#06b6d4": "linear-gradient(90deg, #06b6d4 0%, #67e8f9 25%, #818cf8 50%, #67e8f9 75%, #06b6d4 100%)",
-  "#ec4899": "linear-gradient(90deg, #ec4899 0%, #f9a8d4 25%, #c084fc 50%, #f9a8d4 75%, #ec4899 100%)",
-};
-
-function getGradient(color: string): string {
-  return GRADIENTS[color] ?? `linear-gradient(90deg, ${color} 0%, ${color}99 25%, ${color}cc 50%, ${color}99 75%, ${color} 100%)`;
-}
-
 export default function Hero() {
   const t = useT();
-  const { chartColor } = useSettings();
   const { data: session } = useSession();
   const imageRef = useRef<HTMLDivElement>(null);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => { setMounted(true); }, []);
-
   useEffect(() => {
     const el = imageRef.current;
     const handleScroll = () => {
@@ -102,7 +81,7 @@ export default function Hero() {
               backgroundClip: "text",
               WebkitTextFillColor: "transparent",
               color: "transparent",
-              backgroundImage: mounted ? getGradient(chartColor) : getGradient("#6366f1"),
+              backgroundImage: "linear-gradient(90deg, var(--app-accent) 0%, color-mix(in srgb, var(--app-accent) 60%, white) 25%, color-mix(in srgb, var(--app-accent) 80%, cyan) 50%, color-mix(in srgb, var(--app-accent) 60%, white) 75%, var(--app-accent) 100%)",
               backgroundSize: "200% auto",
               animation: "shimmerMove 3s linear infinite",
             }}
@@ -135,7 +114,7 @@ export default function Hero() {
               const el = document.querySelector("#features");
               if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = chartColor)}
+            onMouseEnter={(e) => (e.currentTarget.style.color = "var(--app-accent)")}
             onMouseLeave={(e) => (e.currentTarget.style.color = "")}
           >
             {t("hero.demo")}

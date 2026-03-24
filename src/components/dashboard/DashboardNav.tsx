@@ -41,7 +41,7 @@ export default function DashboardNav({ name, email, image }: Props) {
               <Link href="/" className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition">
                 <Home className="h-3.5 w-3.5" /> {t("dashboard.home")}
               </Link>
-              <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-medium">
+              <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium" style={{ background: "color-mix(in srgb, var(--app-accent) 12%, transparent)", color: "var(--app-accent)" }}>
                 <LayoutDashboard className="h-3.5 w-3.5" /> {t("nav.features") === "Features" ? "Dashboard" : t("dashboard.overview")}
               </span>
             </div>
@@ -61,7 +61,7 @@ export default function DashboardNav({ name, email, image }: Props) {
               {image ? (
                 <Image src={image} alt={name ?? "User"} width={30} height={30} className="rounded-full object-cover" />
               ) : (
-                <div className="h-7 w-7 rounded-full bg-indigo-500 flex items-center justify-center text-white text-xs font-bold">
+                <div className="h-7 w-7 rounded-full flex items-center justify-center text-white text-xs font-bold" style={{ background: "var(--app-accent)" }}>
                   {initials}
                 </div>
               )}
@@ -87,7 +87,7 @@ export default function DashboardNav({ name, email, image }: Props) {
               {image ? (
                 <Image src={image} alt={name ?? "User"} width={32} height={32} className="rounded-full" />
               ) : (
-                <div className="h-8 w-8 rounded-full bg-indigo-500 flex items-center justify-center text-white text-xs font-bold">{initials}</div>
+                <div className="h-8 w-8 rounded-full flex items-center justify-center text-white text-xs font-bold" style={{ background: "var(--app-accent)" }}>{initials}</div>
               )}
               <div>
                 <p className="text-sm font-semibold text-neutral-800 dark:text-neutral-100">{name}</p>

@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import { useT } from "@/lib/i18n-context";
-import { useSettings } from "@/lib/settings-context";
 import { BarChart3, Receipt, PieChart, CreditCard, Globe, Zap } from "lucide-react";
 import Image from "next/image";
 
@@ -17,7 +16,6 @@ const features = [
 
 export default function FeaturesSection() {
   const t = useT();
-  const { chartColor } = useSettings();
 
   return (
     <section id="features" className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8">

@@ -10,13 +10,13 @@ export interface FullSettings {
   autoCategorize: boolean;
   budgets: Record<string, string>;
   budgetAlerts: boolean;
-  chartColor: string;
+  accentColor: string;
   theme: "light" | "dark" | "system";
 }
 
 interface SettingsCtx extends FullSettings {
   settingsLoaded: boolean;
-  setChartColor: (v: string) => void;
+  setAccentColor: (v: string) => void;
   applyTheme: (v: "light" | "dark" | "system") => void;
   applySettings: (s: FullSettings) => void;
 }
@@ -29,14 +29,14 @@ const DEFAULTS: FullSettings = {
   autoCategorize: true,
   budgets: {},
   budgetAlerts: true,
-  chartColor: "#6366f1",
+  accentColor: "#6366f1",
   theme: "system",
 };
 
 const Ctx = createContext<SettingsCtx>({
   ...DEFAULTS,
   settingsLoaded: false,
-  setChartColor: () => {},
+  setAccentColor: () => {},
   applyTheme: () => {},
   applySettings: () => {},
 });
@@ -58,8 +58,8 @@ function applyThemeToDom(th: "light" | "dark" | "system") {
 
 function applyToDom(s: FullSettings) {
   document.documentElement.lang = s.language;
-  document.documentElement.style.setProperty("--app-accent", s.chartColor);
-  document.documentElement.style.setProperty("--ring", s.chartColor);
+  document.documentElement.style.setProperty("--app-accent", s.accentColor);
+  document.documentElement.style.setProperty("--ring", s.accentColor);
   applyThemeToDom(s.theme);
 }
 
@@ -72,14 +72,16 @@ function saveToLocalStorage(s: FullSettings) {
 function loadFromLocalStorage(): FullSettings {
   try {
     const raw = localStorage.getItem(LS_KEY);
-    if (raw) return { ...DEFAULTS, ...JSON.parse(raw) };
-    // migrate legacy keys
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      return { ...DEFAULTS, ...parsed };
+    }
     return {
       ...DEFAULTS,
       language:       localStorage.getItem("language")        || DEFAULTS.language,
       currency:       localStorage.getItem("currency")        || DEFAULTS.currency,
       currencySymbol: localStorage.getItem("currencySymbol") || DEFAULTS.currencySymbol,
-      chartColor:     localStorage.getItem("chartColor")      || DEFAULTS.chartColor,
+      accentColor:    localStorage.getItem("accentColor")     || DEFAULTS.accentColor,
       theme: (localStorage.getItem("theme") || DEFAULTS.theme) as FullSettings["theme"],
     };
   } catch { return DEFAULTS; }
@@ -100,9 +102,9 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     setSettingsLoaded(true);
   }, []);
 
-  function setChartColor(v: string) {
+  function setAccentColor(v: string) {
     setSettings((s) => {
-      const next = { ...s, chartColor: v };
+      const next = { ...s, accentColor: v };
       saveToLocalStorage(next);
       return next;
     });
@@ -126,7 +128,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <Ctx.Provider value={{ ...settings, settingsLoaded, setChartColor, applyTheme, applySettings }}>
+    <Ctx.Provider value={{ ...settings, settingsLoaded, setAccentColor, applyTheme, applySettings }}>
       {children}
     </Ctx.Provider>
   );

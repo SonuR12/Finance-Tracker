@@ -10,7 +10,7 @@ export default function StatCards({ stats }: { stats: Record<string, number> }) 
   const t = useT();
 
   const CARD_META = [
-    { titleKey: "dashboard.totalBalance",    key: "totalBalance",    change: +12.5, icon: DollarSign,  bg: "bg-indigo-50 dark:bg-indigo-950/30",   iconBg: "bg-indigo-500",   glow: "bg-indigo-500",   accent: true  },
+    { titleKey: "dashboard.totalBalance",    key: "totalBalance",    change: +12.5, icon: DollarSign,  bg: "",                                     iconBg: "",                glow: "",                accent: true  },
     { titleKey: "dashboard.monthlyIncome",   key: "monthlyIncome",   change: +8.2,  icon: TrendingUp,  bg: "bg-emerald-50 dark:bg-emerald-950/30", iconBg: "bg-emerald-500",  glow: "bg-emerald-500",  accent: false },
     { titleKey: "dashboard.monthlyExpenses", key: "monthlyExpenses", change: -3.1,  icon: TrendingDown, bg: "bg-rose-50 dark:bg-rose-950/30",      iconBg: "bg-rose-500",     glow: "bg-rose-500",     accent: false },
     { titleKey: "dashboard.totalSavings",    key: "totalSavings",    change: +22.4, icon: PiggyBank,   bg: "bg-amber-50 dark:bg-amber-950/30",    iconBg: "bg-amber-500",    glow: "bg-amber-500",    accent: false },

@@ -157,7 +157,7 @@
     "light": "浅色",
     "dark": "深色",
     "followSystem": "系统",
-    "chartColor": "主题颜色",
+    "accentColor": "主题颜色",
     "selected": "已选择",
     "account": "账户",
     "signOut": "退出登录"

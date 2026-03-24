@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useSettings } from "@/lib/settings-context";
 import { useT } from "@/lib/i18n-context";
 import { CreditCard, BarChart3, PieChart } from "lucide-react";
 import Image from "next/image";
@@ -14,7 +13,6 @@ const stepImages = [
 const stepIcons = [CreditCard, BarChart3, PieChart];
 
 export default function HowItWorks() {
-  const { chartColor } = useSettings();
   const t = useT();
 
   const steps = [
