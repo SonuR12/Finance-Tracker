@@ -186,7 +186,7 @@ export default function AboutPage() {
                 key={i}
                 variants={stackItem}
                 style={{ willChange: "opacity, transform" }}
-                className="group rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-4 sm:p-5 flex flex-col sm:flex-row gap-3 sm:gap-4 items-center sm:items-start transition-colors duration-300 hover:-translate-y-0.5"
+                className="group rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-4 sm:p-5 flex flex-col sm:flex-row gap-3 sm:gap-4 items-center sm:items-start transition-colors duration-300"
                 onMouseEnter={(e) =>
                   (e.currentTarget.style.borderColor = "var(--app-accent)")
                 }
