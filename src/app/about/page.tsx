@@ -207,7 +207,7 @@ export default function AboutPage() {
                       {item.name}
                     </span>
                     <span
-                      className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-md"
+                      className="text-[10px] font-bold tracking-wider px-1.5 py-0.5 rounded-md"
                       style={{
                         background: "color-mix(in srgb, var(--app-accent) 12%, transparent)",
                         color: "var(--app-accent)",
