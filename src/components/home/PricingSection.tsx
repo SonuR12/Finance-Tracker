@@ -73,6 +73,7 @@ export default function PricingSection() {
                     layoutId="pricing-pill"
                     className="absolute inset-0 rounded-full"
                     style={gradientStyle}
+                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
                   />
                 )}
                 <span className="relative z-10">{plan.name}</span>
@@ -189,8 +190,11 @@ export default function PricingSection() {
                   </div>
                 </div>
                 <AppButton
-                  variant="primary" size="lg"
-                  className={`w-full rounded-xl mb-5 !border-0 ${!isActive ? "opacity-75" : ""}`}
+                  variant="primary"
+                  size="lg"
+                  className="w-full rounded-xl mb-5 !border-0"
+                  disabled={!isActive}
+                  style={!isActive ? { opacity: 0.45, pointerEvents: "none", background: "linear-gradient(to bottom, color-mix(in srgb, var(--app-accent) 85%, white), color-mix(in srgb, var(--app-accent) 72%, black))" } : {}}
                   onClick={(e) => { e.stopPropagation(); window.location.href = plan.href; }}
                 >
                   {plan.cta}
