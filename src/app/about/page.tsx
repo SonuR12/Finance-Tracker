@@ -1,6 +1,7 @@
 "use client";
 
 import PageLayout from "@/components/home/PageLayout";
+import TechCircuit from "@/components/about/TechCircuit";
 import { useT } from "@/lib/i18n-context";
 import { motion, type Variants } from "framer-motion";
 import Image from "next/image";
@@ -222,6 +223,30 @@ export default function AboutPage() {
                 </div>
               </motion.div>
             ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Tech Circuit Diagram */}
+      <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 bg-white dark:bg-neutral-950">
+        <div className="max-w-5xl mx-auto">
+          <motion.div {...fadeUp} className="text-center mb-10 space-y-3">
+            <p className="text-lg font-semibold uppercase tracking-widest" style={{ color: "var(--app-accent)" }}>
+              How It All Connects
+            </p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-neutral-900 dark:text-white">
+              The Stack, Wired Together
+            </h2>
+            <p className="text-neutral-500 dark:text-neutral-400 max-w-xl mx-auto">
+              Every technology feeds into a single, unified platform — each node a building block, every line a live connection.
+            </p>
+          </motion.div>
+          <motion.div
+            {...fadeUp}
+            transition={{ duration: 0.6, delay: 0.15 }}
+            className="rounded-3xl overflow-hidden border border-neutral-200 dark:border-neutral-800"
+          >
+            <TechCircuit />
           </motion.div>
         </div>
       </section>
