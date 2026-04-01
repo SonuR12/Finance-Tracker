@@ -71,8 +71,9 @@ export default function Sidebar({ name, email, image, avatarColor, activeTab, on
   function NavItems({ forMobile = false }: { forMobile?: boolean }) {
     return (
       <>
-        {NAV_GROUPS.map((group) => (
+        {NAV_GROUPS.map((group, i) => (
           <div key={group.labelKey}>
+            {i > 0 && <hr className="border-neutral-200 dark:border-neutral-800 rounded-full mx-1 mb-3" />}
             {(!collapsed || forMobile) && (
               <p className="text-[10px] font-semibold text-neutral-400 uppercase tracking-wider px-3 mb-1">
                 {t(group.labelKey)}
@@ -105,7 +106,7 @@ export default function Sidebar({ name, email, image, avatarColor, activeTab, on
                       <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-rose-500" />
                     )}
                     {collapsed && !forMobile && (
-                      <span className="pointer-events-none absolute left-full ml-2 px-2 py-1 rounded-lg bg-neutral-900 dark:bg-neutral-700 text-white text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition z-50">
+                      <span style={{ backgroundColor: "var(--app-accent)", color: "#fff" }} className={`pointer-events-none absolute left-full ml-2 px-2 py-1 rounded-lg text-xs whitespace-nowrap transition-opacity z-50 ${isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}>
                         {label}
                       </span>
                     )}
