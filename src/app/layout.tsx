@@ -21,6 +21,9 @@ export const metadata: Metadata = {
   title: process.env.NEXT_PUBLIC_SITE_NAME ?? "Finance Tracker",
   description: process.env.NEXT_PUBLIC_SITE_DESCRIPTION ?? "Track and manage your personal finances",
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+  icons: {
+    apple: "/svg/logo.svg",
+  },
 };
 
 export default async function RootLayout({

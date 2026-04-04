@@ -40,8 +40,8 @@ export default function Footer() {
       category: t("footer.company"),
       items: [
         { label: t("footer.about"),   href: "/about" },
-        { label: t("footer.blog"),    href: "/blog" },
         { label: t("footer.careers"), href: "/careers" },
+        { label: t("footer.blog"),    href: "/blog" },
       ],
     },
     {
@@ -116,7 +116,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t text-center border-neutral-100 dark:border-neutral-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-neutral-500 dark:text-neutral-400">
-          <span>© {new Date().getFullYear()} Finance AI · {t("footer.builtBy")}</span>
+          <span>&copy; {new Date().getFullYear()} Finance AI · {t("footer.builtBy")}</span>
           <span>{t("footer.tagline")}</span>
         </div>
       </div>
