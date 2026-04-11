@@ -7,19 +7,20 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, Bell, BarChart3, ArrowLeftRight, TrendingUp, TrendingDown, PiggyBank, Target, Wallet, CreditCard, Receipt, ShieldCheck, X, Send, Trash2 } from "lucide-react";
 import { AppButton } from "@/components/ui/AppButton";
 
-function BotIcon({ size = 32, color }: { size?: number; color: string }) {
-  const id = `bg-${color.replace("#", "")}`;
+function BotIcon({ size = 32, color }: { size?: number; color?: string }) {
+  const resolvedColor = color ?? "var(--app-accent)";
+  const id = `bg-${resolvedColor.replace("#", "").replace(/[^a-zA-Z0-9]/g, "")}`;
   return (
     <svg width={size} height={size} viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect width="56" height="56" rx="14" fill={`url(#${id})`} />
+      <rect width="56" height="56" rx="14" fill={color ? `url(#${id})` : "transparent"} />
       <line x1="28" y1="8" x2="28" y2="14" stroke="white" strokeWidth="2.5" strokeLinecap="round" />
       <circle cx="28" cy="7" r="2.5" fill="white" />
       <rect x="12" y="14" width="32" height="24" rx="8" fill="white" fillOpacity="0.18" />
       <rect x="12" y="14" width="32" height="24" rx="8" stroke="white" strokeOpacity="0.5" strokeWidth="1.5" />
       <circle cx="22" cy="25" r="4" fill="white" />
       <circle cx="34" cy="25" r="4" fill="white" />
-      <circle cx="23" cy="25" r="2" fill={color} />
-      <circle cx="35" cy="25" r="2" fill={color} />
+      <circle cx="23" cy="25" r="2" fill={resolvedColor} />
+      <circle cx="35" cy="25" r="2" fill={resolvedColor} />
       <circle cx="24" cy="24" r="0.8" fill="white" />
       <circle cx="36" cy="24" r="0.8" fill="white" />
       <path d="M22 31 Q28 35 34 31" stroke="white" strokeWidth="2" strokeLinecap="round" fill="none" />
@@ -27,12 +28,14 @@ function BotIcon({ size = 32, color }: { size?: number; color: string }) {
       <circle cx="24" cy="45" r="1.5" fill="white" fillOpacity="0.8" />
       <circle cx="28" cy="45" r="1.5" fill="white" fillOpacity="0.8" />
       <circle cx="32" cy="45" r="1.5" fill="white" fillOpacity="0.8" />
-      <defs>
-        <linearGradient id={id} x1="0" y1="0" x2="56" y2="56" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor={color} />
-          <stop offset="100%" stopColor={color} stopOpacity="0.7" />
-        </linearGradient>
-      </defs>
+      {color && (
+        <defs>
+          <linearGradient id={id} x1="0" y1="0" x2="56" y2="56" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor={color} />
+            <stop offset="100%" stopColor={color} stopOpacity="0.7" />
+          </linearGradient>
+        </defs>
+      )}
     </svg>
   );
 }
@@ -711,7 +714,7 @@ function AIFloatingButton({ insights, data }: { insights: any[]; data: Dashboard
           className="absolute flex items-center justify-center transition-all duration-150"
           style={{ opacity: open ? 0 : 1, transform: open ? "rotate(90deg) scale(0.5)" : "rotate(0deg) scale(1)" }}
         >
-          <BotIcon size={40} color={accentColor} />
+          <BotIcon size={40} />
         </span>
       </AppButton>
     </>
