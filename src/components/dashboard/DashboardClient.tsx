@@ -439,7 +439,7 @@ function TypingDots() {
 
 function AIFloatingButton({ insights, data }: { insights: any[]; data: DashboardData }) {
   const t = useT();
-  const { currency, currencySymbol, language } = useSettings();
+  const { currency, currencySymbol, language, accentColor } = useSettings();
   const STORAGE_KEY = "ai_chat_history";
   const [open, setOpen] = useState(false);
   const [closing, setClosing] = useState(false);
@@ -526,7 +526,7 @@ function AIFloatingButton({ insights, data }: { insights: any[]; data: Dashboard
               <div className="flex items-center gap-2.5">
                 <div className="relative">
                   <div className="h-9 w-9 rounded-xl bg-white/20 flex items-center justify-center overflow-hidden">
-                    <BotIcon size={32} color="var(--app-accent)" />
+                    <BotIcon size={32} color={accentColor} />
                   </div>
                   <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-400 border-2 border-white" />
                 </div>
@@ -559,7 +559,7 @@ function AIFloatingButton({ insights, data }: { insights: any[]; data: Dashboard
               {messages.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full gap-4 px-2">
                   <div className="h-14 w-14 rounded-2xl flex items-center justify-center shadow-lg overflow-hidden">
-                    <BotIcon size={56} color="var(--app-accent)" />
+                    <BotIcon size={56} color={accentColor} />
                   </div>
                   <div className="text-center">
                     <p className="text-sm font-semibold text-neutral-700 dark:text-neutral-200">{t("dashboard.aiAssistant")}</p>
@@ -596,7 +596,7 @@ function AIFloatingButton({ insights, data }: { insights: any[]; data: Dashboard
                       {/* AI avatar */}
                       {!isUser && (
                         <div className="flex-shrink-0 h-6 w-6 rounded-full flex items-center justify-center mb-0.5 overflow-hidden">
-                          {showAvatar && <BotIcon size={24} color="var(--app-accent)" />}
+                          {showAvatar && <BotIcon size={24} color={accentColor} />}
                         </div>
                       )}
                       <div className={`flex flex-col gap-1 max-w-[78%] ${isUser ? "items-end" : "items-start"}`}>
@@ -631,7 +631,7 @@ function AIFloatingButton({ insights, data }: { insights: any[]; data: Dashboard
                   className="flex items-end gap-2"
                 >
                   <div className="flex-shrink-0 h-6 w-6 rounded-full flex items-center justify-center overflow-hidden">
-                    <BotIcon size={24} color="var(--app-accent)" />
+                    <BotIcon size={24} color={accentColor} />
                   </div>
                   <div className="px-3 py-2.5 rounded-2xl rounded-bl-sm bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 shadow-sm">
                     <TypingDots />
@@ -711,7 +711,7 @@ function AIFloatingButton({ insights, data }: { insights: any[]; data: Dashboard
           className="absolute flex items-center justify-center transition-all duration-150"
           style={{ opacity: open ? 0 : 1, transform: open ? "rotate(90deg) scale(0.5)" : "rotate(0deg) scale(1)" }}
         >
-          <BotIcon size={40} color="var(--app-accent)" />
+          <BotIcon size={40} color={accentColor} />
         </span>
       </AppButton>
     </>

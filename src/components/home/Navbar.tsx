@@ -117,7 +117,7 @@ export default function Navbar({ showLinks = true }: { showLinks?: boolean }) {
       <nav className="absolute top-0 z-40 w-full">
         <div className="mx-auto flex h-14 sm:h-16 max-w-7xl items-center justify-between px-3 sm:px-6 lg:px-8">
           <Link href="/" className="flex items-center gap-2">
-            <Image src="/svg/logo.svg" alt="Logo" width={40} height={40} />
+            <Image src="/svg/logo.svg" alt="Logo" width={40} height={40} loading="eager" />
             <div className="flex flex-col leading-none">
               <span className="font-bold text-base" style={{ color: "var(--app-accent)" }}>Finance</span>
               <span className="font-medium text-[10px] tracking-widest uppercase text-neutral-500 dark:text-neutral-400">Track</span>
