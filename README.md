@@ -118,15 +118,51 @@ npm install
 
 ### 2. Set up environment variables
 
-Create a `.env` file in the root:
+Copy `.env.example` to `.env` and fill in your values:
+
+```bash
+cp .env.example .env
+```
+
+Required environment variables:
 
 ```env
-MONGODB_URI=<your_mongodb_connection_string>
-NEXTAUTH_SECRET=<your_secret>
+# Site Configuration
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+NEXT_PUBLIC_SITE_NAME=Finance Tracker
+NEXT_PUBLIC_SITE_DESCRIPTION=Track and manage your personal finances
+
+# NextAuth Configuration
 NEXTAUTH_URL=http://localhost:3000
-EMAIL_USER=<your_email>
-EMAIL_PASS=<your_email_password>
+AUTH_SECRET=<generate_with_openssl_rand_base64_32>
+
+# MongoDB
+MONGODB_URI=<your_mongodb_connection_string>
+
+# SMTP Configuration (for email verification)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=<your_email>
+SMTP_PASS=<your_email_app_password>
+
+# AI Provider (choose one)
+AI_PROVIDER=groq  # or openai, gemini
+GROQ_API_KEY=<your_groq_api_key>  # Free tier available
+# OPENAI_API_KEY=<your_openai_api_key>
+# GEMINI_API_KEY=<your_gemini_api_key>
 ```
+
+**Generate AUTH_SECRET:**
+```bash
+openssl rand -base64 32
+```
+
+**SMTP Setup (Gmail):**
+1. Go to [Google Account Settings](https://myaccount.google.com/security)
+2. Enable 2-Step Verification
+3. Generate an App Password for "Mail"
+4. Use the 16-character app password as `SMTP_PASS`
 
 ### 3. Generate Prisma client
 
