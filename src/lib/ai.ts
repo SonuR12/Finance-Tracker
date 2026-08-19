@@ -65,7 +65,7 @@ async function chatGemini(messages: ChatMessage[], system: string): Promise<stri
 async function chatGroq(messages: ChatMessage[], system: string): Promise<string> {
   const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
   const completion = await groq.chat.completions.create({
-    model: process.env.GROQ_MODEL ?? "llama-3.3-70b-versatile",
+    model: process.env.GROQ_MODEL ?? "qwen/qwen3.6-27b",
     messages: [{ role: "system", content: system }, ...messages],
     max_tokens: 200,
     temperature: 0.7,
