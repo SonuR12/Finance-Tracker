@@ -1,10 +1,9 @@
 import OpenAI from "openai";
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import Groq from "groq-sdk";
+import { GoogleGenAI } from "@google/genai";
 
-export type AIProvider = "openai" | "gemini" | "groq";
+export type AIProvider = "openai" | "gemini";
 
-const PROVIDER = (process.env.AI_PROVIDER ?? "groq") as AIProvider;
+const PROVIDER = (process.env.AI_PROVIDER ?? "gemini") as AIProvider;
 
 const SYSTEM_PROMPT = `You are a finance-only AI assistant embedded in a personal finance tracker app.
 You ONLY answer questions related to finance: personal budgeting, savings, expenses, income, investments, stocks, mutual funds, ETFs, bonds, crypto, commodities, forex, Nifty, Sensex, global markets, economic news, and financial planning.
@@ -31,8 +30,7 @@ export async function chat(messages: ChatMessage[], context?: string): Promise<s
     : SYSTEM_PROMPT;
 
   if (PROVIDER === "openai") return chatOpenAI(messages, systemWithContext);
-  if (PROVIDER === "gemini") return chatGemini(messages, systemWithContext);
-  return chatGroq(messages, systemWithContext);
+  return chatGemini(messages, systemWithContext);
 }
 
 async function chatOpenAI(messages: ChatMessage[], system: string): Promise<string> {
@@ -47,28 +45,16 @@ async function chatOpenAI(messages: ChatMessage[], system: string): Promise<stri
 }
 
 async function chatGemini(messages: ChatMessage[], system: string): Promise<string> {
-  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
-  const model = genAI.getGenerativeModel({
-    model: process.env.GEMINI_MODEL ?? "gemini-2.0-flash",
-    systemInstruction: system,
-  });
+  const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
   const history = messages.slice(0, -1).map((m) => ({
     role: m.role === "assistant" ? "model" : "user",
     parts: [{ text: m.content }],
   }));
-  const lastMessage = messages[messages.length - 1].content;
-  const chatSession = model.startChat({ history });
-  const result = await chatSession.sendMessage(lastMessage);
-  return result.response.text() ?? "Sorry, I couldn't generate a response.";
-}
-
-async function chatGroq(messages: ChatMessage[], system: string): Promise<string> {
-  const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
-  const completion = await groq.chat.completions.create({
-    model: process.env.GROQ_MODEL ?? "qwen/qwen3.6-27b",
-    messages: [{ role: "system", content: system }, ...messages],
-    max_tokens: 200,
-    temperature: 0.7,
+  const chat = genAI.chats.create({
+    model: process.env.GEMINI_MODEL ?? "models/gemini-flash-lite-latest",
+    config: { systemInstruction: system, maxOutputTokens: 200, temperature: 0.7 },
+    history,
   });
-  return completion.choices[0]?.message?.content ?? "Sorry, I couldn't generate a response.";
+  const result = await chat.sendMessage({ message: messages[messages.length - 1].content });
+  return result.text ?? "Sorry, I couldn't generate a response.";
 }
