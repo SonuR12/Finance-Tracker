@@ -18,9 +18,44 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: process.env.NEXT_PUBLIC_SITE_NAME ?? "Finance Tracker",
-  description: process.env.NEXT_PUBLIC_SITE_DESCRIPTION ?? "Track and manage your personal finances",
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+  verification: {
+    google: "HN3fzLREBKFaLgowG7iQcm5O02Vw3tyz5vkpwpftbiA",
+  },
+  title: {
+    default: process.env.NEXT_PUBLIC_SITE_NAME ?? "Finance Tracker",
+    template: `%s | ${process.env.NEXT_PUBLIC_SITE_NAME ?? "Finance Tracker"}`,
+  },
+  description: process.env.NEXT_PUBLIC_SITE_DESCRIPTION ?? "Track and manage your personal finances with AI-powered insights.",
+  applicationName: process.env.NEXT_PUBLIC_SITE_NAME ?? "Finance Tracker",
+  keywords: [
+    "finance tracker", "personal finance", "AI finance", "expense tracker",
+    "budget tracker", "income tracker", "spending insights", "CGPA calculator",
+    "money management", "financial dashboard",
+  ],
+  authors: [{ name: "Sonu Rai", url: "https://www.linkedin.com/in/sonu-rai-55473a289/" }],
+  creator: "Sonu Rai",
+  publisher: "Sonu Rai",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: process.env.NEXT_PUBLIC_SITE_URL,
+    siteName: process.env.NEXT_PUBLIC_SITE_NAME ?? "Finance Tracker",
+    title: process.env.NEXT_PUBLIC_SITE_NAME ?? "Finance Tracker",
+    description: process.env.NEXT_PUBLIC_SITE_DESCRIPTION ?? "Track and manage your personal finances with AI-powered insights.",
+    images: [{ url: "/Group.png", width: 1200, height: 630, alt: "Finance Tracker" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: process.env.NEXT_PUBLIC_SITE_NAME ?? "Finance Tracker",
+    description: process.env.NEXT_PUBLIC_SITE_DESCRIPTION ?? "Track and manage your personal finances with AI-powered insights.",
+    images: ["/Group.png"],
+  },
   icons: {
     apple: "/svg/logo.svg",
   },
@@ -35,6 +70,7 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <meta name="google-site-verification" content="xVPvfVnEJ0BB0VkgOJoeIfncc7H1Tus9oQi9j-Za1ig" />
         <script dangerouslySetInnerHTML={{ __html: `
           (function() {
             try {
